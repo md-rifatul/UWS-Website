@@ -21,6 +21,99 @@ import { AvailabilityBadge, ConditionBadge } from '@/components/common/Badge';
 import Button from '@/components/common/Button';
 import { handleImageError } from '@/utils/imageUtils';
 
+interface SpecRow {
+  id: string;
+  key: string;
+  value: string;
+}
+
+const SUBCATEGORIES_STORAGE_KEY = 'uws_subcategories_by_category';
+
+const DEFAULT_SUBCATEGORIES_MAP: Record<string, string[]> = {
+  'cnc-router-machine': [
+    '3-Axis CNC Router',
+    '4-Axis CNC Router',
+    '5-Axis Machining Center',
+    'ATC Linear Nesting Center',
+    'Heavy-Duty Stone & Wood CNC',
+  ],
+  'surface-planer': [
+    'Manual Surface Planer',
+    'Heavy-Duty Long-Bed Jointer',
+    'Helical Spiral Cutter Planer',
+  ],
+  'thickness-planer': [
+    'Single-Side Auto Feed Planer',
+    'Double-Side Heavy Duty Planer',
+    'High-Precision 630mm Planer',
+  ],
+  'spindle-shaper-moulder': [
+    'Tilting Spindle Shaper',
+    'High Speed Heavy Moulder',
+    'Sliding Table Spindle Shaper',
+  ],
+  'circular-saw': [
+    'Sliding Table Precision Saw',
+    'Heavy Duty Rip Saw',
+    'Multi-Blade Cross-Cut Saw',
+  ],
+  'edge-banding': [
+    'Manual Contour Edge Bander',
+    'High-Speed Automatic Edgebander',
+    'PUR & EVA Dual-Melt Edgebander',
+    'Corner Rounding Finishing Line',
+  ],
+  'panel-saws': [
+    'Sliding Table Saw (MJ Series)',
+    'Computerized Heavy Beam Saw',
+    'Vertical Panel Saw',
+  ],
+  'boring-drilling': [
+    'Single-Row Multi-Spindle Line',
+    'Multi-Row Boring Machine',
+    'Six-Sided CNC Drilling Center',
+  ],
+  'sanding-finishing': [
+    'Wide Belt Calibrating Sander',
+    'Profile Brush Polishing Sander',
+    'Fine Lacquer Finish Sander',
+  ],
+  'hydraulic-presses': [
+    'Multi-Daylight Hot Press',
+    '50-Ton Sectional Cold Press',
+    'Hydraulic Door Embossing Press',
+  ],
+  'dust-extraction': [
+    'Pulse-Jet Central Dust Collector',
+    'Twin-Bag Industrial Dust Collector',
+    'Cyclone Filtration Unit',
+  ],
+  'cutter-accessories': [
+    'PCD Diamond Sizing Saw Blades',
+    'Helical Spiral Planer Heads',
+    'TCT Turnover Knives',
+  ],
+};
+
+const getStoredSubcategoriesMap = (): Record<string, string[]> => {
+  try {
+    const raw = localStorage.getItem(SUBCATEGORIES_STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return {};
+};
+
+const saveStoredSubcategory = (categoryKey: string, subName: string) => {
+  try {
+    const map = getStoredSubcategoriesMap();
+    const existing = map[categoryKey] || [];
+    if (!existing.includes(subName)) {
+      map[categoryKey] = [...existing, subName];
+      localStorage.setItem(SUBCATEGORIES_STORAGE_KEY, JSON.stringify(map));
+    }
+  } catch {}
+};
+
 export const AdminProductsPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -77,6 +170,32 @@ export const AdminProductsPage: React.FC = () => {
   const [newCatDesc, setNewCatDesc] = useState('');
   const [isCreatingCat, setIsCreatingCat] = useState(false);
   const [inlineCatSuccess, setInlineCatSuccess] = useState('');
+
+  // In-line Subcategory Creation States
+  const [isInlineSubCategoryOpen, setIsInlineSubCategoryOpen] = useState(false);
+  const [newSubCategoryName, setNewSubCategoryName] = useState('');
+  const [inlineSubCatSuccess, setInlineSubCatSuccess] = useState('');
+  const [customSubcategoriesMap, setCustomSubcategoriesMap] = useState<Record<string, string[]>>(() => getStoredSubcategoriesMap());
+
+  // Dynamic Custom Specification Rows State
+  const [specRows, setSpecRows] = useState<SpecRow[]>([]);
+
+  const handleAddSpecRow = (key = '', value = '') => {
+    setSpecRows((prev) => [
+      ...prev,
+      { id: `spec-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`, key, value },
+    ]);
+  };
+
+  const handleRemoveSpecRow = (id: string) => {
+    setSpecRows((prev) => prev.filter((r) => r.id !== id));
+  };
+
+  const handleSpecRowChange = (id: string, field: 'key' | 'value', value: string) => {
+    setSpecRows((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, [field]: value } : r))
+    );
+  };
 
   // Form State
   const [formState, setFormState] = useState({
@@ -135,10 +254,19 @@ export const AdminProductsPage: React.FC = () => {
     setInlineCatSuccess('');
     setNewCatName('');
     setNewCatDesc('');
+    setIsInlineSubCategoryOpen(false);
+    setInlineSubCatSuccess('');
+    setNewSubCategoryName('');
+    setSpecRows([
+      { id: 'spec-1', key: 'Working Area', value: '' },
+      { id: 'spec-2', key: 'Main Motor / Spindle Power', value: '' },
+      { id: 'spec-3', key: 'Control System', value: '' },
+      { id: 'spec-4', key: 'Operating Voltage', value: '' },
+    ]);
     setFormState({
       name: '',
       modelNumber: '',
-      sku: `WTS-EQ-${Math.floor(100 + Math.random() * 900)}`,
+      sku: `UWS-EQ-${Math.floor(100 + Math.random() * 900)}`,
       categoryId: defaultCatId,
       subCategory: '',
       manufacturerId: defaultManId,
@@ -161,6 +289,30 @@ export const AdminProductsPage: React.FC = () => {
     setInlineCatSuccess('');
     setNewCatName('');
     setNewCatDesc('');
+    setIsInlineSubCategoryOpen(false);
+    setInlineSubCatSuccess('');
+    setNewSubCategoryName('');
+
+    const existingSpecs = p.specifications || {};
+    const rows: SpecRow[] = Object.entries(existingSpecs)
+      .filter(([k]) => k !== 'subCategory')
+      .map(([k, v], i) => ({
+        id: `spec-${i}-${Date.now()}`,
+        key: k.replace(/_/g, ' '),
+        value: typeof v === 'boolean' ? (v ? 'Yes / Integrated' : 'No') : String(v),
+      }));
+
+    setSpecRows(
+      rows.length > 0
+        ? rows
+        : [
+            { id: 'spec-1', key: 'Working Area', value: '' },
+            { id: 'spec-2', key: 'Main Motor / Spindle Power', value: '' },
+            { id: 'spec-3', key: 'Control System', value: '' },
+            { id: 'spec-4', key: 'Operating Voltage', value: '' },
+          ]
+    );
+
     setFormState({
       name: p.name,
       modelNumber: p.modelNumber,
@@ -204,6 +356,27 @@ export const AdminProductsPage: React.FC = () => {
     }
   };
 
+  const handleQuickCreateSubCategory = () => {
+    const trimmed = newSubCategoryName.trim();
+    if (!trimmed) return;
+    if (!formState.categoryId) {
+      alert('Please select a Category first.');
+      return;
+    }
+
+    saveStoredSubcategory(formState.categoryId, trimmed);
+    if (currentCategory?.slug) {
+      saveStoredSubcategory(currentCategory.slug, trimmed);
+    }
+
+    setCustomSubcategoriesMap(getStoredSubcategoriesMap());
+    setFormState((prev) => ({ ...prev, subCategory: trimmed }));
+    setInlineSubCatSuccess(`Subcategory "${trimmed}" saved & selected!`);
+    setTimeout(() => setInlineSubCatSuccess(''), 3500);
+    setNewSubCategoryName('');
+    setIsInlineSubCategoryOpen(false);
+  };
+
   const handleDelete = async (id: string, name: string) => {
     if (window.confirm(`Are you sure you want to remove "${name}" from the active catalog?`)) {
       await adminService.deleteProduct(id);
@@ -231,12 +404,24 @@ export const AdminProductsPage: React.FC = () => {
       return;
     }
 
-    const specs = { ...formState.specifications };
+    // Build custom specifications map from dynamic specification rows
+    const specs: Record<string, any> = {};
+    specRows.forEach((r) => {
+      const k = r.key.trim();
+      const v = r.value.trim();
+      if (k) {
+        specs[k] = v;
+      }
+    });
+
     const trimmedSub = formState.subCategory.trim();
     if (trimmedSub) {
       specs.subCategory = trimmedSub;
-    } else {
-      delete specs.subCategory;
+      saveStoredSubcategory(formState.categoryId, trimmedSub);
+      if (currentCategory?.slug) {
+        saveStoredSubcategory(currentCategory.slug, trimmedSub);
+      }
+      setCustomSubcategoriesMap(getStoredSubcategoriesMap());
     }
 
     const payload: Partial<Product> = {
@@ -268,23 +453,46 @@ export const AdminProductsPage: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  // Find active category attributes to dynamically generate spec input fields
+  // Find active category
   const currentCategory = categories.find((c) => c.id === formState.categoryId);
 
-  // Collect available subcategories for selected category from category + existing products
+  // Collect available subcategories for selected category from default map + custom storage + products
   const availableSubcategories = React.useMemo(() => {
     const list = new Set<string>();
+    const catId = formState.categoryId;
+    const catSlug = currentCategory?.slug;
+
+    // 1. From default map by slug or id
+    if (catSlug && DEFAULT_SUBCATEGORIES_MAP[catSlug]) {
+      DEFAULT_SUBCATEGORIES_MAP[catSlug].forEach((s) => list.add(s));
+    }
+    if (catId && DEFAULT_SUBCATEGORIES_MAP[catId]) {
+      DEFAULT_SUBCATEGORIES_MAP[catId].forEach((s) => list.add(s));
+    }
+
+    // 2. From stored custom map
+    if (catId && customSubcategoriesMap[catId]) {
+      customSubcategoriesMap[catId].forEach((s) => list.add(s));
+    }
+    if (catSlug && customSubcategoriesMap[catSlug]) {
+      customSubcategoriesMap[catSlug].forEach((s) => list.add(s));
+    }
+
+    // 3. From category model subCategories
     currentCategory?.subCategories?.forEach((sub) => {
       if (sub.name) list.add(sub.name);
     });
+
+    // 4. From existing products in this category
     products
-      .filter((p) => p.categoryId === formState.categoryId)
+      .filter((p) => p.categoryId === catId || (catSlug && p.categorySlug === catSlug))
       .forEach((p) => {
         const sc = p.subCategory || (p.specifications?.subCategory as string);
         if (sc && sc.trim()) list.add(sc.trim());
       });
+
     return Array.from(list);
-  }, [currentCategory, formState.categoryId, products]);
+  }, [currentCategory, formState.categoryId, customSubcategoriesMap, products]);
 
   return (
     <div className="p-6 sm:p-10 space-y-6">
@@ -544,37 +752,48 @@ export const AdminProductsPage: React.FC = () => {
                     </select>
                   </div>
 
-                  {/* Subcategory (Can be chosen from existing or typed custom) */}
+                  {/* Subcategory Dropdown (With Create & Save Capability) */}
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <label className="block text-xs font-semibold text-charcoal-700 uppercase">
                         Subcategory <span className="text-slate-400 font-normal lowercase">(optional)</span>
                       </label>
-                      {availableSubcategories.length > 0 && (
-                        <span className="text-[10px] text-slate-400">
-                          {availableSubcategories.length} suggestions
-                        </span>
-                      )}
+                      <button
+                        type="button"
+                        onClick={() => setIsInlineSubCategoryOpen(!isInlineSubCategoryOpen)}
+                        className="text-[11px] font-bold text-industrial-orange hover:text-industrial-orange-dark inline-flex items-center gap-1 cursor-pointer"
+                        title="Create a new subcategory"
+                      >
+                        <Plus className="w-3 h-3" />
+                        {isInlineSubCategoryOpen ? 'Cancel' : '+ New Subcategory'}
+                      </button>
                     </div>
 
-                    <input
-                      type="text"
-                      list="subcategories-datalist"
-                      placeholder={
-                        formState.categoryId
-                          ? 'Select or type subcategory (e.g. Sliding Table Saws)...'
-                          : 'Select a category first...'
-                      }
+                    <select
                       value={formState.subCategory}
-                      onChange={(e) => setFormState({ ...formState, subCategory: e.target.value })}
-                      className="w-full text-xs px-3 py-2 bg-white border border-slate-border rounded-md text-charcoal-800 focus:outline-none focus:border-industrial-orange shadow-2xs"
-                    />
-
-                    <datalist id="subcategories-datalist">
+                      onChange={(e) => {
+                        if (e.target.value === '__new__') {
+                          setIsInlineSubCategoryOpen(true);
+                        } else {
+                          setFormState({ ...formState, subCategory: e.target.value });
+                        }
+                      }}
+                      className="w-full text-xs px-3 py-2 bg-white border border-slate-border rounded-md text-charcoal-800 focus:outline-none focus:border-industrial-orange shadow-2xs font-medium"
+                    >
+                      <option value="">
+                        {availableSubcategories.length > 0
+                          ? '-- Select Subcategory (Optional) --'
+                          : '-- No Subcategories Yet (Click + New) --'}
+                      </option>
                       {availableSubcategories.map((sc) => (
-                        <option key={sc} value={sc} />
+                        <option key={sc} value={sc}>
+                          {sc}
+                        </option>
                       ))}
-                    </datalist>
+                      <option value="__new__" className="font-semibold text-industrial-orange">
+                        + Create New Subcategory...
+                      </option>
+                    </select>
 
                     {/* Quick suggestion pills if available */}
                     {availableSubcategories.length > 0 && (
@@ -586,7 +805,7 @@ export const AdminProductsPage: React.FC = () => {
                             onClick={() => setFormState({ ...formState, subCategory: sc })}
                             className={`text-[10px] px-2 py-0.5 rounded-full border transition-colors cursor-pointer ${
                               formState.subCategory === sc
-                                ? 'bg-industrial-orange text-white border-industrial-orange'
+                                ? 'bg-industrial-orange text-white border-industrial-orange font-bold'
                                 : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
                             }`}
                           >
@@ -684,6 +903,59 @@ export const AdminProductsPage: React.FC = () => {
                   </div>
                 )}
 
+                {/* Inline Quick-Add Subcategory Box (Saved and Persisted) */}
+                {isInlineSubCategoryOpen && (
+                  <div className="p-3 bg-blue-50/70 border border-blue-200/80 rounded-lg space-y-2 animate-fadeIn">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-navy-950">
+                        <Plus className="w-3.5 h-3.5 text-industrial-orange" />
+                        <span>
+                          Add New Subcategory for {currentCategory?.name || 'Selected Category'}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setIsInlineSubCategoryOpen(false)}
+                        className="text-slate-400 hover:text-slate-600 p-0.5"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={newSubCategoryName}
+                        onChange={(e) => setNewSubCategoryName(e.target.value)}
+                        placeholder="e.g. 5-Axis CNC Routers, Sliding Table Saws, Contour Edgebander..."
+                        className="flex-1 text-xs px-3 py-2 bg-white border border-slate-300 rounded text-charcoal-800 focus:outline-none focus:border-industrial-orange"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleQuickCreateSubCategory();
+                          }
+                        }}
+                      />
+                      <button
+                        type="button"
+                        disabled={!newSubCategoryName.trim()}
+                        onClick={handleQuickCreateSubCategory}
+                        className="px-3.5 py-2 bg-industrial-orange text-white text-xs font-semibold rounded hover:bg-industrial-orange-dark disabled:opacity-50 transition-colors shadow-2xs cursor-pointer inline-flex items-center gap-1.5 shrink-0"
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Save &amp; Select</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {inlineSubCatSuccess && (
+                  <div className="p-2 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs rounded-md flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>{inlineSubCatSuccess}</span>
+                  </div>
+                )}
+
                 {inlineCatSuccess && (
                   <div className="p-2 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs rounded-md flex items-center gap-2">
                     <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
@@ -756,93 +1028,133 @@ export const AdminProductsPage: React.FC = () => {
                 />
               </div>
 
-              {/* DYNAMIC ATTRIBUTE SPEC BUILDER SECTION */}
-              <div className="pt-3 border-t border-slate-border space-y-3">
+              {/* FLEXIBLE CUSTOM SPECIFICATIONS BUILDER */}
+              <div className="pt-4 border-t border-slate-200 space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <Sliders className="w-4 h-4 text-industrial-orange" />
-                    <span className="text-xs font-bold uppercase text-navy-900">
-                      Dynamic Schema Specifications (PostgreSQL JSONB)
-                    </span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Sliders className="w-4 h-4 text-industrial-orange" />
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-navy-950">
+                        Technical Specifications (Custom Parameters)
+                      </h4>
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      Add any custom specification boxes for this machine model as needed.
+                    </p>
                   </div>
-                  <span className="text-[11px] text-slate-400">
-                    Category: {currentCategory?.name}
-                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => handleAddSpecRow()}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-navy-950 hover:bg-industrial-orange text-white text-xs font-bold rounded-lg shadow-2xs transition-colors cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>+ Add Specification Box</span>
+                  </button>
                 </div>
 
-                {currentCategory?.attributes && currentCategory.attributes.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-surface-offwhite border border-slate-border rounded-lg">
-                    {currentCategory.attributes.map((attr) => (
-                      <div key={attr.id} className="space-y-1">
-                        <label className="block text-[11px] font-semibold text-charcoal-700">
-                          {attr.label} {attr.unit && `(${attr.unit})`}{' '}
-                          {attr.isRequired && <span className="text-red-500">*</span>}
-                        </label>
+                {/* Common quick-add suggestion pills */}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[11px] text-slate-400 font-medium mr-1">Quick Add:</span>
+                  {[
+                    'Working Area',
+                    'Spindle / Motor Power',
+                    'Control System',
+                    'Table Size',
+                    'Feed Speed',
+                    'Max Blade Diameter',
+                    'Operating Voltage',
+                    'Net Weight',
+                  ].map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => handleAddSpecRow(s, '')}
+                      className="text-[10px] px-2 py-0.5 bg-surface-offwhite hover:bg-slate-200 border border-slate-200 text-slate-600 rounded-full transition-colors cursor-pointer"
+                    >
+                      + {s}
+                    </button>
+                  ))}
+                </div>
 
-                        {attr.options && attr.options.length > 0 ? (
-                          <select
-                            value={formState.specifications[attr.attributeKey] || ''}
-                            onChange={(e) =>
-                              setFormState({
-                                ...formState,
-                                specifications: {
-                                  ...formState.specifications,
-                                  [attr.attributeKey]: e.target.value,
-                                },
-                              })
-                            }
-                            className="w-full text-xs px-2.5 py-1.5 bg-white border border-slate-border rounded text-charcoal-800 focus:outline-none focus:border-industrial-orange"
-                          >
-                            <option value="">Select {attr.label}</option>
-                            {attr.options.map((opt) => (
-                              <option key={opt} value={opt}>
-                                {opt}
-                              </option>
-                            ))}
-                          </select>
-                        ) : attr.dataType === 'Boolean' ? (
-                          <label className="flex items-center gap-2 cursor-pointer text-xs pt-1">
-                            <input
-                              type="checkbox"
-                              checked={!!formState.specifications[attr.attributeKey]}
-                              onChange={(e) =>
-                                setFormState({
-                                  ...formState,
-                                  specifications: {
-                                    ...formState.specifications,
-                                    [attr.attributeKey]: e.target.checked,
-                                  },
-                                })
-                              }
-                              className="text-industrial-orange focus:ring-industrial-orange rounded"
-                            />
-                            <span>Integrated Feature</span>
-                          </label>
-                        ) : (
-                          <input
-                            type="text"
-                            placeholder={`e.g. 1300 x 2500 mm`}
-                            value={formState.specifications[attr.attributeKey] || ''}
-                            onChange={(e) =>
-                              setFormState({
-                                ...formState,
-                                specifications: {
-                                  ...formState.specifications,
-                                  [attr.attributeKey]: e.target.value,
-                                },
-                              })
-                            }
-                            className="w-full text-xs px-2.5 py-1.5 bg-white border border-slate-border rounded text-charcoal-800 focus:outline-none focus:border-industrial-orange"
-                          />
-                        )}
+                {/* Dynamic Spec Boxes Container */}
+                <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+                  {specRows.map((row, idx) => (
+                    <div
+                      key={row.id}
+                      className="flex items-center gap-2.5 p-2.5 bg-surface-offwhite rounded-xl border border-slate-200 hover:border-slate-300 transition-colors"
+                    >
+                      {/* Column 1: Spec Name */}
+                      <div className="flex-1 min-w-0">
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">
+                          Specification Name #{idx + 1}
+                        </label>
+                        <input
+                          type="text"
+                          list="common-spec-keys"
+                          placeholder="e.g. Working Area, Spindle Power..."
+                          value={row.key}
+                          onChange={(e) => handleSpecRowChange(row.id, 'key', e.target.value)}
+                          className="w-full text-xs px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-navy-950 font-semibold focus:outline-none focus:border-industrial-orange"
+                        />
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xs text-slate-400 italic">
-                    No custom dynamic attributes defined for this category yet. You can add them under Categories & Dynamic Specs.
-                  </p>
-                )}
+
+                      {/* Column 2: Spec Value */}
+                      <div className="flex-1 min-w-0">
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">
+                          Specification Value
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. 1300 × 2500 mm, 9.0 kW..."
+                          value={row.value}
+                          onChange={(e) => handleSpecRowChange(row.id, 'value', e.target.value)}
+                          className="w-full text-xs px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-charcoal-800 focus:outline-none focus:border-industrial-orange"
+                        />
+                      </div>
+
+                      {/* Delete Button */}
+                      <div className="pt-3">
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveSpecRow(row.id)}
+                          className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                          title="Delete this specification box"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+
+                  {specRows.length === 0 && (
+                    <div className="p-5 text-center bg-slate-50 rounded-xl border border-dashed border-slate-300">
+                      <p className="text-xs text-slate-500">
+                        No specifications added yet. Click <strong>+ Add Specification Box</strong> or any quick pill above to add machine parameters.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <datalist id="common-spec-keys">
+                  <option value="Working Area" />
+                  <option value="Table Size" />
+                  <option value="Spindle Power" />
+                  <option value="Spindle Speed" />
+                  <option value="Main Motor Power" />
+                  <option value="Control System" />
+                  <option value="Inverter Power" />
+                  <option value="Tool Changer Type" />
+                  <option value="Vacuum Pump Capacity" />
+                  <option value="Feed Speed" />
+                  <option value="Max Working Thickness" />
+                  <option value="Max Saw Blade Diameter" />
+                  <option value="Tape Thickness" />
+                  <option value="Operating Voltage" />
+                  <option value="Air Pressure Requirement" />
+                  <option value="Machine Weight" />
+                  <option value="Overall Dimensions" />
+                </datalist>
               </div>
 
               <div className="flex items-center gap-2 pt-2">
