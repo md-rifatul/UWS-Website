@@ -116,7 +116,6 @@ export const HomePage: React.FC = () => {
     displayOrder: 1,
     isActive: true,
   };
-  const [selectedFilterCategory, setSelectedFilterCategory] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
@@ -155,12 +154,6 @@ export const HomePage: React.FC = () => {
     return () => clearInterval(timer);
   }, [isCatPaused]);
 
-  // Featured Products Section: Display 9 products + View All by Category
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const ITEMS_PER_PAGE = 9;
-
-  const productsSectionRef = useRef<HTMLDivElement>(null);
-
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const compareItems = useAppSelector((state) => state.compare.items);
@@ -190,40 +183,13 @@ export const HomePage: React.FC = () => {
     navigate(`/products?category=${categorySlug}`);
   };
 
-  // Filter products for the featured section below
-  const handleFilterPillClick = (slug: string) => {
-    setSelectedFilterCategory(slug);
-    setCurrentPage(1);
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-    productsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
   // 5 Popular Items: 1 Hero on Left + 4 on Right in 2x2 grid
   const popularCategories = categories.slice(0, 5);
   const heroCategory = popularCategories[0]; // CNC ROUTER MACHINE
   const gridCategories = popularCategories.slice(1, 5); // SURFACE PLANER, THICKNESS PLANER, SPINDLE SHAPER, CIRCULAR SAW
 
-  // Filter products for the section below: All or selected pill
-  const displayedProducts =
-    selectedFilterCategory === 'all'
-      ? allProducts
-      : allProducts.filter(
-          (p) =>
-            p.categorySlug === selectedFilterCategory ||
-            p.categoryId === categories.find((c) => c.slug === selectedFilterCategory)?.id ||
-            p.categoryName?.toLowerCase().includes(selectedFilterCategory.replace(/-/g, ' '))
-        );
-
-  // Pagination calculation
-  const totalCount = displayedProducts.length;
-  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE) || 1;
-  const paginatedProducts = displayedProducts.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  // Featured Products Section: Display top 9 products
+  const featuredProducts = allProducts.slice(0, 9);
 
   return (
     <div className="space-y-10 sm:space-y-12 pb-14">
@@ -542,9 +508,9 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. FEATURED PRODUCTS (EXACT REFERENCE DESIGN: BORDERLESS 3-COL GRID, HOVER QUICK VIEW, NO AI CLUTTER) */}
-      <section ref={productsSectionRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-4 space-y-6 scroll-mt-20">
-        {/* Centered Heading & Subtitle matching Reference Website */}
+      {/* 4. FEATURED PRODUCTS (CLEAN 3-COL GRID, 9 PRODUCTS, HOVER QUICK VIEW, NO CATEGORY PILLS) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-4 space-y-6">
+        {/* Centered Heading & Subtitle */}
         <div className="text-center max-w-3xl mx-auto space-y-2">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-navy-900 uppercase tracking-tight">
             FEATURED PRODUCTS
@@ -555,39 +521,10 @@ export const HomePage: React.FC = () => {
           <div className="w-16 h-0.5 bg-slate-200 mx-auto mt-2" />
         </div>
 
-        {/* Category Filter Pills (Instant tab switching) */}
-        <div className="flex items-center justify-center flex-wrap gap-2 pt-1 pb-1">
-          <button
-            type="button"
-            onClick={() => handleFilterPillClick('all')}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              selectedFilterCategory === 'all'
-                ? 'bg-industrial-orange text-white shadow-xs'
-                : 'bg-white border border-slate-200 text-charcoal-700 hover:border-slate-300 hover:bg-slate-50'
-            }`}
-          >
-            All Machinery ({allProducts.length})
-          </button>
-          {categories.slice(0, 8).map((cat) => (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => handleFilterPillClick(cat.slug)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                selectedFilterCategory === cat.slug
-                  ? 'bg-industrial-orange text-white shadow-xs'
-                  : 'bg-white border border-slate-200 text-charcoal-700 hover:border-slate-300 hover:bg-slate-50'
-              }`}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </div>
-
-        {/* Clean 3-Column Grid without artificial AI card boxes/borders */}
-        {paginatedProducts.length > 0 ? (
+        {/* Clean 3-Column Grid without artificial card boxes/borders */}
+        {featuredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-8 gap-y-8 sm:gap-y-10">
-            {paginatedProducts.map((product) => {
+            {featuredProducts.map((product) => {
               return (
                 <div
                   key={product.id}
@@ -608,7 +545,7 @@ export const HomePage: React.FC = () => {
                       />
                     </Link>
 
-                    {/* Smooth Minimalist Hover View ("mouse er cursor nile just view hobe") */}
+                    {/* Smooth Minimalist Hover View */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
                       <div className="pointer-events-auto">
                         <button
@@ -627,7 +564,7 @@ export const HomePage: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Machine Model Name & Category (Pure, Human-Crafted Typography) */}
+                  {/* Machine Model Name & Category */}
                   <div className="pt-4 space-y-1">
                     <Link
                       to={`/products/${product.slug}`}
@@ -656,27 +593,18 @@ export const HomePage: React.FC = () => {
           </div>
         )}
 
-        {/* View All Products Button ("niche view all ekta button thakbe oita taap dile category er vittirte product dekhabe") */}
+        {/* View All Products Button */}
         <div className="pt-6 sm:pt-8 flex flex-col items-center justify-center space-y-2 text-center">
           <button
             type="button"
             onClick={() => {
               window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-              if (selectedFilterCategory && selectedFilterCategory !== 'all') {
-                dispatch(setSelectedCategory(selectedFilterCategory));
-                navigate(`/products?category=${selectedFilterCategory}`);
-              } else {
-                dispatch(setSelectedCategory(null));
-                navigate('/products');
-              }
+              dispatch(setSelectedCategory(null));
+              navigate('/products');
             }}
             className="inline-flex items-center gap-3 px-8 py-3.5 bg-navy-950 hover:bg-industrial-orange text-white text-xs sm:text-sm font-bold uppercase tracking-wider rounded-xl shadow-md hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 cursor-pointer group"
           >
-            <span>
-              {selectedFilterCategory !== 'all'
-                ? `View All ${categories.find((c) => c.slug === selectedFilterCategory)?.name || ''} Machinery`
-                : 'View All Machinery by Category'}
-            </span>
+            <span>View All Machinery by Category</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
           </button>
           <span className="text-xs text-slate-500 font-medium">
