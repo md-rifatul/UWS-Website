@@ -15,6 +15,7 @@ import {
   Scale,
   FileSpreadsheet,
   ExternalLink,
+  Sparkles,
 } from 'lucide-react';
 import { catalogService } from '@/services/catalogService';
 import { Category, Product, HeroSlide } from '@/types';
@@ -783,77 +784,70 @@ export const HomePage: React.FC = () => {
         </div>
       )}
 
-      {/* 6. WHY CHOOSE US / FACTORY ENGINEERING */}
+      {/* 6. ABOUT UNIQUE WOOD SOLUTION (CRAFTSMANSHIP, STORY & PHILOSOPHY) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <span className="text-xs font-bold uppercase tracking-widest text-industrial-orange">
-              Turnkey Manufacturing Partner
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-navy-900 leading-tight">
-              Why Bangladesh's Leading Furniture Brands Rely on WoodTech
-            </h2>
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-              We do not simply sell machinery boxes. We provide comprehensive manufacturing engineering:
-              from 3D factory layout CAD blueprints, compressed air line sizing, electrical power load
-              balancing, down to operator training and G-code optimization.
-            </p>
-
-            <div className="space-y-4 pt-2">
-              <div className="flex items-start gap-3.5">
-                <div className="p-2 bg-navy-900 text-industrial-orange rounded-md mt-0.5">
-                  <Factory className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm text-navy-900">Factory Layout &amp; Material Flow Optimization</h4>
-                  <p className="text-xs text-slate-600 mt-0.5">
-                    Eliminating bottlenecks between raw board storage, CNC nesting, edge finishing, and assembly.
-                  </p>
-                </div>
+        <div className="bg-white rounded-3xl border border-slate-200/90 p-8 sm:p-12 lg:p-14 shadow-sm">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+            <div className="lg:col-span-7 space-y-5">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 border border-orange-200/80 text-industrial-orange text-xs font-bold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>About Unique Wood Solution</span>
               </div>
 
-              <div className="flex items-start gap-3.5">
-                <div className="p-2 bg-navy-900 text-industrial-orange rounded-md mt-0.5">
-                  <Wrench className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm text-navy-900">Certified Installation &amp; Laser Alignment</h4>
-                  <p className="text-xs text-slate-600 mt-0.5">
-                    Rigorous optical leveling and mechanical squareness calibration during onsite commissioning.
-                  </p>
-                </div>
-              </div>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-navy-950 tracking-tight leading-tight">
+                More Than Craftsmen — <br />
+                <span className="text-industrial-orange">We Are Storytellers</span>
+              </h2>
 
-              <div className="flex items-start gap-3.5">
-                <div className="p-2 bg-navy-900 text-industrial-orange rounded-md mt-0.5">
-                  <Cpu className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm text-navy-900">CAM Software &amp; Operator Training</h4>
-                  <p className="text-xs text-slate-600 mt-0.5">
-                    Hands-on software training for your production staff in Alphacam, Artcam, and Syntec control.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative">
-            <div className="aspect-4/3 rounded-2xl overflow-hidden shadow-2xl border border-slate-border">
-              <img
-                src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1000&q=80"
-                alt="Automated Woodworking Factory in Operation"
-                onError={handleImageError}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="absolute -bottom-6 -left-6 bg-navy-950 text-white p-5 rounded-xl shadow-xl border border-navy-800 max-w-xs hidden sm:block">
-              <span className="text-xs font-bold text-industrial-orange uppercase tracking-wider block">
-                Total Reliability
-              </span>
-              <p className="text-xs text-slate-300 mt-1">
-                Zero-downtime maintenance programs with immediate factory spare parts dispatch.
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+                At <strong>Unique Wood Solution</strong>, we are more than craftsmen; we are storytellers,
+                weaving tales of passion, creativity, and expertise through the medium of wood.
+                Established with a vision to redefine craftsmanship and innovation, our journey began with
+                a profound love for the timeless beauty and versatility of wood.
               </p>
+
+              <p className="text-sm text-slate-600 leading-relaxed font-normal">
+                Driven by an unwavering commitment to excellence, our goal is to create exceptional wooden
+                pieces that inspire, captivate, and endure. We embrace age-old techniques passed down through
+                generations, infusing them with modern design sensibilities.
+              </p>
+
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <Link
+                  to="/about"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-navy-950 hover:bg-industrial-orange text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition-all hover:scale-102"
+                >
+                  <span>Read Our Full Story</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-surface-offwhite hover:bg-slate-100 text-navy-900 text-xs sm:text-sm font-semibold rounded-xl border border-slate-200 transition-all"
+                >
+                  <span>Get in Touch</span>
+                </Link>
+              </div>
+            </div>
+
+            <div className="lg:col-span-5 relative">
+              <div className="aspect-4/3 rounded-2xl overflow-hidden shadow-xl border border-slate-200 bg-slate-100">
+                <img
+                  src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1000&q=80"
+                  alt="Craftsmanship at Unique Wood Solution"
+                  onError={handleImageError}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              <div className="absolute -bottom-5 -left-5 bg-navy-950 text-white p-5 rounded-2xl shadow-xl border border-navy-800 max-w-xs hidden sm:block">
+                <span className="text-xs font-bold text-industrial-orange uppercase tracking-wider block">
+                  Tradition &amp; Innovation
+                </span>
+                <p className="text-xs text-slate-300 mt-1">
+                  Crafting bespoke solutions that reflect unique personalities, elegance, and durability.
+                </p>
+              </div>
             </div>
           </div>
         </div>
