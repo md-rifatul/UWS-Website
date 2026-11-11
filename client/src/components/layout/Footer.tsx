@@ -10,11 +10,15 @@ import {
   Cpu,
   Clock,
   Globe,
+  Building2,
+  MessageSquare,
 } from 'lucide-react';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export const Footer: React.FC = () => {
   const siteSettings = useSiteSettings();
+  const rawWhatsApp = (siteSettings.whatsapp_number || siteSettings.corporate_office_phone || '01912580072').replace(/[^0-9]/g, '');
+  const normalizedWhatsApp = rawWhatsApp.startsWith('880') ? rawWhatsApp : rawWhatsApp.startsWith('0') ? `88${rawWhatsApp}` : `880${rawWhatsApp}`;
 
   return (
     <footer className="bg-navy-950 text-slate-300 border-t border-navy-800">
@@ -47,43 +51,62 @@ export const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Footer Links */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+      {/* Main Footer Information: Brand & 3 Locations */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Column 1: Company Profile (Dynamic from Admin Settings) */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="space-y-4">
             <div className="flex items-center gap-3">
               {siteSettings.logo_url ? (
                 <img
                   src={siteSettings.logo_url}
-                  alt={siteSettings.logo_title || 'WoodTech Solutions'}
-                  className="h-10 w-auto max-w-[160px] object-contain"
+                  alt={siteSettings.logo_title || 'Unique Wood Solution'}
+                  className="h-10 w-auto max-w-[170px] object-contain"
                 />
               ) : (
                 <>
                   <div className="w-10 h-10 bg-navy-800 border border-navy-700 rounded-lg flex items-center justify-center text-industrial-orange font-extrabold text-xl">
-                    {siteSettings.logo_short || 'WTS'}
+                    {siteSettings.logo_short || 'UWS'}
                   </div>
                   <div>
                     <span className="font-bold text-lg text-white tracking-tight">
-                      {siteSettings.logo_title || 'WOODTECH SOLUTIONS'}
+                      {siteSettings.logo_title || 'UNIQUE WOOD SOLUTION'}
                     </span>
                     <p className="text-[11px] text-slate-400 uppercase tracking-wider">
-                      {siteSettings.logo_badge || 'Industrial Machinery & Technology'}
+                      {siteSettings.logo_badge || 'Woodworking Machinery & Craftsmanship'}
                     </p>
                   </div>
                 </>
               )}
             </div>
-            <p className="text-sm text-slate-400 leading-relaxed max-w-sm">
-              Delivering high-precision CNC machining centers, automated edgebanders,
-              computerized beam saws, and customized production line solutions for the modern
-              woodworking, furniture, and door manufacturing sector.
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Industrial woodworking machinery, CNC routers, automated edgebanders, and turnkey factory equipment solutions in Bangladesh.
             </p>
-            <div className="pt-2 space-y-2 text-xs text-slate-400">
+            <div className="pt-1">
+              <a
+                href={`https://wa.me/${normalizedWhatsApp}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 px-3.5 py-2 bg-emerald-600/90 hover:bg-emerald-600 text-white rounded-lg text-xs font-semibold transition-colors"
+              >
+                <MessageSquare className="w-3.5 h-3.5" />
+                <span>WhatsApp Quick Desk</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Column 2: Head Office */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 pb-2.5 border-b border-navy-800">
+              <Building2 className="w-4 h-4 text-industrial-orange shrink-0" />
+              <h4 className="text-xs font-bold text-white tracking-wider uppercase">
+                {siteSettings.head_office_name || 'Head Office'}
+              </h4>
+            </div>
+            <div className="space-y-2 text-xs text-slate-400">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-industrial-orange shrink-0 mt-0.5" />
-                <span>
+                <span className="leading-relaxed">
                   {siteSettings.head_office_address ||
                     siteSettings.office_address ||
                     '#5 Purano Mugholtuli Screw Market, Room #17, Nawabpur Road, Dhaka 1000'}
@@ -91,11 +114,21 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-industrial-orange shrink-0" />
-                <span>Hotline: {siteSettings.head_office_phone || siteSettings.support_phone || '01612-429999'}</span>
+                <a
+                  href={`tel:${siteSettings.head_office_phone || siteSettings.support_phone || '01612429999'}`}
+                  className="hover:text-white transition-colors"
+                >
+                  Phone: {siteSettings.head_office_phone || siteSettings.support_phone || '01612-429999'}
+                </a>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-industrial-orange shrink-0" />
-                <span>Corporate: {siteSettings.head_office_email || siteSettings.support_email || 'info@uwsbd.com'}</span>
+                <a
+                  href={`mailto:${siteSettings.head_office_email || siteSettings.support_email || 'info@uwsbd.com'}`}
+                  className="hover:text-white transition-colors"
+                >
+                  Email: {siteSettings.head_office_email || siteSettings.support_email || 'info@uwsbd.com'}
+                </a>
               </div>
               {(siteSettings.head_office_website || siteSettings.website_url) && (
                 <div className="flex items-center gap-2.5">
@@ -106,133 +139,90 @@ export const Footer: React.FC = () => {
                     rel="noopener noreferrer"
                     className="hover:text-white transition-colors"
                   >
-                    Web: {siteSettings.head_office_website || siteSettings.website_url || 'www.uwsbd.com'}
+                    Website: {siteSettings.head_office_website || siteSettings.website_url || 'www.uwsbd.com'}
                   </a>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Column 2: Machinery Categories */}
-          <div>
-            <h4 className="text-sm font-semibold text-white tracking-wider uppercase mb-4">
-              Machinery Categories
-            </h4>
-            <ul className="space-y-2.5 text-sm text-slate-400">
-              <li>
-                <Link
-                  to="/products?category=cnc-machining-centers"
-                  className="hover:text-industrial-orange transition-colors"
+          {/* Column 3: Corporate Office & Display Center */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 pb-2.5 border-b border-navy-800">
+              <MapPin className="w-4 h-4 text-emerald-400 shrink-0" />
+              <h4 className="text-xs font-bold text-white tracking-wider uppercase">
+                {siteSettings.corporate_office_name || 'Corporate Office'}
+              </h4>
+            </div>
+            <div className="space-y-2 text-xs text-slate-400">
+              <div className="flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <span className="leading-relaxed">
+                  {siteSettings.corporate_office_address ||
+                    siteSettings.showroom_address ||
+                    'Unique Wood Solution Display Center, South Ramerkanda, Keraniganj Model, Dhaka 1310'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
+                <a
+                  href={`tel:${siteSettings.corporate_office_phone || siteSettings.showroom_phone || '01912580072'}`}
+                  className="hover:text-white transition-colors"
                 >
-                  CNC Routers & Nesting
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/products?category=edge-banding-machines"
-                  className="hover:text-industrial-orange transition-colors"
+                  Phone: {siteSettings.corporate_office_phone || siteSettings.showroom_phone || '01912-580072'}
+                </a>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
+                <a
+                  href={`mailto:${siteSettings.corporate_office_email || 'info@uwsbd.com'}`}
+                  className="hover:text-white transition-colors"
                 >
-                  Automatic Edgebanders
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/products?category=panel-saws"
-                  className="hover:text-industrial-orange transition-colors"
-                >
-                  Beam Saws & Sliding Tables
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/products?category=cnc-boring-drilling"
-                  className="hover:text-industrial-orange transition-colors"
-                >
-                  Six-Sided Boring Centers
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/products?category=sanding-finishing"
-                  className="hover:text-industrial-orange transition-colors"
-                >
-                  Wide Belt Sanding Machines
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/products?category=hydraulic-presses"
-                  className="hover:text-industrial-orange transition-colors"
-                >
-                  Hydraulic Cold & Hot Presses
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/products?category=dust-extraction"
-                  className="hover:text-industrial-orange transition-colors"
-                >
-                  Central Dust Collectors
-                </Link>
-              </li>
-            </ul>
+                  Mail: {siteSettings.corporate_office_email || 'info@uwsbd.com'}
+                </a>
+              </div>
+              {siteSettings.showroom_hours && (
+                <div className="flex items-center gap-2.5 text-slate-400">
+                  <Clock className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>{siteSettings.showroom_hours}</span>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Column 3: Engineering Services */}
-          <div>
-            <h4 className="text-sm font-semibold text-white tracking-wider uppercase mb-4">
-              Services & Support
-            </h4>
-            <ul className="space-y-2.5 text-sm text-slate-400">
-              <li>
-                <Link to="/services" className="hover:text-industrial-orange transition-colors">
-                  Factory Layout Planning
-                </Link>
-              </li>
-              <li>
-                <Link to="/services" className="hover:text-industrial-orange transition-colors">
-                  Installation & Commissioning
-                </Link>
-              </li>
-              <li>
-                <Link to="/services" className="hover:text-industrial-orange transition-colors">
-                  CNC Operator & CAM Training
-                </Link>
-              </li>
-              <li>
-                <Link to="/services" className="hover:text-industrial-orange transition-colors">
-                  Genuine Spare Parts Supply
-                </Link>
-              </li>
-              <li>
-                <Link to="/services" className="hover:text-industrial-orange transition-colors">
-                  Annual Maintenance (AMC)
-                </Link>
-              </li>
-              <li>
-                <Link to="/compare" className="hover:text-industrial-orange transition-colors">
-                  Technical Comparison Matrix
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 4: Quality & Compliance */}
-          <div>
-            <h4 className="text-sm font-semibold text-white tracking-wider uppercase mb-4">
-              Quality Assurance
-            </h4>
-            <div className="space-y-3 text-xs text-slate-400">
-              <p>
-                All machinery supplied conforms to CE industrial safety directives with certified
-                fail-safe electrical cabinets and overload protections.
-              </p>
-              <div className="p-3 bg-navy-900 border border-navy-800 rounded-md space-y-1">
-                <span className="text-white font-semibold block text-xs">Warranty Guarantee</span>
-                <p className="text-[11px] text-slate-400">
-                  1-Year standard warranty on core mechanical and electronic components with 24/7
-                  troubleshooting support.
-                </p>
+          {/* Column 4: Warehouse & Logistics */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 pb-2.5 border-b border-navy-800">
+              <Building2 className="w-4 h-4 text-blue-400 shrink-0" />
+              <h4 className="text-xs font-bold text-white tracking-wider uppercase">
+                {siteSettings.warehouse_name || 'Warehouse'}
+              </h4>
+            </div>
+            <div className="space-y-2 text-xs text-slate-400">
+              <div className="flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+                <span className="leading-relaxed">
+                  {siteSettings.warehouse_address ||
+                    'Unique Wood Solution Warehouse, Godarbag, Keraniganj, Dhaka 1310'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Phone className="w-4 h-4 text-blue-400 shrink-0" />
+                <a
+                  href={`tel:${siteSettings.warehouse_phone || '01805465555'}`}
+                  className="hover:text-white transition-colors"
+                >
+                  Phone: {siteSettings.warehouse_phone || '01805-465555'}
+                </a>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Mail className="w-4 h-4 text-blue-400 shrink-0" />
+                <a
+                  href={`mailto:${siteSettings.warehouse_email || 'info@uwsbd.com'}`}
+                  className="hover:text-white transition-colors"
+                >
+                  Mail: {siteSettings.warehouse_email || 'info@uwsbd.com'}
+                </a>
               </div>
             </div>
           </div>
