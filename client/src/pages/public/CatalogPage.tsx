@@ -178,6 +178,43 @@ export const CatalogPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Category-Based Horizontal Navigation Bar */}
+        <div className="bg-white rounded-xl border border-slate-border p-3 shadow-2xs">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scrollbar-none py-0.5">
+            <button
+              type="button"
+              onClick={() => {
+                dispatch(setSelectedCategory(null));
+                setCurrentPage(1);
+              }}
+              className={`shrink-0 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                !selectedCategorySlug
+                  ? 'bg-industrial-orange text-white shadow-xs'
+                  : 'bg-surface-offwhite hover:bg-slate-100 text-charcoal-700 border border-slate-200'
+              }`}
+            >
+              All Machinery
+            </button>
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => {
+                  dispatch(setSelectedCategory(cat.slug));
+                  setCurrentPage(1);
+                }}
+                className={`shrink-0 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  selectedCategorySlug === cat.slug
+                    ? 'bg-industrial-orange text-white shadow-xs'
+                    : 'bg-surface-offwhite hover:bg-slate-100 text-charcoal-700 border border-slate-200'
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Main Content Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Desktop Left Sidebar Filter */}

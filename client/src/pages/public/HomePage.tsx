@@ -145,9 +145,9 @@ export const HomePage: React.FC = () => {
     return () => clearInterval(timer);
   }, [isCatPaused]);
 
-  // Pagination State for Featured Products Section
+  // Featured Products Section: Display 9 products + View All by Category
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const ITEMS_PER_PAGE = 6;
+  const ITEMS_PER_PAGE = 9;
 
   const productsSectionRef = useRef<HTMLDivElement>(null);
 
@@ -575,7 +575,36 @@ export const HomePage: React.FC = () => {
           <p className="text-xs sm:text-sm text-slate-500 font-normal">
             Visit our demo and technology center to see all kind of woodworking machines
           </p>
-          <div className="w-16 h-0.5 bg-slate-200 mx-auto mt-3" />
+          <div className="w-16 h-0.5 bg-slate-200 mx-auto mt-2" />
+        </div>
+
+        {/* Category Filter Pills (Instant tab switching) */}
+        <div className="flex items-center justify-center flex-wrap gap-2 pt-1 pb-1">
+          <button
+            type="button"
+            onClick={() => handleFilterPillClick('all')}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              selectedFilterCategory === 'all'
+                ? 'bg-industrial-orange text-white shadow-xs'
+                : 'bg-white border border-slate-200 text-charcoal-700 hover:border-slate-300 hover:bg-slate-50'
+            }`}
+          >
+            All Machinery ({allProducts.length})
+          </button>
+          {categories.slice(0, 8).map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => handleFilterPillClick(cat.slug)}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                selectedFilterCategory === cat.slug
+                  ? 'bg-industrial-orange text-white shadow-xs'
+                  : 'bg-white border border-slate-200 text-charcoal-700 hover:border-slate-300 hover:bg-slate-50'
+              }`}
+            >
+              {cat.name}
+            </button>
+          ))}
         </div>
 
         {/* Clean 3-Column Grid without artificial AI card boxes/borders */}
@@ -650,67 +679,32 @@ export const HomePage: React.FC = () => {
           </div>
         )}
 
-        {/* Minimalist, Clean Pagination */}
-        {totalPages > 1 && (
-          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-200">
-            <span className="text-xs text-slate-500 font-medium">
-              Showing{' '}
-              <span className="font-bold text-navy-900">
-                {(currentPage - 1) * ITEMS_PER_PAGE + 1}–
-                {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)}
-              </span>{' '}
-              of <span className="font-bold text-navy-900">{totalCount}</span> machines
+        {/* View All Products Button ("niche view all ekta button thakbe oita taap dile category er vittirte product dekhabe") */}
+        <div className="pt-6 sm:pt-8 flex flex-col items-center justify-center space-y-2 text-center">
+          <button
+            type="button"
+            onClick={() => {
+              if (selectedFilterCategory && selectedFilterCategory !== 'all') {
+                dispatch(setSelectedCategory(selectedFilterCategory));
+                navigate(`/products?category=${selectedFilterCategory}`);
+              } else {
+                dispatch(setSelectedCategory(null));
+                navigate('/products');
+              }
+            }}
+            className="inline-flex items-center gap-3 px-8 py-3.5 bg-navy-950 hover:bg-industrial-orange text-white text-xs sm:text-sm font-bold uppercase tracking-wider rounded-xl shadow-md hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 cursor-pointer group"
+          >
+            <span>
+              {selectedFilterCategory !== 'all'
+                ? `View All ${categories.find((c) => c.slug === selectedFilterCategory)?.name || ''} Machinery`
+                : 'View All Machinery by Category'}
             </span>
-
-            <div className="flex items-center gap-1.5">
-              {/* Previous Button */}
-              <button
-                type="button"
-                disabled={currentPage === 1}
-                onClick={() => handlePageChange(currentPage - 1)}
-                className={`px-3 py-1.5 rounded-md border text-xs font-semibold flex items-center gap-1 transition-colors ${
-                  currentPage === 1
-                    ? 'border-slate-200 text-slate-300 cursor-not-allowed bg-slate-50'
-                    : 'border-slate-300 bg-white text-charcoal-700 hover:bg-slate-50 hover:border-industrial-orange'
-                }`}
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-                <span>Prev</span>
-              </button>
-
-              {/* Page Number Buttons */}
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                <button
-                  key={pageNum}
-                  type="button"
-                  onClick={() => handlePageChange(pageNum)}
-                  className={`w-8 h-8 rounded-md text-xs font-bold transition-all ${
-                    currentPage === pageNum
-                      ? 'bg-industrial-orange text-white shadow-xs'
-                      : 'bg-white border border-slate-300 text-charcoal-700 hover:bg-slate-50'
-                  }`}
-                >
-                  {pageNum}
-                </button>
-              ))}
-
-              {/* Next Button */}
-              <button
-                type="button"
-                disabled={currentPage === totalPages}
-                onClick={() => handlePageChange(currentPage + 1)}
-                className={`px-3 py-1.5 rounded-md border text-xs font-semibold flex items-center gap-1 transition-colors ${
-                  currentPage === totalPages
-                    ? 'border-slate-200 text-slate-300 cursor-not-allowed bg-slate-50'
-                    : 'border-slate-300 bg-white text-charcoal-700 hover:bg-slate-50 hover:border-industrial-orange'
-                }`}
-              >
-                <span>Next</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-        )}
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+          </button>
+          <span className="text-xs text-slate-500 font-medium">
+            Explore complete catalog across all industrial manufacturing disciplines
+          </span>
+        </div>
       </section>
 
       {/* QUICK VIEW MODAL (CLEAN, PROFESSIONAL, NO CLUTTER) */}
