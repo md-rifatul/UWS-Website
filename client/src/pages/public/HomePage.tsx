@@ -71,6 +71,15 @@ export const HomePage: React.FC = () => {
   useEffect(() => {
     const slides = catalogService.getHeroSlides();
     setHeroSlides(slides);
+
+    const handleSlidesUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<HeroSlide[]>;
+      if (customEvent.detail) {
+        setHeroSlides(customEvent.detail.filter((s) => s.isActive));
+      }
+    };
+    window.addEventListener('wts-hero-slides-updated', handleSlidesUpdate);
+    return () => window.removeEventListener('wts-hero-slides-updated', handleSlidesUpdate);
   }, []);
 
   // Auto-play timer for Hero Machinery Visual
@@ -218,68 +227,31 @@ export const HomePage: React.FC = () => {
     <div className="space-y-10 sm:space-y-12 pb-14">
       {/* 1. HERO SECTION: PANORAMIC BANNER SLIDER (CLEAN WHITE / HIGH CONTRAST THEME) */}
       <section className="bg-surface-offwhite text-navy-900 pt-3 pb-5 sm:pb-7 border-b border-slate-200">
-        {/* Wide Panoramic Hero Banner Slider on Light Theme */}
+        {/* Wide Panoramic Hero Banner Slider on Light Theme (Pure Banner Graphics, No Text Overlay) */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
-            className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl bg-white border border-slate-200 min-h-[420px] sm:min-h-[480px] lg:min-h-[520px] flex items-center group select-none"
+            className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl bg-slate-100 border border-slate-200 aspect-[16/7] sm:aspect-[21/9] min-h-[220px] sm:min-h-[360px] md:min-h-[440px] lg:min-h-[500px] flex items-center group select-none cursor-pointer"
             onMouseEnter={() => setIsHeroPaused(true)}
             onMouseLeave={() => setIsHeroPaused(false)}
+            onClick={() => {
+              if (activeHeroSlide.targetSlug) {
+                navigate(
+                  activeHeroSlide.targetSlug.startsWith('/')
+                    ? activeHeroSlide.targetSlug
+                    : `/products/${activeHeroSlide.targetSlug}`
+                );
+              }
+            }}
           >
-            {/* Active Slide Background Image */}
+            {/* Active Slide Background Image - Pure Banner Image with No Text / No Whitewash Gradient */}
             <div className="absolute inset-0">
               <img
                 key={activeHeroSlide.id}
                 src={activeHeroSlide.imageUrl}
-                alt={activeHeroSlide.title}
+                alt={activeHeroSlide.title || 'Hero Banner'}
                 onError={handleImageError}
-                className="w-full h-full object-cover object-right transition-all duration-700 ease-in-out group-hover:scale-102"
+                className="w-full h-full object-cover object-center transition-all duration-700 ease-in-out group-hover:scale-[1.01]"
               />
-              {/* Balanced High-Contrast Gradient: Keeps Text Sharp while Showing Full Machine Photo */}
-              <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/75 to-transparent sm:via-white/50" />
-            </div>
-
-            {/* Banner Left Compact Content Card ("image er upore lekha choto kore daw jeno 2 tai buja jai") */}
-            <div className="relative z-10 max-w-lg lg:max-w-xl p-6 sm:p-8 lg:p-10 space-y-3 sm:space-y-4">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-industrial-orange/15 border border-industrial-orange/30 text-industrial-orange font-bold text-[11px] uppercase tracking-wider">
-                <span className="w-1.5 h-1.5 rounded-full bg-industrial-orange animate-pulse" />
-                <span>{activeHeroSlide.badge || 'Premier Industrial Machinery Solutions'}</span>
-              </div>
-
-              {/* Main Headline (Clean, Balanced & Compact) */}
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-navy-950 leading-snug">
-                {activeHeroSlide.title.includes('CNC') ? (
-                  <>
-                    High-Precision CNC &amp; <br />
-                    <span className="text-industrial-orange">Industrial Woodworking</span> Machinery
-                  </>
-                ) : (
-                  activeHeroSlide.title
-                )}
-              </h1>
-
-              {/* Subtitle (Sharp, Clear Slate Gray) */}
-              <p className="text-xs sm:text-[13px] text-slate-600 max-w-md font-medium leading-relaxed">
-                {activeHeroSlide.subtitle ||
-                  'Direct authorized importer and turnkey manufacturing partner for computer-controlled beam saws, edgebanders, nesting CNC machining centers, and automated vacuum presses.'}
-              </p>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3 pt-1">
-                <Link
-                  to={activeHeroSlide.targetSlug ? `/products/${activeHeroSlide.targetSlug}` : '/products'}
-                  className="inline-flex items-center gap-2 px-4.5 py-2.5 bg-industrial-orange hover:bg-industrial-orange-hover text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm hover:shadow-md transition-all"
-                >
-                  <span>Explore Equipment Catalog</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-                <Link
-                  to="/request-quote"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-white/90 hover:bg-white text-navy-900 text-xs sm:text-sm font-bold rounded-lg border border-slate-300 shadow-2xs transition-all"
-                >
-                  <span>Request Custom Quote</span>
-                </Link>
-              </div>
             </div>
 
             {/* Left & Right Interactive Navigation Arrows */}
@@ -317,7 +289,10 @@ export const HomePage: React.FC = () => {
 
             {/* Bottom Indicator Navigation Dots */}
             {heroSlides.length > 1 && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20 bg-white/90 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-slate-200 shadow-sm">
+              <div
+                className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20 bg-white/90 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-slate-200 shadow-sm"
+                onClick={(e) => e.stopPropagation()}
+              >
                 {heroSlides.map((slide, idx) => (
                   <button
                     key={slide.id}
@@ -328,7 +303,7 @@ export const HomePage: React.FC = () => {
                         ? 'w-7 bg-industrial-orange'
                         : 'w-2 bg-slate-300 hover:bg-slate-400'
                     }`}
-                    title={`Jump to slide ${idx + 1}: ${slide.title}`}
+                    title={`Jump to slide ${idx + 1}`}
                   />
                 ))}
               </div>

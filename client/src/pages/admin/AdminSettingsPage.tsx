@@ -113,11 +113,11 @@ export const AdminSettingsPage: React.FC = () => {
   const handleOpenAddSlide = () => {
     setEditingSlide(null);
     setSlideFormData({
-      badge: 'FEATURED MACHINE MODEL',
+      badge: '',
       title: '',
       subtitle: '',
-      imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80',
-      targetSlug: products[0]?.slug || '',
+      imageUrl: '',
+      targetSlug: '',
       displayOrder: heroSlides.length + 1,
       isActive: true,
     });
@@ -127,10 +127,10 @@ export const AdminSettingsPage: React.FC = () => {
   const handleOpenEditSlide = (slide: HeroSlide) => {
     setEditingSlide(slide);
     setSlideFormData({
-      badge: slide.badge,
-      title: slide.title,
-      subtitle: slide.subtitle,
-      imageUrl: slide.imageUrl,
+      badge: slide.badge || '',
+      title: slide.title || '',
+      subtitle: slide.subtitle || '',
+      imageUrl: slide.imageUrl || '',
       targetSlug: slide.targetSlug || '',
       displayOrder: slide.displayOrder,
       isActive: slide.isActive,
@@ -156,23 +156,26 @@ export const AdminSettingsPage: React.FC = () => {
     updated.sort((a, b) => a.displayOrder - b.displayOrder);
     setHeroSlides(updated);
     adminService.saveHeroSlides(updated);
+    window.dispatchEvent(new CustomEvent('wts-hero-slides-updated', { detail: updated }));
     setIsSlideModalOpen(false);
-    showNotification('Hero machinery slide saved and live!');
+    showNotification('Hero banner saved and live!');
   };
 
   const handleDeleteSlide = (id: string) => {
-    if (!window.confirm('Are you sure you want to remove this hero visual slide?')) return;
+    if (!window.confirm('Are you sure you want to remove this hero banner?')) return;
     const updated = heroSlides.filter((s) => s.id !== id);
     setHeroSlides(updated);
     adminService.saveHeroSlides(updated);
-    showNotification('Hero slide deleted.');
+    window.dispatchEvent(new CustomEvent('wts-hero-slides-updated', { detail: updated }));
+    showNotification('Hero banner deleted.');
   };
 
   const handleToggleSlideActive = (id: string) => {
     const updated = heroSlides.map((s) => (s.id === id ? { ...s, isActive: !s.isActive } : s));
     setHeroSlides(updated);
     adminService.saveHeroSlides(updated);
-    showNotification('Hero slide status updated.');
+    window.dispatchEvent(new CustomEvent('wts-hero-slides-updated', { detail: updated }));
+    showNotification('Hero banner status updated.');
   };
 
   const handleMoveSlide = (index: number, direction: 'up' | 'down') => {
@@ -191,7 +194,8 @@ export const AdminSettingsPage: React.FC = () => {
 
     setHeroSlides(copy);
     adminService.saveHeroSlides(copy);
-    showNotification('Slide order updated.');
+    window.dispatchEvent(new CustomEvent('wts-hero-slides-updated', { detail: copy }));
+    showNotification('Banner order updated.');
   };
 
   // 1-Click Sync from Featured Products in Catalog
@@ -289,7 +293,7 @@ export const AdminSettingsPage: React.FC = () => {
           }`}
         >
           <Sliders className="w-4 h-4" />
-          <span>Hero Auto-Slider Manager ({heroSlides.length})</span>
+          <span>Hero Banners ({heroSlides.length})</span>
         </button>
 
         <button
@@ -315,38 +319,28 @@ export const AdminSettingsPage: React.FC = () => {
           }`}
         >
           <Globe className="w-4 h-4" />
-          <span>Homepage Text & SEO</span>
+          <span>SEO & Metadata</span>
         </button>
       </div>
 
-      {/* TAB 1: HERO SLIDER MANAGER */}
+      {/* TAB 1: HERO BANNER MANAGER */}
       {activeTab === 'hero' && (
         <div className="space-y-6 animate-in fade-in duration-200">
           {/* Controls Bar */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-navy-950 text-white rounded-xl shadow-xs">
             <div>
               <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <span>Homepage Hero Machinery Showcase</span>
+                <span>Homepage Hero Banners</span>
                 <span className="text-[10px] bg-industrial-orange text-navy-950 px-2 py-0.5 rounded-full font-mono uppercase font-extrabold">
                   Live
                 </span>
               </h3>
               <p className="text-xs text-slate-300 mt-0.5">
-                These slides rotate automatically every 4 seconds on the homepage hero card. You can add, edit, reorder or sync from inventory.
+                Upload and manage full-width promotional hero banners for the homepage slider. Banners display clean in full resolution without text overlays.
               </p>
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSyncFromFeaturedProducts}
-                icon={<Sparkles className="w-3.5 h-3.5 text-industrial-orange" />}
-                className="text-xs font-bold border-navy-700 bg-navy-900 text-slate-200 hover:text-white"
-              >
-                Sync From Featured Products
-              </Button>
-
               <Button
                 variant="primary"
                 size="sm"
@@ -354,7 +348,7 @@ export const AdminSettingsPage: React.FC = () => {
                 icon={<Plus className="w-3.5 h-3.5" />}
                 className="text-xs font-bold"
               >
-                Add Hero Slide
+                Add Hero Banner
               </Button>
             </div>
           </div>
@@ -366,9 +360,9 @@ export const AdminSettingsPage: React.FC = () => {
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-border text-slate-500 font-bold uppercase tracking-wider text-[11px]">
                     <th className="py-3.5 px-4 w-12 text-center">Order</th>
-                    <th className="py-3.5 px-4 w-28">Preview</th>
-                    <th className="py-3.5 px-4">Machine Title &amp; Badge</th>
-                    <th className="py-3.5 px-4">Specifications Subtitle</th>
+                    <th className="py-3.5 px-4 w-40">Banner Preview</th>
+                    <th className="py-3.5 px-4">Banner Name / Reference</th>
+                    <th className="py-3.5 px-4">Click Destination Link</th>
                     <th className="py-3.5 px-4 w-32">Status</th>
                     <th className="py-3.5 px-4 w-32 text-right">Actions</th>
                   </tr>
@@ -405,34 +399,35 @@ export const AdminSettingsPage: React.FC = () => {
 
                       {/* Image Thumbnail */}
                       <td className="py-3.5 px-4">
-                        <div className="w-24 h-16 rounded-lg overflow-hidden bg-navy-900 border border-slate-200 flex items-center justify-center p-1">
+                        <div className="w-36 h-16 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center p-0.5">
                           <img
                             src={slide.imageUrl}
-                            alt={slide.title}
+                            alt={slide.title || 'Banner'}
                             onError={handleImageError}
                             className="w-full h-full object-cover rounded"
                           />
                         </div>
                       </td>
 
-                      {/* Title & Badge */}
-                      <td className="py-3.5 px-4 space-y-1">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-industrial-orange block">
-                          {slide.badge}
-                        </span>
+                      {/* Reference Title */}
+                      <td className="py-3.5 px-4">
                         <span className="font-bold text-navy-900 text-sm block">
-                          {slide.title}
+                          {slide.title || 'Promotional Banner'}
                         </span>
-                        {slide.targetSlug && (
-                          <span className="text-[11px] text-slate-400 font-mono flex items-center gap-1">
-                            <span>Link: /products/{slide.targetSlug}</span>
-                          </span>
-                        )}
+                        <span className="text-[11px] text-slate-400">
+                          {slide.id}
+                        </span>
                       </td>
 
-                      {/* Subtitle */}
-                      <td className="py-3.5 px-4 text-slate-600 max-w-xs">
-                        <p className="line-clamp-2 leading-relaxed">{slide.subtitle}</p>
+                      {/* Destination Link */}
+                      <td className="py-3.5 px-4 text-slate-600">
+                        {slide.targetSlug ? (
+                          <span className="text-xs font-mono text-industrial-orange bg-orange-50 px-2.5 py-1 rounded-md border border-orange-200/50">
+                            {slide.targetSlug.startsWith('/') ? slide.targetSlug : `/products/${slide.targetSlug}`}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-slate-400 italic">None (Display only)</span>
+                        )}
                       </td>
 
                       {/* Active Status */}
@@ -458,7 +453,7 @@ export const AdminSettingsPage: React.FC = () => {
                             type="button"
                             onClick={() => handleOpenEditSlide(slide)}
                             className="p-1.5 rounded-md hover:bg-slate-100 text-slate-600 hover:text-navy-900 transition-colors cursor-pointer"
-                            title="Edit Slide"
+                            title="Edit Banner"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
@@ -466,7 +461,7 @@ export const AdminSettingsPage: React.FC = () => {
                             type="button"
                             onClick={() => handleDeleteSlide(slide.id)}
                             className="p-1.5 rounded-md hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer"
-                            title="Delete Slide"
+                            title="Delete Banner"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -478,7 +473,7 @@ export const AdminSettingsPage: React.FC = () => {
                   {heroSlides.length === 0 && (
                     <tr>
                       <td colSpan={6} className="py-12 text-center text-slate-400">
-                        No hero machinery slides defined. Click "Add Hero Slide" or "Sync From Featured Products".
+                        No hero banners defined. Click "Add Hero Banner" to add one.
                       </td>
                     </tr>
                   )}
@@ -813,37 +808,16 @@ export const AdminSettingsPage: React.FC = () => {
       {/* TAB 3: HOMEPAGE TEXT & SEO */}
       {activeTab === 'seo' && (
         <form onSubmit={handleSaveSettings} className="space-y-6 animate-in fade-in duration-200">
-          <div className="bg-white rounded-xl border border-slate-border p-6 shadow-2xs space-y-5">
+          <div className="bg-white rounded-xl border border-slate-border p-6 shadow-2xs space-y-3">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
               <Sliders className="w-4 h-4 text-industrial-orange" />
               <h2 className="text-sm font-bold text-navy-900 uppercase tracking-wide">
-                Homepage Hero Text &amp; Subtitle
+                Homepage Hero Banner Presentation
               </h2>
             </div>
-
-            <div className="space-y-4 text-xs">
-              <div className="space-y-1.5">
-                <label className="font-semibold text-charcoal-700">Main Hero Headline</label>
-                <input
-                  type="text"
-                  name="hero_headline"
-                  value={siteSettings.hero_headline}
-                  onChange={handleSettingChange}
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="font-semibold text-charcoal-700">Subtitle &amp; Factory Proposition</label>
-                <textarea
-                  name="hero_subtitle"
-                  rows={3}
-                  value={siteSettings.hero_subtitle}
-                  onChange={handleSettingChange}
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs leading-relaxed"
-                />
-              </div>
-            </div>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Text overlays on the homepage hero banner are disabled. The homepage features clean, panoramic image banners without overlapping titles or badges. You can upload, edit, or reorder banners from the <strong>Hero Banners</strong> tab above.
+            </p>
           </div>
 
           <div className="bg-white rounded-xl border border-slate-border p-6 shadow-2xs space-y-5">
@@ -902,10 +876,10 @@ export const AdminSettingsPage: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
                 <h3 className="font-extrabold text-lg text-navy-900">
-                  {editingSlide ? 'Edit Hero Machinery Slide' : 'Add New Hero Slide'}
+                  {editingSlide ? 'Edit Hero Banner' : 'Add New Hero Banner'}
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Configure machine banner picture, title, specifications, and destination.
+                  Set the banner picture and click destination. Banners display clean without text overlays.
                 </p>
               </div>
               <button
@@ -918,92 +892,83 @@ export const AdminSettingsPage: React.FC = () => {
             </div>
 
             <form onSubmit={handleSaveSlide} className="space-y-4 text-xs">
-              {/* Badge */}
+              {/* Title / Reference */}
               <div className="space-y-1.5">
-                <label className="font-semibold text-charcoal-700">Banner Badge</label>
-                <input
-                  type="text"
-                  value={slideFormData.badge}
-                  onChange={(e) => setSlideFormData({ ...slideFormData, badge: e.target.value })}
-                  placeholder="e.g. FEATURED MACHINE MODEL, HEAVY DUTY CNC"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
-                  required
-                />
-              </div>
-
-              {/* Title */}
-              <div className="space-y-1.5">
-                <label className="font-semibold text-charcoal-700">Machine Model Title</label>
+                <label className="font-semibold text-charcoal-700 flex items-center justify-between">
+                  <span>Banner Reference Name (Optional)</span>
+                  <span className="text-[10px] text-slate-400 font-normal">Internal name for admin list</span>
+                </label>
                 <input
                   type="text"
                   value={slideFormData.title}
                   onChange={(e) => setSlideFormData({ ...slideFormData, title: e.target.value })}
-                  placeholder="e.g. CNC ROUTER WTS THUNDER"
+                  placeholder="e.g. Promotional Banner 1, Autumn Machinery Sale"
                   className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
-                  required
-                />
-              </div>
-
-              {/* Subtitle / Key Specs */}
-              <div className="space-y-1.5">
-                <label className="font-semibold text-charcoal-700">Key Technical Specs (Subtitle)</label>
-                <input
-                  type="text"
-                  value={slideFormData.subtitle}
-                  onChange={(e) => setSlideFormData({ ...slideFormData, subtitle: e.target.value })}
-                  placeholder="e.g. 7.5kW Spindle • Syntec 6MB • 6-Zone Vacuum Bed"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
-                  required
                 />
               </div>
 
               {/* Image URL & Instant Preview */}
               <div className="space-y-1.5">
-                <label className="font-semibold text-charcoal-700">Machinery Photo URL</label>
+                <label className="font-semibold text-charcoal-700">Banner Image URL *</label>
                 <input
                   type="url"
                   value={slideFormData.imageUrl}
                   onChange={(e) => setSlideFormData({ ...slideFormData, imageUrl: e.target.value })}
-                  placeholder="https://images.unsplash.com/photo-..."
+                  placeholder="https://images.unsplash.com/... or direct banner image link"
                   className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
                   required
                 />
 
                 {/* Instant Image Preview */}
                 {slideFormData.imageUrl && (
-                  <div className="mt-2 p-2 bg-navy-950 rounded-lg flex items-center gap-3">
+                  <div className="mt-2 p-2.5 bg-slate-100 rounded-xl border border-slate-200">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                      Live Banner Image Preview
+                    </span>
                     <img
                       src={slideFormData.imageUrl}
                       alt="Preview"
                       onError={handleImageError}
-                      className="w-20 h-14 object-cover rounded border border-navy-700"
+                      className="w-full max-h-48 object-cover rounded-lg border border-slate-200 shadow-2xs"
                     />
-                    <div className="text-[11px] text-slate-300">
-                      <span className="font-bold text-white block">Image Live Preview</span>
-                      <span className="text-[10px] text-slate-400">Aspect ratio adapts to hero container</span>
-                    </div>
                   </div>
                 )}
               </div>
 
-              {/* Target Product Slug */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="font-semibold text-charcoal-700">Link to Catalog Model</label>
+              {/* Target Destination Link */}
+              <div className="space-y-1.5">
+                <label className="font-semibold text-charcoal-700 flex items-center justify-between">
+                  <span>Click Destination Link (Optional)</span>
+                  <span className="text-[10px] text-slate-400 font-normal">Opens this page when banner is clicked</span>
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <select
                     value={slideFormData.targetSlug}
                     onChange={(e) => setSlideFormData({ ...slideFormData, targetSlug: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs bg-white"
                   >
-                    <option value="">-- Select from Existing Products --</option>
+                    <option value="">-- No Link / Custom URL --</option>
+                    <option value="/products">All Machinery Catalog (/products)</option>
+                    <option value="/request-quote">RFQ Quote Page (/request-quote)</option>
+                    <option value="/contact">Contact Page (/contact)</option>
                     {products.map((p) => (
                       <option key={p.id} value={p.slug}>
-                        {p.name}
+                        Product: {p.name}
                       </option>
                     ))}
                   </select>
+                  <input
+                    type="text"
+                    value={slideFormData.targetSlug}
+                    onChange={(e) => setSlideFormData({ ...slideFormData, targetSlug: e.target.value })}
+                    placeholder="Or type custom URL e.g. /products"
+                    className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs font-mono"
+                  />
                 </div>
+              </div>
 
+              {/* Display Order & Active Toggle */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 <div className="space-y-1.5">
                   <label className="font-semibold text-charcoal-700">Display Order</label>
                   <input
@@ -1015,20 +980,19 @@ export const AdminSettingsPage: React.FC = () => {
                     className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
                   />
                 </div>
-              </div>
 
-              {/* Active Toggle */}
-              <div className="flex items-center gap-2 pt-2">
-                <input
-                  type="checkbox"
-                  id="isActive"
-                  checked={slideFormData.isActive}
-                  onChange={(e) => setSlideFormData({ ...slideFormData, isActive: e.target.checked })}
-                  className="w-4 h-4 text-industrial-orange rounded border-slate-300 focus:ring-industrial-orange"
-                />
-                <label htmlFor="isActive" className="font-semibold text-charcoal-700 cursor-pointer">
-                  Publish to Homepage (Active immediately)
-                </label>
+                <div className="flex items-center gap-2 pt-6">
+                  <input
+                    type="checkbox"
+                    id="isActive"
+                    checked={slideFormData.isActive}
+                    onChange={(e) => setSlideFormData({ ...slideFormData, isActive: e.target.checked })}
+                    className="w-4 h-4 text-industrial-orange rounded border-slate-300 focus:ring-industrial-orange"
+                  />
+                  <label htmlFor="isActive" className="font-semibold text-charcoal-700 cursor-pointer">
+                    Publish to Homepage (Active immediately)
+                  </label>
+                </div>
               </div>
 
               {/* Action Buttons */}
