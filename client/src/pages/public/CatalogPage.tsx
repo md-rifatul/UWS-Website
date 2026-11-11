@@ -194,59 +194,6 @@ export const CatalogPage: React.FC = () => {
 
           {/* Right Product Grid */}
           <div className="lg:col-span-3 space-y-6">
-            {/* Active Filters Bar */}
-            {(selectedCategorySlug ||
-              selectedManufacturerSlug ||
-              searchQuery ||
-              Object.keys(selectedSpecs).length > 0) && (
-              <div className="flex items-center flex-wrap gap-2 p-3 bg-white border border-slate-200/80 rounded-xl text-xs shadow-2xs">
-                <span className="font-semibold text-slate-600">Active Filters:</span>
-                {selectedCategorySlug && (
-                  <span className="inline-flex items-center gap-1.5 bg-orange-50 text-industrial-orange font-semibold px-2.5 py-1 rounded-lg border border-orange-200/60">
-                    Category: {activeCategory?.name || selectedCategorySlug}
-                    <button
-                      type="button"
-                      onClick={() => dispatch(setSelectedCategory(null))}
-                      className="hover:text-industrial-orange-dark cursor-pointer"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </span>
-                )}
-                {selectedManufacturerSlug && (
-                  <span className="inline-flex items-center gap-1.5 bg-slate-100 text-navy-950 font-semibold px-2.5 py-1 rounded-lg border border-slate-200">
-                    Brand: {manufacturers.find((m) => m.slug === selectedManufacturerSlug)?.name || selectedManufacturerSlug}
-                    <button
-                      type="button"
-                      onClick={() => dispatch(setSelectedManufacturer(null))}
-                      className="hover:text-red-500 cursor-pointer"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </span>
-                )}
-                {searchQuery && (
-                  <span className="inline-flex items-center gap-1.5 bg-slate-100 text-navy-900 font-medium px-2.5 py-1 rounded-lg border border-slate-200">
-                    Query: "{searchQuery}"
-                    <button
-                      type="button"
-                      onClick={() => dispatch(resetFilters())}
-                      className="hover:text-red-500 cursor-pointer"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </span>
-                )}
-                <button
-                  type="button"
-                  onClick={() => dispatch(resetFilters())}
-                  className="text-xs text-red-600 hover:text-red-700 font-semibold ml-auto cursor-pointer"
-                >
-                  Clear All Filters
-                </button>
-              </div>
-            )}
-
             {/* Products Container */}
             {loading ? (
               <div className="py-24 text-center">
