@@ -184,6 +184,7 @@ export const HomePage: React.FC = () => {
 
   // 1. Tapping ANY of the 5 Most Popular Items navigates to that category's dedicated page!
   const handlePopularItemNavigate = (categorySlug: string) => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     dispatch(setSelectedCategory(categorySlug));
     navigate(`/products?category=${categorySlug}`);
   };
@@ -659,6 +660,7 @@ export const HomePage: React.FC = () => {
           <button
             type="button"
             onClick={() => {
+              window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
               if (selectedFilterCategory && selectedFilterCategory !== 'all') {
                 dispatch(setSelectedCategory(selectedFilterCategory));
                 navigate(`/products?category=${selectedFilterCategory}`);

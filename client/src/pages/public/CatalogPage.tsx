@@ -241,7 +241,10 @@ export const CatalogPage: React.FC = () => {
                     variant="outline"
                     size="sm"
                     disabled={!productsData.hasPreviousPage}
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    onClick={() => {
+                      setCurrentPage((p) => Math.max(1, p - 1));
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
                     icon={<ChevronLeft className="w-4 h-4" />}
                   >
                     Previous
@@ -250,7 +253,10 @@ export const CatalogPage: React.FC = () => {
                     variant="outline"
                     size="sm"
                     disabled={!productsData.hasNextPage}
-                    onClick={() => setCurrentPage((p) => p + 1)}
+                    onClick={() => {
+                      setCurrentPage((p) => p + 1);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
                     icon={<ChevronRight className="w-4 h-4" />}
                     iconPosition="right"
                   >

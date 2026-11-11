@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import PublicLayout from '@/components/layout/PublicLayout';
 import AdminLayout from '@/components/layout/AdminLayout';
+import ScrollToTop from '@/components/common/ScrollToTop';
 
 // Public Pages
 import HomePage from '@/pages/public/HomePage';
@@ -27,8 +28,10 @@ import AdminSettingsPage from '@/pages/admin/AdminSettingsPage';
 
 export const App: React.FC = () => {
   return (
-    <Routes>
-      {/* Public Pages Layout */}
+    <>
+      <ScrollToTop />
+      <Routes>
+        {/* Public Pages Layout */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<CatalogPage />} />
@@ -57,6 +60,7 @@ export const App: React.FC = () => {
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+  </>
   );
 };
 

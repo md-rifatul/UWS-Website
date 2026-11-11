@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Clock, MessageSquare, Send, CheckCircle2 } from 'lucide-react';
 import Button from '@/components/common/Button';
+import useSiteSettings from '@/hooks/useSiteSettings';
 
 export const ContactPage: React.FC = () => {
+  const siteSettings = useSiteSettings();
+  const rawWhatsApp = (siteSettings.whatsapp_number || '+8801700000000').replace(/[^0-9]/g, '');
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({
     name: '',
@@ -42,43 +45,53 @@ export const ContactPage: React.FC = () => {
                 <span className="text-xs font-bold text-industrial-orange uppercase tracking-wider">
                   Corporate Headquarters & Showroom
                 </span>
-                <h3 className="text-xl font-bold text-white mt-1">WoodTech Solutions Ltd.</h3>
+                <h3 className="text-xl font-bold text-white mt-1">
+                  {siteSettings.company_name || 'WoodTech Solutions Ltd.'}
+                </h3>
               </div>
 
               <div className="space-y-4 text-xs text-slate-300">
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-industrial-orange shrink-0 mt-0.5" />
                   <span>
-                    House #14, Road #18, Sector #07, Uttara Model Town, Dhaka-1230, Bangladesh
+                    {siteSettings.office_address ||
+                      siteSettings.showroom_address ||
+                      'House #14, Road #18, Sector #07, Uttara Model Town, Dhaka-1230, Bangladesh'}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-industrial-orange shrink-0" />
-                  <span>+880 1700-000000 / +880 1819-000000</span>
+                  <span>
+                    {siteSettings.support_phone || siteSettings.showroom_phone || '+880 1700-000000'}
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <Mail className="w-5 h-5 text-industrial-orange shrink-0" />
-                  <span>info@woodtechsolutionbd.com / sales@woodtechsolutionbd.com</span>
+                  <span>{siteSettings.support_email || 'info@woodtechsolutionbd.com'}</span>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <Clock className="w-5 h-5 text-industrial-orange shrink-0" />
-                  <span>Saturday – Thursday: 9:00 AM – 7:00 PM (GMT+6)</span>
+                  <span>
+                    {siteSettings.business_hours ||
+                      siteSettings.showroom_hours ||
+                      'Saturday – Thursday: 9:00 AM – 7:00 PM (GMT+6)'}
+                  </span>
                 </div>
               </div>
 
               <div className="pt-4 border-t border-navy-800 space-y-2">
                 <span className="text-xs font-semibold text-white block">Instant Messaging:</span>
                 <a
-                  href="https://wa.me/8801700000000"
+                  href={`https://wa.me/${rawWhatsApp}`}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-xs font-medium transition-colors"
                 >
                   <MessageSquare className="w-4 h-4" />
-                  <span>WhatsApp Engineering Desk</span>
+                  <span>WhatsApp Engineering Desk ({siteSettings.whatsapp_number || '+880 1700-000000'})</span>
                 </a>
               </div>
             </div>
