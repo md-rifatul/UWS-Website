@@ -195,7 +195,16 @@ function filterLocalProducts(params: ProductFilterParams): PaginatedResult<Produ
   }
 
   if (params.categorySlug) {
-    list = list.filter((p) => p.categorySlug === params.categorySlug);
+    const targetCat = DEMO_CATEGORIES.find((c) => c.slug === params.categorySlug);
+    list = list.filter((p) => {
+      if (p.categorySlug === params.categorySlug) return true;
+      if (targetCat && p.categoryId === targetCat.id) return true;
+      if (targetCat && p.categoryName && p.categoryName.toLowerCase() === targetCat.name.toLowerCase()) return true;
+      if (params.categorySlug === 'edge-banding' && (p.categorySlug === 'edge-banding-machines' || p.categorySlug === 'edge-banding')) return true;
+      if (params.categorySlug === 'boring-drilling' && (p.categorySlug === 'cnc-boring-drilling' || p.categorySlug === 'boring-drilling')) return true;
+      if (params.categorySlug === 'cnc-router-machine' && (p.categorySlug === 'cnc-machining-centers' || p.categorySlug === 'cnc-router-machine')) return true;
+      return false;
+    });
   }
 
   if (params.manufacturerSlug) {

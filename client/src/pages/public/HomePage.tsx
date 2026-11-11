@@ -46,7 +46,7 @@ export const HomePage: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
 
-  // 14 Featured Category Badges (Circular layout matching Gadget & Gear reference)
+  // 12 Featured Machinery Category Badges (Pure Machinery Categories Only)
   const featuredCategoryBadges = [
     { id: 'cat-cnc', name: 'CNC Router', slug: 'cnc-router-machine', imageUrl: CNC_ROUTER_SVG },
     { id: 'cat-surf', name: 'Surface Planer', slug: 'surface-planer', imageUrl: SURFACE_PLANER_SVG },
@@ -60,8 +60,6 @@ export const HomePage: React.FC = () => {
     { id: 'cat-press', name: 'Hydraulic Press', slug: 'hydraulic-presses', imageUrl: HYDRAULIC_PRESS_SVG },
     { id: 'cat-dust', name: 'Dust Extraction', slug: 'dust-extraction', imageUrl: DUST_EXTRACTION_SVG },
     { id: 'cat-tools', name: 'PCD Tooling', slug: 'cutter-accessories', imageUrl: DIAMOND_TOOLING_SVG },
-    { id: 'cat-display', name: 'Display Center', slug: 'display-center', imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80', isDisplayCenter: true },
-    { id: 'cat-all', name: 'All Machinery', slug: 'all', imageUrl: ALL_MACHINERY_SVG, isAll: true },
   ];
 
   // Hero Carousel State (Auto-swapping pictures with pause on hover)
@@ -385,15 +383,7 @@ export const HomePage: React.FC = () => {
               {featuredCategoryBadges.map((cat) => (
                 <div
                   key={cat.id}
-                  onClick={() => {
-                    if (cat.isAll) {
-                      navigate('/products');
-                    } else if (cat.isDisplayCenter) {
-                      navigate('/display-center');
-                    } else {
-                      handlePopularItemNavigate(cat.slug);
-                    }
-                  }}
+                  onClick={() => handlePopularItemNavigate(cat.slug)}
                   className="shrink-0 group flex flex-col items-center cursor-pointer text-center select-none w-20 sm:w-24 md:w-26 transition-all duration-200 hover:-translate-y-1"
                 >
                   {/* Circular Badge Avatar */}
