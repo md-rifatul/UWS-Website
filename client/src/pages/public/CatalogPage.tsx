@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from '@/features/hooks';
 import {
   setViewMode,
   setSelectedCategory,
+  setSelectedManufacturer,
   resetFilters,
   setSortBy,
 } from '@/features/catalog/catalogSlice';
@@ -178,48 +179,11 @@ export const CatalogPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Category-Based Horizontal Navigation Bar */}
-        <div className="bg-white rounded-xl border border-slate-border p-3 shadow-2xs">
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scrollbar-none py-0.5">
-            <button
-              type="button"
-              onClick={() => {
-                dispatch(setSelectedCategory(null));
-                setCurrentPage(1);
-              }}
-              className={`shrink-0 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                !selectedCategorySlug
-                  ? 'bg-industrial-orange text-white shadow-xs'
-                  : 'bg-surface-offwhite hover:bg-slate-100 text-charcoal-700 border border-slate-200'
-              }`}
-            >
-              All Machinery
-            </button>
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => {
-                  dispatch(setSelectedCategory(cat.slug));
-                  setCurrentPage(1);
-                }}
-                className={`shrink-0 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  selectedCategorySlug === cat.slug
-                    ? 'bg-industrial-orange text-white shadow-xs'
-                    : 'bg-surface-offwhite hover:bg-slate-100 text-charcoal-700 border border-slate-200'
-                }`}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
         {/* Main Content Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Desktop Left Sidebar Filter */}
           <div className="hidden lg:block lg:col-span-1">
-            <div className="bg-white rounded-lg border border-slate-border p-5 sticky top-24 shadow-2xs">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sticky top-24 shadow-xs">
               <ProductFilterSidebar
                 categories={categories}
                 manufacturers={manufacturers}
@@ -234,35 +198,49 @@ export const CatalogPage: React.FC = () => {
             {(selectedCategorySlug ||
               selectedManufacturerSlug ||
               searchQuery ||
-              selectedAvailability ||
               Object.keys(selectedSpecs).length > 0) && (
-              <div className="flex items-center flex-wrap gap-2 p-3 bg-white border border-slate-border rounded-lg text-xs">
-                <span className="font-semibold text-charcoal-700">Active Filters:</span>
+              <div className="flex items-center flex-wrap gap-2 p-3 bg-white border border-slate-200/80 rounded-xl text-xs shadow-2xs">
+                <span className="font-semibold text-slate-600">Active Filters:</span>
                 {selectedCategorySlug && (
-                  <span className="inline-flex items-center gap-1 bg-industrial-orange/15 text-industrial-orange-dark font-medium px-2 py-0.5 rounded">
+                  <span className="inline-flex items-center gap-1.5 bg-orange-50 text-industrial-orange font-semibold px-2.5 py-1 rounded-lg border border-orange-200/60">
                     Category: {activeCategory?.name || selectedCategorySlug}
                     <button
+                      type="button"
                       onClick={() => dispatch(setSelectedCategory(null))}
-                      className="hover:text-charcoal-900"
+                      className="hover:text-industrial-orange-dark cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                )}
+                {selectedManufacturerSlug && (
+                  <span className="inline-flex items-center gap-1.5 bg-slate-100 text-navy-950 font-semibold px-2.5 py-1 rounded-lg border border-slate-200">
+                    Brand: {manufacturers.find((m) => m.slug === selectedManufacturerSlug)?.name || selectedManufacturerSlug}
+                    <button
+                      type="button"
+                      onClick={() => dispatch(setSelectedManufacturer(null))}
+                      className="hover:text-red-500 cursor-pointer"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </span>
                 )}
                 {searchQuery && (
-                  <span className="inline-flex items-center gap-1 bg-slate-light text-navy-900 font-medium px-2 py-0.5 rounded">
+                  <span className="inline-flex items-center gap-1.5 bg-slate-100 text-navy-900 font-medium px-2.5 py-1 rounded-lg border border-slate-200">
                     Query: "{searchQuery}"
                     <button
+                      type="button"
                       onClick={() => dispatch(resetFilters())}
-                      className="hover:text-charcoal-900"
+                      className="hover:text-red-500 cursor-pointer"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </span>
                 )}
                 <button
+                  type="button"
                   onClick={() => dispatch(resetFilters())}
-                  className="text-xs text-red-600 hover:underline font-medium ml-auto"
+                  className="text-xs text-red-600 hover:text-red-700 font-semibold ml-auto cursor-pointer"
                 >
                   Clear All Filters
                 </button>
