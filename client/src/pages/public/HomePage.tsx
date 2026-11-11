@@ -419,25 +419,25 @@ export const HomePage: React.FC = () => {
             </p>
           </div>
 
-          {/* Single Line Carousel with Left & Right < > Buttons ("2 pashe < > thakbe swap korar jonno") */}
+          {/* Single Line Carousel with Left & Right < > Buttons */}
           <div className="relative max-w-6xl mx-auto flex items-center group/cat-slider">
-            {/* Left < Button */}
+            {/* Left < Button (Shifted further left so it never touches or overlaps the first card) */}
             <button
               type="button"
               onClick={scrollCategoriesLeft}
-              className="absolute -left-2 sm:-left-5 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white hover:bg-industrial-orange text-navy-900 hover:text-white border border-slate-200 shadow-md flex items-center justify-center transition-all duration-200 hover:scale-110 cursor-pointer"
+              className="absolute -left-4 sm:-left-7 md:-left-9 lg:-left-12 top-9 sm:top-10 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white hover:bg-industrial-orange text-navy-900 hover:text-white border border-slate-200 shadow-md flex items-center justify-center transition-all duration-200 hover:scale-110 cursor-pointer"
               title="Previous Categories"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
-            {/* Single Row Horizontal Scroll Track ("nicher daag remove kore daw") */}
+            {/* Single Row Horizontal Scroll Track */}
             <div
               ref={categoryScrollRef}
               onMouseEnter={() => setIsCatPaused(true)}
               onMouseLeave={() => setIsCatPaused(false)}
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-              className="no-scrollbar scrollbar-none flex items-start gap-3 sm:gap-5 lg:gap-6 overflow-x-auto scroll-smooth py-2 px-2 w-full select-none"
+              className="no-scrollbar scrollbar-none flex items-start gap-4 sm:gap-6 lg:gap-7 overflow-x-auto scroll-smooth py-2 px-3 sm:px-4 w-full select-none"
             >
               {featuredCategoryBadges.map((cat) => (
                 <div
@@ -471,14 +471,14 @@ export const HomePage: React.FC = () => {
               ))}
             </div>
 
-            {/* Right > Button */}
+            {/* Right > Button (Shifted further right so it never touches or overlaps the last card) */}
             <button
               type="button"
               onClick={scrollCategoriesRight}
-              className="absolute -right-2 sm:-right-5 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white hover:bg-industrial-orange text-navy-900 hover:text-white border border-slate-200 shadow-md flex items-center justify-center transition-all duration-200 hover:scale-110 cursor-pointer"
+              className="absolute -right-4 sm:-right-7 md:-right-9 lg:-right-12 top-9 sm:top-10 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white hover:bg-industrial-orange text-navy-900 hover:text-white border border-slate-200 shadow-md flex items-center justify-center transition-all duration-200 hover:scale-110 cursor-pointer"
               title="Next Categories"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
         </div>
