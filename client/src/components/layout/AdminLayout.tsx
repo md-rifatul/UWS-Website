@@ -116,6 +116,18 @@ export const AdminLayout: React.FC = () => {
               <LogOut className="w-4 h-4" />
             </button>
           </div>
+
+          <div className="px-4 py-2.5 text-[10px] text-slate-500 border-t border-navy-900/80 text-center">
+            Developed by{' '}
+            <a
+              href="https://rifatul.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-400 hover:text-industrial-orange transition-colors font-medium hover:underline"
+            >
+              Md. Rifatul Islam
+            </a>
+          </div>
         </div>
       </aside>
 

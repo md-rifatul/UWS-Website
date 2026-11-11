@@ -241,11 +241,24 @@ export const Footer: React.FC = () => {
 
       {/* Bottom Bar: Copyright & Note */}
       <div className="border-t border-navy-800 py-6 text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p>
-            © {new Date().getFullYear()} {siteSettings.logo_title || 'Unique Wood Solution'}. All rights
-            reserved.
-          </p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+          <div className="space-y-1">
+            <p>
+              © {new Date().getFullYear()} {siteSettings.logo_title || 'Unique Wood Solution'}. All rights
+              reserved.
+            </p>
+            <p className="text-[11px] text-slate-500">
+              Developed by{' '}
+              <a
+                href="https://rifatul.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-industrial-orange transition-colors font-medium hover:underline"
+              >
+                Md. Rifatul Islam
+              </a>
+            </p>
+          </div>
           <div className="flex items-center gap-6">
             <span>Enterprise B2B Quotation System</span>
             <Link to="/admin" className="text-slate-400 hover:text-white transition-colors">
