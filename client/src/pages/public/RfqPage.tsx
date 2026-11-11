@@ -25,10 +25,14 @@ import {
 } from '@/features/rfq/rfqBasketSlice';
 import { rfqService } from '@/services/rfqService';
 import Button from '@/components/common/Button';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export const RfqPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const siteSettings = useSiteSettings();
+  const rawWhatsApp = (siteSettings.whatsapp_number || siteSettings.corporate_office_phone || '01912580072').replace(/[^0-9]/g, '');
+  const normalizedWhatsApp = rawWhatsApp.startsWith('880') ? rawWhatsApp : rawWhatsApp.startsWith('0') ? `88${rawWhatsApp}` : `880${rawWhatsApp}`;
 
   const { items } = useAppSelector((state) => state.rfqBasket);
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
@@ -167,10 +171,11 @@ export const RfqPage: React.FC = () => {
             <Button
               variant="outline"
               onClick={() => {
+                const brand = siteSettings.logo_title || 'Unique Wood Solution';
                 const text = encodeURIComponent(
-                  `Hello WoodTech Solutions, I have submitted RFQ Reference: ${submissionSuccess.referenceNumber} for ${formData.companyName}. Looking forward to discussing details.`
+                  `Hello ${brand}, I have submitted RFQ Reference: ${submissionSuccess.referenceNumber} for ${formData.companyName}. Looking forward to discussing details.`
                 );
-                window.open(`https://wa.me/8801700000000?text=${text}`, '_blank');
+                window.open(`https://wa.me/${normalizedWhatsApp}?text=${text}`, '_blank');
               }}
             >
               Direct WhatsApp Follow-up

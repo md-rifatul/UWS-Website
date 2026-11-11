@@ -45,28 +45,50 @@ export const AdminSettingsPage: React.FC = () => {
     isActive: true,
   });
 
-  // Company, Brand, and SEO Settings
+  // Company, Brand, and Location Settings
   const [siteSettings, setSiteSettings] = useState({
     logo_url: '',
-    logo_short: 'WTS',
-    logo_title: 'WOODTECH',
-    logo_badge: 'Solutions',
-    showroom_name: 'Central Technology Center',
-    showroom_badge: '40,000 sq ft Demo',
-    showroom_address: 'Plot 42, Tejgaon Industrial Area, Dhaka-1208, Bangladesh',
-    showroom_hours: 'Sat – Thu: 9:00 AM – 7:00 PM',
-    showroom_phone: '+880 1700-000000 / +880 2-9880000',
-    showroom_maps_url: 'https://maps.google.com/?q=Tejgaon+Industrial+Area+Dhaka',
-    office_name: 'Corporate Head Office',
-    office_address: 'House #14, Road #18, Sector #07, Uttara Model Town, Dhaka-1230, Bangladesh',
-    support_phone: '+880 1700-000000',
-    support_email: 'info@woodtechsolutionbd.com',
-    whatsapp_number: '+880 1700-000000',
-    partner_badge: 'Authorized Industrial Technology Partner',
+    logo_short: 'UWS',
+    logo_title: 'UNIQUE WOOD SOLUTION',
+    logo_badge: 'Woodworking Machinery & Craftsmanship',
+    website_url: 'www.uwsbd.com',
+
+    // 1. Head Office
+    head_office_name: 'Head Office',
+    head_office_address: '#5 Purano Mugholtuli Screw Market, Room #17, Nawabpur Road, Dhaka 1000',
+    head_office_phone: '01612-429999',
+    head_office_email: 'info@uwsbd.com',
+    head_office_website: 'www.uwsbd.com',
+
+    // 2. Corporate Office & Display Center
+    corporate_office_name: 'Corporate Office',
+    corporate_office_address: 'Unique Wood Solution Display Center, South Ramerkanda, Keraniganj Model, Dhaka 1310',
+    corporate_office_phone: '01912-580072',
+    corporate_office_email: 'info@uwsbd.com',
+
+    // 3. Warehouse & Logistics
+    warehouse_name: 'Warehouse & Logistics',
+    warehouse_address: 'Unique Wood Solution Warehouse, Godarbag, Keraniganj, Dhaka 1310',
+    warehouse_phone: '01805-465555',
+    warehouse_email: 'info@uwsbd.com',
+
+    // Showroom & General Backwards Compatibility
+    showroom_name: 'Unique Wood Solution Display Center',
+    showroom_badge: 'Live Machinery Demonstrations',
+    showroom_address: 'Unique Wood Solution Display Center, South Ramerkanda, Keraniganj Model, Dhaka 1310',
+    showroom_hours: 'Saturday – Thursday: 9:00 AM – 7:00 PM',
+    showroom_phone: '01912-580072',
+    showroom_maps_url: 'https://maps.google.com/?q=Unique+Wood+Solution+South+Ramerkanda+Keraniganj+Dhaka',
+    office_name: 'Head Office',
+    office_address: '#5 Purano Mugholtuli Screw Market, Room #17, Nawabpur Road, Dhaka 1000',
+    support_phone: '01612-429999',
+    support_email: 'info@uwsbd.com',
+    whatsapp_number: '01912-580072',
+    partner_badge: 'Authorized Industrial Machinery & Craftsmanship Partner',
     hero_headline: 'High-Precision CNC & Industrial Woodworking Machinery',
     hero_subtitle: 'Turnkey industrial solutions with complete factory planning, automated production line layout, machinery commissioning, and genuine spare parts support.',
-    seo_title: 'WoodTech Solutions | Industrial Woodworking Machinery & CNC Routers Bangladesh',
-    seo_description: 'Official importer and distributor of high-precision CNC routers, computerized beam saws, automatic edgebanders, and wide belt sanders in Bangladesh.',
+    seo_title: 'Unique Wood Solution | Industrial Woodworking Machinery & Bespoke Solutions Bangladesh',
+    seo_description: 'Official importer and distributor of high-precision CNC routers, computerized beam saws, automatic edgebanders, and woodworking equipment in Bangladesh.',
   });
 
   const [isLoading, setIsLoading] = useState(true);
@@ -227,7 +249,23 @@ export const AdminSettingsPage: React.FC = () => {
   // ----------------------------------------------------
   const handleSettingChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setSiteSettings((prev) => ({ ...prev, [name]: value }));
+    setSiteSettings((prev) => {
+      const updated = { ...prev, [name]: value };
+      // Keep backwards compatibility keys in sync
+      if (name === 'head_office_address') updated.office_address = value;
+      if (name === 'head_office_name') updated.office_name = value;
+      if (name === 'head_office_phone') updated.support_phone = value;
+      if (name === 'head_office_email') updated.support_email = value;
+      if (name === 'head_office_website') updated.website_url = value;
+      if (name === 'website_url') updated.head_office_website = value;
+      if (name === 'corporate_office_address') updated.showroom_address = value;
+      if (name === 'corporate_office_name') updated.showroom_name = value;
+      if (name === 'corporate_office_phone') {
+        updated.showroom_phone = value;
+        updated.whatsapp_number = value;
+      }
+      return updated;
+    });
   };
 
   const handleSaveSettings = async (e: React.FormEvent) => {
@@ -237,7 +275,7 @@ export const AdminSettingsPage: React.FC = () => {
       const payload: SiteSetting[] = Object.entries(siteSettings).map(([k, v]) => ({
         key: k,
         value: v,
-        group: k.startsWith('logo') ? 'Brand' : k.startsWith('showroom') || k.startsWith('office') ? 'Location' : k.startsWith('seo') ? 'SEO' : k.startsWith('hero') ? 'Homepage' : 'Contact',
+        group: k.startsWith('logo') ? 'Brand' : (k.startsWith('showroom') || k.startsWith('office') || k.startsWith('head_office') || k.startsWith('corporate_office') || k.startsWith('warehouse')) ? 'Location' : k.startsWith('seo') ? 'SEO' : k.startsWith('hero') ? 'Homepage' : 'Contact',
       }));
 
       await adminService.updateSiteSettings(payload);
@@ -595,75 +633,193 @@ export const AdminSettingsPage: React.FC = () => {
                   className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
                 />
               </div>
+
+              <div className="space-y-1.5 sm:col-span-2 lg:col-span-4">
+                <label className="font-semibold text-charcoal-700 flex items-center gap-1.5">
+                  <Globe className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Official Website Domain URL</span>
+                </label>
+                <input
+                  type="text"
+                  name="website_url"
+                  value={siteSettings.website_url}
+                  onChange={handleSettingChange}
+                  placeholder="www.uwsbd.com"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs font-semibold"
+                />
+              </div>
             </div>
           </div>
 
-          {/* Card 2: Central Technology Center (Showroom & Demo Center Physical Address) */}
+          {/* Card 2: Head Office */}
           <div className="bg-white rounded-xl border border-slate-border p-6 shadow-2xs space-y-5">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-              <MapPin className="w-4 h-4 text-industrial-orange" />
-              <h2 className="text-sm font-bold text-navy-900 uppercase tracking-wide">
-                Showroom &amp; Central Technology Center (Client Address Popover)
-              </h2>
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-industrial-orange" />
+                <h2 className="text-sm font-bold text-navy-900 uppercase tracking-wide">
+                  1. Head Office (Nawabpur Road)
+                </h2>
+              </div>
+              <span className="text-[11px] font-semibold text-industrial-orange bg-orange-50 border border-orange-200/60 px-2 py-0.5 rounded">
+                Central Headquarters
+              </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 text-xs">
               <div className="space-y-1.5">
-                <label className="font-semibold text-charcoal-700">Showroom Name / Center Title</label>
+                <label className="font-semibold text-charcoal-700">Facility / Branch Title</label>
                 <input
                   type="text"
-                  name="showroom_name"
-                  value={siteSettings.showroom_name}
+                  name="head_office_name"
+                  value={siteSettings.head_office_name}
                   onChange={handleSettingChange}
-                  placeholder="e.g. Central Technology Center"
+                  placeholder="Head Office"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs font-medium"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-charcoal-700 flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Direct Phone / Hotline</span>
+                </label>
+                <input
+                  type="text"
+                  name="head_office_phone"
+                  value={siteSettings.head_office_phone}
+                  onChange={handleSettingChange}
+                  placeholder="01612-429999"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs font-medium"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-charcoal-700 flex items-center gap-1.5">
+                  <Mail className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Official Email</span>
+                </label>
+                <input
+                  type="email"
+                  name="head_office_email"
+                  value={siteSettings.head_office_email}
+                  onChange={handleSettingChange}
+                  placeholder="info@uwsbd.com"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs font-medium"
+                />
+              </div>
+
+              <div className="space-y-1.5 sm:col-span-2">
+                <label className="font-semibold text-charcoal-700 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Full Physical Address</span>
+                </label>
+                <input
+                  type="text"
+                  name="head_office_address"
+                  value={siteSettings.head_office_address}
+                  onChange={handleSettingChange}
+                  placeholder="#5 Purano Mugholtuli Screw Market, Room #17, Nawabpur Road, Dhaka 1000"
                   className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-semibold text-charcoal-700">Showroom Feature Badge</label>
+                <label className="font-semibold text-charcoal-700 flex items-center gap-1.5">
+                  <Globe className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Website URL</span>
+                </label>
                 <input
                   type="text"
-                  name="showroom_badge"
-                  value={siteSettings.showroom_badge}
+                  name="head_office_website"
+                  value={siteSettings.head_office_website}
                   onChange={handleSettingChange}
-                  placeholder="e.g. 40,000 sq ft Demo"
+                  placeholder="www.uwsbd.com"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Corporate Office & Display Center */}
+          <div className="bg-white rounded-xl border border-slate-border p-6 shadow-2xs space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-industrial-orange" />
+                <h2 className="text-sm font-bold text-navy-900 uppercase tracking-wide">
+                  2. Corporate Office &amp; Display Center (Keraniganj Model)
+                </h2>
+              </div>
+              <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded">
+                Live Machine Demo Facility
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 text-xs">
+              <div className="space-y-1.5">
+                <label className="font-semibold text-charcoal-700">Facility Title</label>
+                <input
+                  type="text"
+                  name="corporate_office_name"
+                  value={siteSettings.corporate_office_name}
+                  onChange={handleSettingChange}
+                  placeholder="Unique Wood Solution Display Center"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs font-medium"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-charcoal-700 flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Contact Phone / VIP Inquiries</span>
+                </label>
+                <input
+                  type="text"
+                  name="corporate_office_phone"
+                  value={siteSettings.corporate_office_phone}
+                  onChange={handleSettingChange}
+                  placeholder="01912-580072"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs font-medium"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-charcoal-700 flex items-center gap-1.5">
+                  <Mail className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Facility Email</span>
+                </label>
+                <input
+                  type="email"
+                  name="corporate_office_email"
+                  value={siteSettings.corporate_office_email}
+                  onChange={handleSettingChange}
+                  placeholder="info@uwsbd.com"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs font-medium"
+                />
+              </div>
+
+              <div className="space-y-1.5 sm:col-span-2 lg:col-span-3">
+                <label className="font-semibold text-charcoal-700 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Full Physical Address</span>
+                </label>
+                <input
+                  type="text"
+                  name="corporate_office_address"
+                  value={siteSettings.corporate_office_address}
+                  onChange={handleSettingChange}
+                  placeholder="Unique Wood Solution Display Center, South Ramerkanda, Keraniganj Model, Dhaka 1310"
                   className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-semibold text-charcoal-700">Operating Hours</label>
+                <label className="font-semibold text-charcoal-700">Display Center Visiting Hours</label>
                 <input
                   type="text"
                   name="showroom_hours"
                   value={siteSettings.showroom_hours}
                   onChange={handleSettingChange}
                   placeholder="e.g. Sat – Thu: 9:00 AM – 7:00 PM"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
-                />
-              </div>
-
-              <div className="space-y-1.5 sm:col-span-2 lg:col-span-3">
-                <label className="font-semibold text-charcoal-700">Full Physical Address</label>
-                <input
-                  type="text"
-                  name="showroom_address"
-                  value={siteSettings.showroom_address}
-                  onChange={handleSettingChange}
-                  placeholder="e.g. Plot 42, Tejgaon Industrial Area, Dhaka-1208, Bangladesh"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="font-semibold text-charcoal-700">Showroom Direct Phone</label>
-                <input
-                  type="text"
-                  name="showroom_phone"
-                  value={siteSettings.showroom_phone}
-                  onChange={handleSettingChange}
-                  placeholder="e.g. +880 1700-000000 / +880 2-9880000"
                   className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
                 />
               </div>
@@ -682,48 +838,86 @@ export const AdminSettingsPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Card 3: Corporate Head Office */}
+          {/* Card 4: Warehouse & Logistics */}
           <div className="bg-white rounded-xl border border-slate-border p-6 shadow-2xs space-y-5">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-              <Building2 className="w-4 h-4 text-industrial-orange" />
-              <h2 className="text-sm font-bold text-navy-900 uppercase tracking-wide">
-                Corporate Head Office Address
-              </h2>
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-industrial-orange" />
+                <h2 className="text-sm font-bold text-navy-900 uppercase tracking-wide">
+                  3. Warehouse &amp; Logistics Hub (Godarbag)
+                </h2>
+              </div>
+              <span className="text-[11px] font-semibold text-blue-800 bg-blue-50 border border-blue-200/60 px-2 py-0.5 rounded">
+                Inventory &amp; Dispatch Depot
+              </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 text-xs">
               <div className="space-y-1.5">
-                <label className="font-semibold text-charcoal-700">Office Title</label>
+                <label className="font-semibold text-charcoal-700">Facility Title</label>
                 <input
                   type="text"
-                  name="office_name"
-                  value={siteSettings.office_name}
+                  name="warehouse_name"
+                  value={siteSettings.warehouse_name}
                   onChange={handleSettingChange}
-                  placeholder="e.g. Corporate Head Office"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
+                  placeholder="Unique Wood Solution Warehouse"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs font-medium"
                 />
               </div>
 
-              <div className="space-y-1.5 sm:col-span-2">
-                <label className="font-semibold text-charcoal-700">Full Office Address</label>
+              <div className="space-y-1.5">
+                <label className="font-semibold text-charcoal-700 flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Logistics &amp; Dispatch Phone</span>
+                </label>
                 <input
                   type="text"
-                  name="office_address"
-                  value={siteSettings.office_address}
+                  name="warehouse_phone"
+                  value={siteSettings.warehouse_phone}
                   onChange={handleSettingChange}
-                  placeholder="e.g. House #14, Road #18, Sector #07, Uttara Model Town, Dhaka-1230, Bangladesh"
+                  placeholder="01805-465555"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs font-medium"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-semibold text-charcoal-700 flex items-center gap-1.5">
+                  <Mail className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Warehouse Email</span>
+                </label>
+                <input
+                  type="email"
+                  name="warehouse_email"
+                  value={siteSettings.warehouse_email}
+                  onChange={handleSettingChange}
+                  placeholder="info@uwsbd.com"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs font-medium"
+                />
+              </div>
+
+              <div className="space-y-1.5 sm:col-span-2 lg:col-span-3">
+                <label className="font-semibold text-charcoal-700 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Full Physical Address</span>
+                </label>
+                <input
+                  type="text"
+                  name="warehouse_address"
+                  value={siteSettings.warehouse_address}
+                  onChange={handleSettingChange}
+                  placeholder="Unique Wood Solution Warehouse, Godarbag, Keraniganj, Dhaka 1310"
                   className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
                 />
               </div>
             </div>
           </div>
 
-          {/* Card 4: TopBar & Emergency Support Contacts */}
+          {/* Card 5: TopBar, Hotline & Emergency Support Contacts */}
           <div className="bg-white rounded-xl border border-slate-border p-6 shadow-2xs space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
               <Phone className="w-4 h-4 text-industrial-orange" />
               <h2 className="text-sm font-bold text-navy-900 uppercase tracking-wide">
-                TopBar &amp; Global Support Contacts
+                4. Global Hotline, WhatsApp &amp; Support Channels
               </h2>
             </div>
 
@@ -731,15 +925,15 @@ export const AdminSettingsPage: React.FC = () => {
               <div className="space-y-1.5">
                 <label className="font-semibold text-charcoal-700 flex items-center gap-1.5">
                   <Phone className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Support Phone / Hotline</span>
+                  <span>Support Phone / Central Hotline</span>
                 </label>
                 <input
                   type="text"
                   name="support_phone"
                   value={siteSettings.support_phone}
                   onChange={handleSettingChange}
-                  placeholder="+880 1700-000000"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
+                  placeholder="01612-429999"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs font-semibold"
                 />
               </div>
 
@@ -753,8 +947,8 @@ export const AdminSettingsPage: React.FC = () => {
                   name="support_email"
                   value={siteSettings.support_email}
                   onChange={handleSettingChange}
-                  placeholder="info@woodtechsolutionbd.com"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
+                  placeholder="info@uwsbd.com"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs font-semibold"
                 />
               </div>
 
@@ -768,8 +962,8 @@ export const AdminSettingsPage: React.FC = () => {
                   name="whatsapp_number"
                   value={siteSettings.whatsapp_number}
                   onChange={handleSettingChange}
-                  placeholder="+880 1700-000000"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
+                  placeholder="01912-580072"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs font-semibold"
                 />
               </div>
 
@@ -783,7 +977,7 @@ export const AdminSettingsPage: React.FC = () => {
                   name="partner_badge"
                   value={siteSettings.partner_badge}
                   onChange={handleSettingChange}
-                  placeholder="Authorized Industrial Technology Partner"
+                  placeholder="Authorized Industrial Machinery & Craftsmanship Partner"
                   className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
                 />
               </div>

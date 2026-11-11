@@ -322,22 +322,44 @@ export const adminService = {
     }
 
     return [
-      { key: 'logo_short', value: 'WTS', group: 'Brand', description: 'Brand Short Code' },
-      { key: 'logo_title', value: 'WOODTECH', group: 'Brand', description: 'Primary Brand Title' },
-      { key: 'logo_badge', value: 'Solutions', group: 'Brand', description: 'Brand Subtitle Badge' },
+      { key: 'logo_short', value: 'UWS', group: 'Brand', description: 'Brand Short Code' },
+      { key: 'logo_title', value: 'UNIQUE WOOD SOLUTION', group: 'Brand', description: 'Primary Brand Title' },
+      { key: 'logo_badge', value: 'Woodworking Machinery & Craftsmanship', group: 'Brand', description: 'Brand Subtitle Badge' },
       { key: 'logo_url', value: '', group: 'Brand', description: 'Custom Image Logo URL (optional)' },
-      { key: 'showroom_name', value: 'Central Technology Center', group: 'Location', description: 'Primary Showroom & Demo Center Name' },
-      { key: 'showroom_badge', value: '40,000 sq ft Demo', group: 'Location', description: 'Showroom demo space badge' },
-      { key: 'showroom_address', value: 'Plot 42, Tejgaon Industrial Area, Dhaka-1208, Bangladesh', group: 'Location', description: 'Showroom physical address' },
-      { key: 'showroom_hours', value: 'Sat – Thu: 9:00 AM – 7:00 PM', group: 'Location', description: 'Showroom operating hours' },
-      { key: 'showroom_phone', value: '+880 1700-000000 / +880 2-9880000', group: 'Location', description: 'Showroom phone number' },
-      { key: 'showroom_maps_url', value: 'https://maps.google.com/?q=Tejgaon+Industrial+Area+Dhaka', group: 'Location', description: 'Showroom Google Maps link' },
-      { key: 'office_name', value: 'Corporate Head Office', group: 'Location', description: 'Corporate Office Name' },
-      { key: 'office_address', value: 'House #14, Road #18, Sector #07, Uttara Model Town, Dhaka-1230, Bangladesh', group: 'Location', description: 'Corporate Office address' },
-      { key: 'support_phone', value: '+880 1700-000000', group: 'Contact', description: 'TopBar support phone' },
-      { key: 'support_email', value: 'info@woodtechsolutionbd.com', group: 'Contact', description: 'TopBar support email' },
-      { key: 'whatsapp_number', value: '+880 1700-000000', group: 'Contact', description: 'WhatsApp Desk number' },
-      { key: 'partner_badge', value: 'Authorized Industrial Technology Partner', group: 'Contact', description: 'TopBar partner badge' },
+      { key: 'website_url', value: 'www.uwsbd.com', group: 'Brand', description: 'Company Website' },
+      
+      // Head Office
+      { key: 'head_office_name', value: 'Head Office', group: 'Head Office', description: 'Head Office Name' },
+      { key: 'head_office_address', value: '#5 Purano Mugholtuli Screw Market, Room #17, Nawabpur Road, Dhaka 1000', group: 'Head Office', description: 'Head Office Address' },
+      { key: 'head_office_phone', value: '01612-429999', group: 'Head Office', description: 'Head Office Phone' },
+      { key: 'head_office_email', value: 'info@uwsbd.com', group: 'Head Office', description: 'Head Office Email' },
+      { key: 'head_office_website', value: 'www.uwsbd.com', group: 'Head Office', description: 'Head Office Website' },
+
+      // Corporate Office & Display Center
+      { key: 'corporate_office_name', value: 'Corporate Office', group: 'Corporate Office', description: 'Corporate Office Name' },
+      { key: 'corporate_office_address', value: 'Unique Wood Solution Display Center, South Ramerkanda, Keraniganj Model, Dhaka 1310', group: 'Corporate Office', description: 'Corporate Office Address' },
+      { key: 'corporate_office_phone', value: '01912-580072', group: 'Corporate Office', description: 'Corporate Office Phone' },
+      { key: 'corporate_office_email', value: 'info@uwsbd.com', group: 'Corporate Office', description: 'Corporate Office Email' },
+
+      // Warehouse
+      { key: 'warehouse_name', value: 'Warehouse & Logistics', group: 'Warehouse', description: 'Warehouse Name' },
+      { key: 'warehouse_address', value: 'Unique Wood Solution Warehouse, Godarbag, Keraniganj, Dhaka 1310', group: 'Warehouse', description: 'Warehouse Address' },
+      { key: 'warehouse_phone', value: '01805-465555', group: 'Warehouse', description: 'Warehouse Phone' },
+      { key: 'warehouse_email', value: 'info@uwsbd.com', group: 'Warehouse', description: 'Warehouse Email' },
+
+      // Backwards Compatibility & General
+      { key: 'showroom_name', value: 'Unique Wood Solution Display Center', group: 'Location', description: 'Primary Showroom & Demo Center Name' },
+      { key: 'showroom_badge', value: 'Live Machinery Demo', group: 'Location', description: 'Showroom demo space badge' },
+      { key: 'showroom_address', value: 'Unique Wood Solution Display Center, South Ramerkanda, Keraniganj Model, Dhaka 1310', group: 'Location', description: 'Showroom physical address' },
+      { key: 'showroom_hours', value: 'Saturday – Thursday: 9:00 AM – 7:00 PM', group: 'Location', description: 'Showroom operating hours' },
+      { key: 'showroom_phone', value: '01912-580072', group: 'Location', description: 'Showroom phone number' },
+      { key: 'showroom_maps_url', value: 'https://maps.google.com/?q=Unique+Wood+Solution+South+Ramerkanda+Keraniganj+Dhaka', group: 'Location', description: 'Showroom Google Maps link' },
+      { key: 'office_name', value: 'Head Office', group: 'Location', description: 'Corporate Office Name' },
+      { key: 'office_address', value: '#5 Purano Mugholtuli Screw Market, Room #17, Nawabpur Road, Dhaka 1000', group: 'Location', description: 'Corporate Office address' },
+      { key: 'support_phone', value: '01612-429999', group: 'Contact', description: 'TopBar support phone' },
+      { key: 'support_email', value: 'info@uwsbd.com', group: 'Contact', description: 'TopBar support email' },
+      { key: 'whatsapp_number', value: '01912-580072', group: 'Contact', description: 'WhatsApp Desk number' },
+      { key: 'partner_badge', value: 'Authorized Machinery & Turnkey Engineering Partner', group: 'Contact', description: 'TopBar partner badge' },
       { key: 'hero_headline', value: 'High-Precision CNC & Industrial Woodworking Machinery', group: 'Homepage', description: 'Hero banner main title' },
       { key: 'hero_subtitle', value: 'Turnkey industrial solutions with complete factory planning, automated production line layout, machinery commissioning, and genuine spare parts support.', group: 'Homepage', description: 'Hero banner subtitle' },
     ];

@@ -23,9 +23,13 @@ import { AvailabilityBadge, ConditionBadge } from '@/components/common/Badge';
 import Button from '@/components/common/Button';
 import { handleImageError } from '@/utils/imageUtils';
 import ProductCard from '@/components/catalog/ProductCard';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export const ProductDetailsPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const siteSettings = useSiteSettings();
+  const rawWhatsApp = (siteSettings.whatsapp_number || siteSettings.corporate_office_phone || '01912580072').replace(/[^0-9]/g, '');
+  const normalizedWhatsApp = rawWhatsApp.startsWith('880') ? rawWhatsApp : rawWhatsApp.startsWith('0') ? `88${rawWhatsApp}` : `880${rawWhatsApp}`;
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [activeImage, setActiveImage] = useState<string>('');
@@ -97,10 +101,12 @@ export const ProductDetailsPage: React.FC = () => {
   };
 
   const handleWhatsApp = () => {
+    if (!product) return;
+    const brand = siteSettings.logo_title || 'Unique Wood Solution';
     const text = encodeURIComponent(
-      `Hello WoodTech Solutions, I am reviewing machine specifications for ${product.name} (Model: ${product.modelNumber}, SKU: ${product.sku}). Please provide commercial quotation and delivery lead time.`
+      `Hello ${brand}, I am reviewing machine specifications for ${product.name} (Model: ${product.modelNumber || ''}). Please provide commercial quotation and delivery lead time.`
     );
-    window.open(`https://wa.me/8801700000000?text=${text}`, '_blank');
+    window.open(`https://wa.me/${normalizedWhatsApp}?text=${text}`, '_blank');
   };
 
   return (

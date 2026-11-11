@@ -444,7 +444,7 @@ export const DEMO_MANUFACTURERS: Manufacturer[] = [
     slug: 'woodtech-prime',
     country: 'Taiwan',
     logoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80',
-    websiteUrl: 'https://woodtechsolutionbd.com',
+    websiteUrl: 'https://www.uwsbd.com',
     description: 'Customized heavy-duty industrial machinery engineered for tropical climates and continuous operation.',
     isActive: true,
     productCount: 2,

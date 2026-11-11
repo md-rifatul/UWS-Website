@@ -2,8 +2,12 @@ import React from 'react';
 import { Factory, Wrench, Cpu, ShieldCheck, ArrowRight, Settings, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Button from '@/components/common/Button';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export const ServicesPage: React.FC = () => {
+  const siteSettings = useSiteSettings();
+  const rawWhatsApp = (siteSettings.whatsapp_number || siteSettings.corporate_office_phone || '01912580072').replace(/[^0-9]/g, '');
+  const normalizedWhatsApp = rawWhatsApp.startsWith('880') ? rawWhatsApp : rawWhatsApp.startsWith('0') ? `88${rawWhatsApp}` : `880${rawWhatsApp}`;
   const services = [
     {
       id: 'layout',
@@ -122,7 +126,7 @@ export const ServicesPage: React.FC = () => {
               Contact Engineering Team
             </Link>
             <a
-              href="https://wa.me/8801700000000"
+              href={`https://wa.me/${normalizedWhatsApp}`}
               target="_blank"
               rel="noreferrer"
               className="px-6 py-3 bg-navy-800 hover:bg-navy-700 text-slate-200 text-xs font-medium rounded-md border border-navy-700"

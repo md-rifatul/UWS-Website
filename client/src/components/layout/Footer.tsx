@@ -9,6 +9,7 @@ import {
   ExternalLink,
   Cpu,
   Clock,
+  Globe,
 } from 'lucide-react';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 
@@ -82,16 +83,33 @@ export const Footer: React.FC = () => {
             <div className="pt-2 space-y-2 text-xs text-slate-400">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-industrial-orange shrink-0 mt-0.5" />
-                <span>{siteSettings.office_address || siteSettings.showroom_address || 'House #14, Road #18, Sector #07, Uttara Model Town, Dhaka-1230, Bangladesh'}</span>
+                <span>
+                  {siteSettings.head_office_address ||
+                    siteSettings.office_address ||
+                    '#5 Purano Mugholtuli Screw Market, Room #17, Nawabpur Road, Dhaka 1000'}
+                </span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-industrial-orange shrink-0" />
-                <span>Hotline: {siteSettings.support_phone || '+880 1700-000000'}</span>
+                <span>Hotline: {siteSettings.head_office_phone || siteSettings.support_phone || '01612-429999'}</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-industrial-orange shrink-0" />
-                <span>Corporate: {siteSettings.support_email || 'info@woodtechsolutionbd.com'}</span>
+                <span>Corporate: {siteSettings.head_office_email || siteSettings.support_email || 'info@uwsbd.com'}</span>
               </div>
+              {(siteSettings.head_office_website || siteSettings.website_url) && (
+                <div className="flex items-center gap-2.5">
+                  <Globe className="w-4 h-4 text-industrial-orange shrink-0" />
+                  <a
+                    href={`https://${(siteSettings.head_office_website || siteSettings.website_url || 'www.uwsbd.com').replace(/^https?:\/\//, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    Web: {siteSettings.head_office_website || siteSettings.website_url || 'www.uwsbd.com'}
+                  </a>
+                </div>
+              )}
             </div>
           </div>
 
@@ -225,7 +243,7 @@ export const Footer: React.FC = () => {
       <div className="border-t border-navy-800 py-6 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p>
-            © {new Date().getFullYear()} WoodTech Solutions Industrial Catalog Platform. All rights
+            © {new Date().getFullYear()} {siteSettings.logo_title || 'Unique Wood Solution'}. All rights
             reserved.
           </p>
           <div className="flex items-center gap-6">

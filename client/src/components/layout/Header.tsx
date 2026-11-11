@@ -516,51 +516,56 @@ export const Header: React.FC = () => {
                     </button>
                   </div>
 
-                  {/* Primary Location 1: Central Demo & Tech Center (Dynamic) */}
+                  {/* Facility 1: Corporate Office & Display Center (Dynamic) */}
                   <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1.5">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-navy-900">
-                        {siteSettings.showroom_name || 'Central Technology Center'}
+                        {siteSettings.corporate_office_name || siteSettings.showroom_name || 'Unique Wood Solution Display Center'}
                       </span>
-                      {siteSettings.showroom_badge && (
-                        <span className="text-[9px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded">
-                          {siteSettings.showroom_badge}
-                        </span>
-                      )}
+                      <span className="text-[9px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded">
+                        Live Demo
+                      </span>
                     </div>
                     <p className="text-xs text-charcoal-700 leading-relaxed font-medium">
-                      {siteSettings.showroom_address || 'Plot 42, Tejgaon Industrial Area, Dhaka-1208, Bangladesh.'}
+                      {siteSettings.corporate_office_address || siteSettings.showroom_address || 'Unique Wood Solution Display Center, South Ramerkanda, Keraniganj Model, Dhaka 1310'}
                     </p>
-                    {siteSettings.showroom_hours && (
-                      <div className="flex items-center gap-2 text-[11px] text-slate-500 pt-0.5">
-                        <Clock className="w-3 h-3 text-industrial-orange shrink-0" />
-                        <span>{siteSettings.showroom_hours}</span>
-                      </div>
-                    )}
-                    {siteSettings.showroom_phone && (
-                      <div className="flex items-center gap-2 text-[11px] text-slate-500">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-500 pt-0.5">
+                      <div className="flex items-center gap-1.5">
                         <Phone className="w-3 h-3 text-industrial-orange shrink-0" />
-                        <span>{siteSettings.showroom_phone}</span>
+                        <span>{siteSettings.corporate_office_phone || siteSettings.showroom_phone || '01912-580072'}</span>
                       </div>
-                    )}
+                      {siteSettings.showroom_hours && (
+                        <div className="flex items-center gap-1.5">
+                          <Clock className="w-3 h-3 text-industrial-orange shrink-0" />
+                          <span>{siteSettings.showroom_hours}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Primary Location 2: Corporate Head Office (Dynamic) */}
-                  {siteSettings.office_address && (
-                    <div className="p-2.5 bg-white rounded-xl border border-slate-100 space-y-1">
-                      <span className="text-[11px] font-bold text-navy-900 block">
-                        {siteSettings.office_name || 'Corporate Head Office'}
+                  {/* Facility 2: Head Office (Dynamic) */}
+                  <div className="p-2.5 bg-white rounded-xl border border-slate-200/60 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-navy-900">
+                        {siteSettings.head_office_name || siteSettings.office_name || 'Head Office'}
                       </span>
-                      <p className="text-xs text-slate-600 leading-relaxed">
-                        {siteSettings.office_address}
-                      </p>
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-industrial-orange bg-orange-50 px-1.5 py-0.5 rounded">
+                        Dhaka 1000
+                      </span>
                     </div>
-                  )}
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      {siteSettings.head_office_address || siteSettings.office_address || '#5 Purano Mugholtuli Screw Market, Room #17, Nawabpur Road, Dhaka 1000'}
+                    </p>
+                    <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+                      <Phone className="w-3 h-3 text-industrial-orange shrink-0" />
+                      <span>{siteSettings.head_office_phone || siteSettings.support_phone || '01612-429999'}</span>
+                    </div>
+                  </div>
 
                   {/* Action Buttons: Google Maps Direction + View Display Center */}
                   <div className="grid grid-cols-2 gap-2 pt-0.5">
                     <a
-                      href={siteSettings.showroom_maps_url || 'https://maps.google.com/?q=Tejgaon+Industrial+Area+Dhaka'}
+                      href={siteSettings.showroom_maps_url || 'https://maps.google.com/?q=Unique+Wood+Solution+South+Ramerkanda+Keraniganj+Dhaka'}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-navy-900 hover:bg-navy-800 text-white rounded-lg text-xs font-bold transition-all shadow-2xs"

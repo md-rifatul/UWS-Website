@@ -15,7 +15,8 @@ import useSiteSettings from '@/hooks/useSiteSettings';
 
 export const AboutPage: React.FC = () => {
   const siteSettings = useSiteSettings();
-  const rawWhatsApp = (siteSettings.whatsapp_number || '+8801700000000').replace(/[^0-9]/g, '');
+  const rawWhatsApp = (siteSettings.whatsapp_number || siteSettings.corporate_office_phone || '01912580072').replace(/[^0-9]/g, '');
+  const normalizedWhatsApp = rawWhatsApp.startsWith('880') ? rawWhatsApp : rawWhatsApp.startsWith('0') ? `88${rawWhatsApp}` : `880${rawWhatsApp}`;
 
   return (
     <div className="bg-surface-offwhite min-h-screen py-10 sm:py-16 pb-24 space-y-16">
@@ -228,7 +229,7 @@ export const AboutPage: React.FC = () => {
             </Link>
 
             <a
-              href={`https://wa.me/${rawWhatsApp}`}
+              href={`https://wa.me/${normalizedWhatsApp}`}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition-all"

@@ -142,6 +142,28 @@ export interface SiteSettingsMap {
   logo_short: string;
   logo_title: string;
   logo_badge: string;
+  website_url: string;
+
+  // Head Office
+  head_office_name: string;
+  head_office_address: string;
+  head_office_phone: string;
+  head_office_email: string;
+  head_office_website: string;
+
+  // Corporate Office & Display Center
+  corporate_office_name: string;
+  corporate_office_address: string;
+  corporate_office_phone: string;
+  corporate_office_email: string;
+
+  // Warehouse
+  warehouse_name: string;
+  warehouse_address: string;
+  warehouse_phone: string;
+  warehouse_email: string;
+
+  // Showroom & General Backwards-compatibility
   showroom_name: string;
   showroom_badge: string;
   showroom_address: string;
@@ -161,21 +183,43 @@ export interface SiteSettingsMap {
 
 export const DEFAULT_SITE_SETTINGS: SiteSettingsMap = {
   logo_url: '',
-  logo_short: 'WTS',
-  logo_title: 'WOODTECH',
-  logo_badge: 'Solutions',
-  showroom_name: 'Central Technology Center',
-  showroom_badge: '40,000 sq ft Demo',
-  showroom_address: 'Plot 42, Tejgaon Industrial Area, Dhaka-1208, Bangladesh',
-  showroom_hours: 'Sat – Thu: 9:00 AM – 7:00 PM',
-  showroom_phone: '+880 1700-000000 / +880 2-9880000',
-  showroom_maps_url: 'https://maps.google.com/?q=Tejgaon+Industrial+Area+Dhaka',
-  office_name: 'Corporate Head Office',
-  office_address: 'House #14, Road #18, Sector #07, Uttara Model Town, Dhaka-1230, Bangladesh',
-  support_phone: '+880 1700-000000',
-  support_email: 'info@woodtechsolutionbd.com',
-  whatsapp_number: '+880 1700-000000',
-  partner_badge: 'Authorized Industrial Technology Partner',
+  logo_short: 'UWS',
+  logo_title: 'UNIQUE WOOD SOLUTION',
+  logo_badge: 'Woodworking Machinery & Craftsmanship',
+  website_url: 'www.uwsbd.com',
+
+  // Head Office
+  head_office_name: 'Head Office',
+  head_office_address: '#5 Purano Mugholtuli Screw Market, Room #17, Nawabpur Road, Dhaka 1000',
+  head_office_phone: '01612-429999',
+  head_office_email: 'info@uwsbd.com',
+  head_office_website: 'www.uwsbd.com',
+
+  // Corporate Office & Display Center
+  corporate_office_name: 'Corporate Office',
+  corporate_office_address: 'Unique Wood Solution Display Center, South Ramerkanda, Keraniganj Model, Dhaka 1310',
+  corporate_office_phone: '01912-580072',
+  corporate_office_email: 'info@uwsbd.com',
+
+  // Warehouse
+  warehouse_name: 'Warehouse & Logistics',
+  warehouse_address: 'Unique Wood Solution Warehouse, Godarbag, Keraniganj, Dhaka 1310',
+  warehouse_phone: '01805-465555',
+  warehouse_email: 'info@uwsbd.com',
+
+  // Showroom & General Backwards-compatibility
+  showroom_name: 'Unique Wood Solution Display Center',
+  showroom_badge: 'Live Machinery Demonstrations',
+  showroom_address: 'Unique Wood Solution Display Center, South Ramerkanda, Keraniganj Model, Dhaka 1310',
+  showroom_hours: 'Saturday – Thursday: 9:00 AM – 7:00 PM',
+  showroom_phone: '01912-580072',
+  showroom_maps_url: 'https://maps.google.com/?q=Unique+Wood+Solution+South+Ramerkanda+Keraniganj+Dhaka',
+  office_name: 'Head Office',
+  office_address: '#5 Purano Mugholtuli Screw Market, Room #17, Nawabpur Road, Dhaka 1000',
+  support_phone: '01612-429999',
+  support_email: 'info@uwsbd.com',
+  whatsapp_number: '01912-580072',
+  partner_badge: 'Authorized Machinery & Turnkey Engineering Partner',
   hero_headline: 'High-Precision CNC & Industrial Woodworking Machinery',
   hero_subtitle: 'Turnkey industrial solutions with complete factory planning, automated production line layout, machinery commissioning, and genuine spare parts support.',
 };

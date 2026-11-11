@@ -21,7 +21,8 @@ import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export const DisplayCenterPage: React.FC = () => {
   const siteSettings = useSiteSettings();
-  const rawWhatsApp = (siteSettings.whatsapp_number || '+8801700000000').replace(/[^0-9]/g, '');
+  const rawWhatsApp = (siteSettings.whatsapp_number || siteSettings.corporate_office_phone || '01912580072').replace(/[^0-9]/g, '');
+  const normalizedWhatsApp = rawWhatsApp.startsWith('880') ? rawWhatsApp : rawWhatsApp.startsWith('0') ? `88${rawWhatsApp}` : `880${rawWhatsApp}`;
 
   const [formData, setFormData] = useState({
     name: '',
@@ -62,7 +63,7 @@ export const DisplayCenterPage: React.FC = () => {
           </h1>
 
           <p className="text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed">
-            Visit Bangladesh’s largest 40,000 sq ft industrial woodworking technology center in Tejgaon, Dhaka.
+            Visit the {siteSettings.corporate_office_name || siteSettings.showroom_name || 'Unique Wood Solution Display Center'} in Keraniganj, Dhaka.
             Inspect live test cuts, computerized nesting, PUR edgebanding, and heavy solid wood leveling firsthand.
           </p>
 
@@ -143,10 +144,10 @@ export const DisplayCenterPage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs text-slate-600">
                 <div className="space-y-2">
                   <span className="font-bold text-navy-900 block text-sm">
-                    {siteSettings.showroom_name || 'Central Technology Center'}
+                    {siteSettings.corporate_office_name || siteSettings.showroom_name || 'Unique Wood Solution Display Center'}
                   </span>
                   <p className="leading-relaxed font-medium text-charcoal-700">
-                    {siteSettings.showroom_address || 'Plot 42, Tejgaon Industrial Area, Dhaka-1208, Bangladesh.'}
+                    {siteSettings.corporate_office_address || siteSettings.showroom_address || 'Unique Wood Solution Display Center, South Ramerkanda, Keraniganj Model, Dhaka 1310'}
                   </p>
                   {siteSettings.showroom_maps_url && (
                     <a
@@ -171,17 +172,17 @@ export const DisplayCenterPage: React.FC = () => {
                   )}
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-industrial-orange shrink-0" />
-                    <span>Hotline: {siteSettings.showroom_phone || siteSettings.support_phone || '+880 1700-000000'}</span>
+                    <span>Hotline: {siteSettings.corporate_office_phone || siteSettings.showroom_phone || siteSettings.support_phone || '01912-580072'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <MessageSquare className="w-4 h-4 text-emerald-500 shrink-0" />
                     <a
-                      href={`https://wa.me/${rawWhatsApp}`}
+                      href={`https://wa.me/${normalizedWhatsApp}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-emerald-600 transition-colors"
+                      className="hover:text-emerald-600 transition-colors font-medium"
                     >
-                      WhatsApp VIP Desk: {siteSettings.whatsapp_number || '+880 1700-000000'}
+                      WhatsApp VIP Desk: {siteSettings.whatsapp_number || siteSettings.corporate_office_phone || '01912-580072'}
                     </a>
                   </div>
                 </div>
