@@ -40,7 +40,7 @@ export const ContactPage: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Left Column: Multi-Facility Office Details */}
-          <div className="lg:col-span-6 space-y-6">
+          <div id="locations" className="lg:col-span-6 space-y-6 scroll-mt-28">
             {/* 1. Head Office */}
             <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-xs space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
@@ -240,7 +240,7 @@ export const ContactPage: React.FC = () => {
           </div>
 
           {/* Right Column: Inquiry Form */}
-          <div className="lg:col-span-6">
+          <div id="info" className="lg:col-span-6 scroll-mt-28">
             <div className="bg-white rounded-xl border border-slate-border p-8 shadow-xs sticky top-24">
               <h3 className="font-bold text-base text-navy-900 mb-1">Send a Direct Message</h3>
               <p className="text-xs text-slate-500 mb-6">

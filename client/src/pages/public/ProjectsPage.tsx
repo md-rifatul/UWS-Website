@@ -53,7 +53,7 @@ export const ProjectsPage: React.FC = () => {
         </div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div id="projects" className="grid grid-cols-1 md:grid-cols-3 gap-8 scroll-mt-28">
           {projects.map((proj, idx) => (
             <div
               key={idx}

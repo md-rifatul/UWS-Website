@@ -15,6 +15,7 @@ import {
   setViewMode,
   setSelectedCategory,
   setSelectedManufacturer,
+  setSearchQuery,
   resetFilters,
   setSortBy,
 } from '@/features/catalog/catalogSlice';
@@ -54,13 +55,18 @@ export const CatalogPage: React.FC = () => {
     viewMode,
   } = useAppSelector((state) => state.catalog);
 
-  // Sync URL category query param on initial load or navigation
+  // Sync URL category & search query param on initial load or navigation
   useEffect(() => {
     const urlCategory = searchParams.get('category');
     if (urlCategory) {
       dispatch(setSelectedCategory(urlCategory));
     } else {
       dispatch(setSelectedCategory(null));
+    }
+
+    const urlSearch = searchParams.get('search');
+    if (urlSearch !== null) {
+      dispatch(setSearchQuery(urlSearch));
     }
   }, [searchParams, dispatch]);
 

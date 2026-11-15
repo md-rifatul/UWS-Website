@@ -69,13 +69,28 @@ export const Header: React.FC = () => {
 
   const totalRfqCount = rfqItems.reduce((acc, it) => acc + it.quantity, 0);
 
-  // Active state styling matching screenshot: Green when active, dark charcoal when inactive
+  // Active state styling matching user specifications
   const isHome = location.pathname === '/';
+  const isAbout = location.pathname.startsWith('/about');
+  const isMachinery =
+    location.pathname.startsWith('/products') &&
+    !location.search.toLowerCase().includes('cutter') &&
+    !location.search.toLowerCase().includes('motor') &&
+    !location.search.toLowerCase().includes('drive') &&
+    !location.search.toLowerCase().includes('spindle') &&
+    !location.search.toLowerCase().includes('inverter') &&
+    !location.search.toLowerCase().includes('remote');
+  const isAccessories =
+    location.pathname.startsWith('/products') &&
+    (location.search.toLowerCase().includes('cutter') ||
+      location.search.toLowerCase().includes('motor') ||
+      location.search.toLowerCase().includes('drive') ||
+      location.search.toLowerCase().includes('spindle') ||
+      location.search.toLowerCase().includes('inverter') ||
+      location.search.toLowerCase().includes('remote'));
   const isDisplay = location.pathname === '/display-center';
-  const isAbout = location.pathname.startsWith('/about') || location.pathname.startsWith('/services');
-  const isMachine = location.pathname.startsWith('/products');
-  const isContact = location.pathname === '/contact';
   const isGallery = location.pathname === '/projects';
+  const isContact = location.pathname === '/contact';
 
   const toggleMobileDropdown = (name: string) => {
     setMobileOpenDropdown(mobileOpenDropdown === name ? null : name);
@@ -134,19 +149,7 @@ export const Header: React.FC = () => {
               HOME
             </NavLink>
 
-            {/* 2. DISPLAY CENTER */}
-            <NavLink
-              to="/display-center"
-              className={({ isActive }) =>
-                `transition-colors py-1.5 px-1.5 xl:px-2 flex items-center whitespace-nowrap rounded ${
-                  isActive ? 'text-emerald-600 font-extrabold' : 'text-charcoal-800 hover:text-emerald-600'
-                }`
-              }
-            >
-              <span className="hidden xl:inline">DISPLAY </span>CENTER
-            </NavLink>
-
-            {/* 3. ABOUT US (DROPDOWN) */}
+            {/* 2. ABOUT US (DROPDOWN) */}
             <div className="relative group py-1.5">
               <button
                 type="button"
@@ -159,289 +162,238 @@ export const Header: React.FC = () => {
                 <ChevronDown className="w-2.5 h-2.5 xl:w-3 xl:h-3 group-hover:rotate-180 transition-transform duration-200 shrink-0 opacity-70" />
               </button>
 
-              {/* Flyout Menu */}
               <div className="absolute top-full left-0 w-64 bg-white rounded-xl shadow-xl border border-slate-border py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <Link
-                  to="/about"
+                  to="/about#profile"
                   className="block px-4 py-2.5 hover:bg-slate-50 transition-colors"
                 >
-                  <span className="font-bold text-navy-900 block text-xs">Company Overview</span>
-                  <span className="text-[11px] text-slate-500 font-normal">Our 15+ years engineering heritage</span>
+                  <span className="font-bold text-navy-900 block text-xs">Company Profile</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Our heritage, vision &amp; craftsmanship</span>
                 </Link>
                 <Link
-                  to="/services"
+                  to="/about#team"
                   className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
                 >
-                  <span className="font-bold text-navy-900 block text-xs">Turnkey Factory Services</span>
-                  <span className="text-[11px] text-slate-500 font-normal">3D CAD planning &amp; power balancing</span>
+                  <span className="font-bold text-navy-900 block text-xs">Our Team</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Passionate artisans, engineers &amp; leaders</span>
                 </Link>
                 <Link
-                  to="/services"
+                  to="/about#mission"
                   className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
                 >
-                  <span className="font-bold text-navy-900 block text-xs">Maintenance &amp; Spare Parts</span>
-                  <span className="text-[11px] text-slate-500 font-normal">Onsite factory installation &amp; calibration</span>
-                </Link>
-                <Link
-                  to="/about"
-                  className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
-                >
-                  <span className="font-bold text-navy-900 block text-xs">Leadership &amp; Engineers</span>
-                  <span className="text-[11px] text-slate-500 font-normal">Certified technical application team</span>
+                  <span className="font-bold text-navy-900 block text-xs">Our Mission</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Crafting excellence with purpose &amp; sustainability</span>
                 </Link>
               </div>
             </div>
 
-            {/* 4. ALL MACHINE (MEGA-DROPDOWN) */}
+            {/* 3. MACHINERY (DROPDOWN) */}
             <div className="relative group py-1.5">
               <button
                 type="button"
                 onClick={() => navigate('/products')}
                 className={`flex items-center gap-0.5 xl:gap-1 transition-colors uppercase cursor-pointer px-1.5 xl:px-2 rounded whitespace-nowrap ${
-                  isMachine ? 'text-emerald-600 font-extrabold' : 'text-charcoal-800 group-hover:text-emerald-600'
+                  isMachinery ? 'text-emerald-600 font-extrabold' : 'text-charcoal-800 group-hover:text-emerald-600'
                 }`}
               >
-                <span><span className="hidden xl:inline">ALL </span>MACHINES</span>
-                <ChevronDown className="w-2.5 h-2.5 xl:w-3 xl:h-3 group-hover:rotate-180 transition-transform duration-200 shrink-0" />
-              </button>
-
-              {/* Rich Mega-Menu Flyout */}
-              <div className="absolute top-full -left-20 w-[720px] bg-white rounded-2xl shadow-2xl border border-slate-border p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 grid grid-cols-3 gap-6">
-                {/* Column 1: CNC Machining Centers */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-1.5 pb-2 border-b border-slate-100 text-industrial-orange">
-                    <Cpu className="w-4 h-4" />
-                    <span className="font-extrabold text-[11px] tracking-wider uppercase">CNC Machining</span>
-                  </div>
-                  <ul className="space-y-2 text-xs font-normal normal-case">
-                    <li>
-                      <Link
-                        to="/products?category=cnc-router-machine"
-                        className="text-navy-900 hover:text-industrial-orange font-semibold block transition-colors"
-                      >
-                        CNC Router Machines
-                      </Link>
-                      <span className="text-[11px] text-slate-400">Classic &amp; Racer Pro Series</span>
-                    </li>
-                    <li>
-                      <Link
-                        to="/products?category=cnc-router-machine"
-                        className="text-navy-900 hover:text-industrial-orange font-semibold block transition-colors"
-                      >
-                        ATC Nesting Machining Centers
-                      </Link>
-                      <span className="text-[11px] text-slate-400">12-Tool Carousel &amp; Syntec 6MB</span>
-                    </li>
-                    <li>
-                      <Link
-                        to="/products?category=cnc-boring-drilling"
-                        className="text-navy-900 hover:text-industrial-orange font-semibold block transition-colors"
-                      >
-                        Six-Sided Drilling &amp; Boring
-                      </Link>
-                      <span className="text-[11px] text-slate-400">High speed throughfeed lines</span>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Column 2: Solid Wood Preparation */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-1.5 pb-2 border-b border-slate-100 text-industrial-orange">
-                    <Layers className="w-4 h-4" />
-                    <span className="font-extrabold text-[11px] tracking-wider uppercase">Solid Wood Prep</span>
-                  </div>
-                  <ul className="space-y-2 text-xs font-normal normal-case">
-                    <li>
-                      <Link
-                        to="/products?category=surface-planer"
-                        className="text-navy-900 hover:text-industrial-orange font-semibold block transition-colors"
-                      >
-                        Surface Planers (Jointers)
-                      </Link>
-                      <span className="text-[11px] text-slate-400">Helical spiral silent cutterhead</span>
-                    </li>
-                    <li>
-                      <Link
-                        to="/products?category=thickness-planer"
-                        className="text-navy-900 hover:text-industrial-orange font-semibold block transition-colors"
-                      >
-                        Auto-Feed Thickness Planers
-                      </Link>
-                      <span className="text-[11px] text-slate-400">Digital DRO table elevation</span>
-                    </li>
-                    <li>
-                      <Link
-                        to="/products?category=spindle-shaper-moulder"
-                        className="text-navy-900 hover:text-industrial-orange font-semibold block transition-colors"
-                      >
-                        Spindle Shapers &amp; Moulders
-                      </Link>
-                      <span className="text-[11px] text-slate-400">Tilting spindle 10,000 RPM</span>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Column 3: Panel Processing & Finishing */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-1.5 pb-2 border-b border-slate-100 text-industrial-orange">
-                    <Wrench className="w-4 h-4" />
-                    <span className="font-extrabold text-[11px] tracking-wider uppercase">Panel Processing</span>
-                  </div>
-                  <ul className="space-y-2 text-xs font-normal normal-case">
-                    <li>
-                      <Link
-                        to="/products?category=circular-saw"
-                        className="text-navy-900 hover:text-industrial-orange font-semibold block transition-colors"
-                      >
-                        Sliding Table Circular Saws
-                      </Link>
-                      <span className="text-[11px] text-slate-400">3200mm anodized carriage</span>
-                    </li>
-                    <li>
-                      <Link
-                        to="/products?category=panel-saws"
-                        className="text-navy-900 hover:text-industrial-orange font-semibold block transition-colors"
-                      >
-                        Computerized Beam Panel Saws
-                      </Link>
-                      <span className="text-[11px] text-slate-400">Magnetic digital positioning</span>
-                    </li>
-                    <li>
-                      <Link
-                        to="/products?category=edge-banding-machines"
-                        className="text-navy-900 hover:text-industrial-orange font-semibold block transition-colors"
-                      >
-                        Automatic Edgebanders
-                      </Link>
-                      <span className="text-[11px] text-slate-400">PUR/EVA dual-melt gluing</span>
-                    </li>
-                    <li>
-                      <Link
-                        to="/products?category=sanding-finishing"
-                        className="text-navy-900 hover:text-industrial-orange font-semibold block transition-colors"
-                      >
-                        Wide Belt Calibrating Sanders
-                      </Link>
-                      <span className="text-[11px] text-slate-400">Heavy calibrating &amp; finish heads</span>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Mega-Menu Footer Banner */}
-                <div className="col-span-3 pt-3 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-xs text-slate-500 font-normal normal-case">
-                    Direct authorized distributor with manufacturer warranty &amp; spare parts backup.
-                  </span>
-                  <Link
-                    to="/products"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-industrial-orange hover:text-industrial-orange-hover"
-                  >
-                    <span>Explore Full 2026 Catalog (35+ Models)</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* 5. CUTTER ACCESSORIES (DROPDOWN) */}
-            <div className="relative group py-1.5">
-              <button
-                type="button"
-                onClick={() => navigate('/products?search=Cutter')}
-                className="flex items-center gap-0.5 xl:gap-1 text-charcoal-800 group-hover:text-emerald-600 transition-colors uppercase cursor-pointer px-1.5 xl:px-2 rounded whitespace-nowrap"
-              >
-                <span><span className="hidden 2xl:inline">CUTTER </span>ACCESSORIES</span>
+                <span>MACHINERY</span>
                 <ChevronDown className="w-2.5 h-2.5 xl:w-3 xl:h-3 group-hover:rotate-180 transition-transform duration-200 shrink-0" />
               </button>
 
               <div className="absolute top-full left-0 w-64 bg-white rounded-xl shadow-xl border border-slate-border py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <Link
-                  to="/products?search=Diamond"
+                  to="/products"
                   className="block px-4 py-2.5 hover:bg-slate-50 transition-colors"
                 >
-                  <span className="font-bold text-navy-900 block text-xs">Diamond PCD Router Cutters</span>
-                  <span className="text-[11px] text-slate-500 font-normal">Nesting compression &amp; mortising</span>
+                  <span className="font-bold text-navy-900 block text-xs">All Machines</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Explore full woodworking lineup</span>
                 </Link>
                 <Link
-                  to="/products?search=Blade"
+                  to="/products?search=CNC+Router"
                   className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
                 >
-                  <span className="font-bold text-navy-900 block text-xs">T.C.T. Circular Saw Blades</span>
-                  <span className="text-[11px] text-slate-500 font-normal">Main &amp; scoring chip-free blades</span>
+                  <span className="font-bold text-navy-900 block text-xs">CNC Router</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Classic &amp; heavy-duty nesting routers</span>
                 </Link>
                 <Link
-                  to="/products?search=Spiral"
+                  to="/products?search=Surface+Planer"
                   className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
                 >
-                  <span className="font-bold text-navy-900 block text-xs">Spiral Helical Cutterheads</span>
-                  <span className="text-[11px] text-slate-500 font-normal">Carbide four-side indexable inserts</span>
+                  <span className="font-bold text-navy-900 block text-xs">Surface Planer</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Helical spiral silent jointers</span>
                 </Link>
                 <Link
-                  to="/products?search=Parts"
+                  to="/products?search=Thickness+Planer"
                   className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
                 >
-                  <span className="font-bold text-navy-900 block text-xs">Genuine Factory Spare Parts</span>
-                  <span className="text-[11px] text-slate-500 font-normal">Vacuum pods, solenoids &amp; motors</span>
+                  <span className="font-bold text-navy-900 block text-xs">Thickness Planer</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Digital elevation thicknessers</span>
+                </Link>
+                <Link
+                  to="/products?search=Spindle+Shaper"
+                  className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
+                >
+                  <span className="font-bold text-navy-900 block text-xs">Spindle Shaper</span>
+                  <span className="text-[11px] text-slate-500 font-normal">High-speed tilting moulders</span>
+                </Link>
+                <Link
+                  to="/products?search=Circular+Saw"
+                  className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
+                >
+                  <span className="font-bold text-navy-900 block text-xs">Circular Saw</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Sliding table &amp; precision beam saws</span>
                 </Link>
               </div>
             </div>
 
-            {/* 6. CONTACT US */}
-            <NavLink
-              to="/contact"
-              className={({ isActive }) =>
-                `transition-colors py-1.5 px-1.5 xl:px-2 flex items-center whitespace-nowrap rounded ${
-                  isActive ? 'text-emerald-600 font-extrabold' : 'text-charcoal-800 hover:text-emerald-600'
-                }`
-              }
-            >
-              <span className="hidden xl:inline">CONTACT US</span>
-              <span className="xl:hidden">CONTACT</span>
-            </NavLink>
-
-            {/* 7. GALLERY */}
-            <NavLink
-              to="/projects"
-              className={({ isActive }) =>
-                `transition-colors py-1.5 px-1.5 xl:px-2 flex items-center whitespace-nowrap rounded ${
-                  isActive ? 'text-emerald-600 font-extrabold' : 'text-charcoal-800 hover:text-emerald-600'
-                }`
-              }
-            >
-              GALLERY
-            </NavLink>
-
-            {/* 8. WTS FOUNDATION (DROPDOWN) */}
+            {/* 4. ACCESSORIES (DROPDOWN) */}
             <div className="relative group py-1.5">
               <button
                 type="button"
-                onClick={() => navigate('/about')}
-                className="flex items-center gap-0.5 xl:gap-1 text-charcoal-800 group-hover:text-emerald-600 transition-colors uppercase cursor-pointer px-1.5 xl:px-2 rounded whitespace-nowrap"
+                onClick={() => navigate('/products?search=Accessories')}
+                className={`flex items-center gap-0.5 xl:gap-1 transition-colors uppercase cursor-pointer px-1.5 xl:px-2 rounded whitespace-nowrap ${
+                  isAccessories ? 'text-emerald-600 font-extrabold' : 'text-charcoal-800 group-hover:text-emerald-600'
+                }`}
               >
-                <span><span className="hidden 2xl:inline">WTS </span>FOUNDATION</span>
+                <span>ACCESSORIES</span>
                 <ChevronDown className="w-2.5 h-2.5 xl:w-3 xl:h-3 group-hover:rotate-180 transition-transform duration-200 shrink-0" />
               </button>
-              <div className="absolute top-full right-0 w-64 bg-white rounded-xl shadow-xl border border-slate-border py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+
+              <div className="absolute top-full left-0 w-64 bg-white rounded-xl shadow-xl border border-slate-border py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <Link
-                  to="/about"
+                  to="/products?search=Cutter"
                   className="block px-4 py-2.5 hover:bg-slate-50 transition-colors"
                 >
-                  <span className="font-bold text-navy-900 block text-xs">Woodworking Skill Academy</span>
-                  <span className="text-[11px] text-slate-500 font-normal">Operator CAD/CAM certification</span>
+                  <span className="font-bold text-navy-900 block text-xs">Cutter Accessories</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Diamond PCD router bits, blades &amp; inserts</span>
                 </Link>
                 <Link
-                  to="/about"
+                  to="/products?search=Motor"
                   className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
                 >
-                  <span className="font-bold text-navy-900 block text-xs">Factory Safety Protocols</span>
-                  <span className="text-[11px] text-slate-500 font-normal">Machine guarding &amp; dust control</span>
+                  <span className="font-bold text-navy-900 block text-xs">Motor</span>
+                  <span className="text-[11px] text-slate-500 font-normal">AC servo &amp; stepper drive motors</span>
                 </Link>
                 <Link
-                  to="/about"
+                  to="/products?search=Drive"
                   className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
                 >
-                  <span className="font-bold text-navy-900 block text-xs">Green Woodworking CSR</span>
-                  <span className="text-[11px] text-slate-500 font-normal">Eco-friendly sawdust recycling</span>
+                  <span className="font-bold text-navy-900 block text-xs">Drive</span>
+                  <span className="text-[11px] text-slate-500 font-normal">High precision digital servo drives</span>
+                </Link>
+                <Link
+                  to="/products?search=Spindle"
+                  className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
+                >
+                  <span className="font-bold text-navy-900 block text-xs">Spindle</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Air &amp; water-cooled electro-spindles</span>
+                </Link>
+                <Link
+                  to="/products?search=Inverter"
+                  className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
+                >
+                  <span className="font-bold text-navy-900 block text-xs">Inverter</span>
+                  <span className="text-[11px] text-slate-500 font-normal">High frequency VFD variable inverters</span>
+                </Link>
+                <Link
+                  to="/products?search=Remote"
+                  className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
+                >
+                  <span className="font-bold text-navy-900 block text-xs">Remote</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Wireless MPG &amp; DSP hand controllers</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* 5. DISPLAY CENTER (DROPDOWN) */}
+            <div className="relative group py-1.5">
+              <button
+                type="button"
+                onClick={() => navigate('/display-center')}
+                className={`flex items-center gap-0.5 xl:gap-1 transition-colors uppercase cursor-pointer px-1.5 xl:px-2 rounded whitespace-nowrap ${
+                  isDisplay ? 'text-emerald-600 font-extrabold' : 'text-charcoal-800 group-hover:text-emerald-600'
+                }`}
+              >
+                <span><span className="hidden xl:inline">DISPLAY </span>CENTER</span>
+                <ChevronDown className="w-2.5 h-2.5 xl:w-3 xl:h-3 group-hover:rotate-180 transition-transform duration-200 shrink-0" />
+              </button>
+
+              <div className="absolute top-full left-0 w-64 bg-white rounded-xl shadow-xl border border-slate-border py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <Link
+                  to="/display-center"
+                  className="block px-4 py-2.5 hover:bg-slate-50 transition-colors"
+                >
+                  <span className="font-bold text-navy-900 block text-xs">Showroom</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Experience machinery live demos in Keraniganj</span>
+                </Link>
+                <Link
+                  to="/display-center#factory-visit"
+                  className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
+                >
+                  <span className="font-bold text-navy-900 block text-xs">Factory Visit</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Book test cut session with your board samples</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* 6. GALLERY (DROPDOWN) */}
+            <div className="relative group py-1.5">
+              <button
+                type="button"
+                onClick={() => navigate('/projects')}
+                className={`flex items-center gap-0.5 xl:gap-1 transition-colors uppercase cursor-pointer px-1.5 xl:px-2 rounded whitespace-nowrap ${
+                  isGallery ? 'text-emerald-600 font-extrabold' : 'text-charcoal-800 group-hover:text-emerald-600'
+                }`}
+              >
+                <span>GALLERY</span>
+                <ChevronDown className="w-2.5 h-2.5 xl:w-3 xl:h-3 group-hover:rotate-180 transition-transform duration-200 shrink-0" />
+              </button>
+
+              <div className="absolute top-full left-0 w-64 bg-white rounded-xl shadow-xl border border-slate-border py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <Link
+                  to="/projects#projects"
+                  className="block px-4 py-2.5 hover:bg-slate-50 transition-colors"
+                >
+                  <span className="font-bold text-navy-900 block text-xs">Machine Gallery</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Industrial equipment in action</span>
+                </Link>
+                <Link
+                  to="/projects#projects"
+                  className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
+                >
+                  <span className="font-bold text-navy-900 block text-xs">Project Gallery</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Turnkey automated factory installations</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* 7. CONTACT US (DROPDOWN) */}
+            <div className="relative group py-1.5">
+              <button
+                type="button"
+                onClick={() => navigate('/contact')}
+                className={`flex items-center gap-0.5 xl:gap-1 transition-colors uppercase cursor-pointer px-1.5 xl:px-2 rounded whitespace-nowrap ${
+                  isContact ? 'text-emerald-600 font-extrabold' : 'text-charcoal-800 group-hover:text-emerald-600'
+                }`}
+              >
+                <span><span className="hidden xl:inline">CONTACT </span>US</span>
+                <ChevronDown className="w-2.5 h-2.5 xl:w-3 xl:h-3 group-hover:rotate-180 transition-transform duration-200 shrink-0" />
+              </button>
+
+              <div className="absolute top-full right-0 w-64 bg-white rounded-xl shadow-xl border border-slate-border py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <Link
+                  to="/contact#info"
+                  className="block px-4 py-2.5 hover:bg-slate-50 transition-colors"
+                >
+                  <span className="font-bold text-navy-900 block text-xs">Contact Information</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Hotline, email &amp; inquiry messaging</span>
+                </Link>
+                <Link
+                  to="/contact#locations"
+                  className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
+                >
+                  <span className="font-bold text-navy-900 block text-xs">Location</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Head office, display center &amp; warehouse</span>
                 </Link>
               </div>
             </div>
@@ -770,26 +722,21 @@ export const Header: React.FC = () => {
             <Link
               to="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2.5 rounded-md text-emerald-600 font-extrabold hover:bg-slate-50"
+              className={`block px-3 py-2.5 rounded-md ${
+                isHome ? 'text-emerald-600 font-extrabold bg-emerald-50/60' : 'text-charcoal-800 hover:bg-slate-50'
+              }`}
             >
               HOME
             </Link>
 
-            {/* 2. DISPLAY CENTER */}
-            <Link
-              to="/display-center"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2.5 rounded-md text-charcoal-800 hover:bg-slate-50"
-            >
-              DISPLAY CENTER
-            </Link>
-
-            {/* 3. ABOUT US Accordion */}
+            {/* 2. ABOUT US Accordion */}
             <div>
               <button
                 type="button"
                 onClick={() => toggleMobileDropdown('about')}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-md text-charcoal-800 hover:bg-slate-50 text-left font-bold"
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-left font-bold ${
+                  isAbout ? 'text-emerald-600' : 'text-charcoal-800 hover:bg-slate-50'
+                }`}
               >
                 <span>ABOUT US</span>
                 <ChevronDown className={`w-4 h-4 transition-transform ${mobileOpenDropdown === 'about' ? 'rotate-180' : ''}`} />
@@ -797,175 +744,241 @@ export const Header: React.FC = () => {
               {mobileOpenDropdown === 'about' && (
                 <div className="pl-6 space-y-1 py-1 font-normal normal-case text-xs">
                   <Link
-                    to="/about"
+                    to="/about#profile"
                     onClick={() => setMobileMenuOpen(false)}
                     className="block py-1.5 text-slate-600 hover:text-industrial-orange"
                   >
-                    Company Overview &amp; Heritage
+                    Company Profile
                   </Link>
                   <Link
-                    to="/services"
+                    to="/about#team"
                     onClick={() => setMobileMenuOpen(false)}
                     className="block py-1.5 text-slate-600 hover:text-industrial-orange"
                   >
-                    Turnkey Engineering &amp; Factory Planning
+                    Our Team
                   </Link>
                   <Link
-                    to="/services"
+                    to="/about#mission"
                     onClick={() => setMobileMenuOpen(false)}
                     className="block py-1.5 text-slate-600 hover:text-industrial-orange"
                   >
-                    Maintenance &amp; Spare Parts
+                    Our Mission
                   </Link>
                 </div>
               )}
             </div>
 
-            {/* 4. ALL MACHINE Accordion */}
+            {/* 3. MACHINERY Accordion */}
             <div>
               <button
                 type="button"
-                onClick={() => toggleMobileDropdown('machine')}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-md text-charcoal-800 hover:bg-slate-50 text-left font-bold"
+                onClick={() => toggleMobileDropdown('machinery')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-left font-bold ${
+                  isMachinery ? 'text-emerald-600' : 'text-charcoal-800 hover:bg-slate-50'
+                }`}
               >
-                <span>ALL MACHINE</span>
-                <ChevronDown className={`w-4 h-4 transition-transform ${mobileOpenDropdown === 'machine' ? 'rotate-180' : ''}`} />
+                <span>MACHINERY</span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${mobileOpenDropdown === 'machinery' ? 'rotate-180' : ''}`} />
               </button>
-              {mobileOpenDropdown === 'machine' && (
+              {mobileOpenDropdown === 'machinery' && (
                 <div className="pl-6 space-y-1 py-1 font-normal normal-case text-xs">
-                  <Link
-                    to="/products?category=cnc-router-machine"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block py-1.5 text-slate-600 hover:text-industrial-orange font-semibold"
-                  >
-                    CNC Router Machines (Classic &amp; Racer Pro)
-                  </Link>
-                  <Link
-                    to="/products?category=surface-planer"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
-                  >
-                    Surface Planers (Spiral Jointers)
-                  </Link>
-                  <Link
-                    to="/products?category=thickness-planer"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
-                  >
-                    Thickness Planers
-                  </Link>
-                  <Link
-                    to="/products?category=spindle-shaper-moulder"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
-                  >
-                    Spindle Shapers &amp; Moulders
-                  </Link>
-                  <Link
-                    to="/products?category=circular-saw"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
-                  >
-                    Sliding Table Circular Saws
-                  </Link>
-                  <Link
-                    to="/products?category=edge-banding-machines"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
-                  >
-                    Automatic Edgebanders (PUR/EVA)
-                  </Link>
                   <Link
                     to="/products"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block py-1.5 text-industrial-orange font-bold"
+                    className="block py-1.5 text-slate-600 hover:text-industrial-orange font-semibold"
                   >
-                    View Complete 2026 Catalog →
+                    All Machines
+                  </Link>
+                  <Link
+                    to="/products?search=CNC+Router"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
+                  >
+                    CNC Router
+                  </Link>
+                  <Link
+                    to="/products?search=Surface+Planer"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
+                  >
+                    Surface Planer
+                  </Link>
+                  <Link
+                    to="/products?search=Thickness+Planer"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
+                  >
+                    Thickness Planer
+                  </Link>
+                  <Link
+                    to="/products?search=Spindle+Shaper"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
+                  >
+                    Spindle Shaper
+                  </Link>
+                  <Link
+                    to="/products?search=Circular+Saw"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
+                  >
+                    Circular Saw
                   </Link>
                 </div>
               )}
             </div>
 
-            {/* 5. CUTTER ACCESSORIES Accordion */}
+            {/* 4. ACCESSORIES Accordion */}
             <div>
               <button
                 type="button"
-                onClick={() => toggleMobileDropdown('cutters')}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-md text-charcoal-800 hover:bg-slate-50 text-left font-bold"
+                onClick={() => toggleMobileDropdown('accessories')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-left font-bold ${
+                  isAccessories ? 'text-emerald-600' : 'text-charcoal-800 hover:bg-slate-50'
+                }`}
               >
-                <span>CUTTER ACCESSORIES</span>
-                <ChevronDown className={`w-4 h-4 transition-transform ${mobileOpenDropdown === 'cutters' ? 'rotate-180' : ''}`} />
+                <span>ACCESSORIES</span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${mobileOpenDropdown === 'accessories' ? 'rotate-180' : ''}`} />
               </button>
-              {mobileOpenDropdown === 'cutters' && (
+              {mobileOpenDropdown === 'accessories' && (
                 <div className="pl-6 space-y-1 py-1 font-normal normal-case text-xs">
                   <Link
                     to="/products?search=Cutter"
                     onClick={() => setMobileMenuOpen(false)}
                     className="block py-1.5 text-slate-600 hover:text-industrial-orange"
                   >
-                    Diamond PCD CNC Cutters
+                    Cutter Accessories
                   </Link>
                   <Link
-                    to="/products?search=Blade"
+                    to="/products?search=Motor"
                     onClick={() => setMobileMenuOpen(false)}
                     className="block py-1.5 text-slate-600 hover:text-industrial-orange"
                   >
-                    T.C.T. Saw Blades
+                    Motor
                   </Link>
                   <Link
-                    to="/products?search=Spiral"
+                    to="/products?search=Drive"
                     onClick={() => setMobileMenuOpen(false)}
                     className="block py-1.5 text-slate-600 hover:text-industrial-orange"
                   >
-                    Spiral Planer Inserts
+                    Drive
+                  </Link>
+                  <Link
+                    to="/products?search=Spindle"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
+                  >
+                    Spindle
+                  </Link>
+                  <Link
+                    to="/products?search=Inverter"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
+                  >
+                    Inverter
+                  </Link>
+                  <Link
+                    to="/products?search=Remote"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
+                  >
+                    Remote
                   </Link>
                 </div>
               )}
             </div>
 
-            {/* 6. CONTACT US */}
-            <Link
-              to="/contact"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2.5 rounded-md text-charcoal-800 hover:bg-slate-50"
-            >
-              CONTACT US
-            </Link>
-
-            {/* 7. GALLERY */}
-            <Link
-              to="/projects"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2.5 rounded-md text-charcoal-800 hover:bg-slate-50"
-            >
-              GALLERY
-            </Link>
-
-            {/* 8. WTS FOUNDATION Accordion */}
+            {/* 5. DISPLAY CENTER Accordion */}
             <div>
               <button
                 type="button"
-                onClick={() => toggleMobileDropdown('foundation')}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-md text-charcoal-800 hover:bg-slate-50 text-left font-bold"
+                onClick={() => toggleMobileDropdown('display')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-left font-bold ${
+                  isDisplay ? 'text-emerald-600' : 'text-charcoal-800 hover:bg-slate-50'
+                }`}
               >
-                <span>WTS FOUNDATION</span>
-                <ChevronDown className={`w-4 h-4 transition-transform ${mobileOpenDropdown === 'foundation' ? 'rotate-180' : ''}`} />
+                <span>DISPLAY CENTER</span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${mobileOpenDropdown === 'display' ? 'rotate-180' : ''}`} />
               </button>
-              {mobileOpenDropdown === 'foundation' && (
+              {mobileOpenDropdown === 'display' && (
                 <div className="pl-6 space-y-1 py-1 font-normal normal-case text-xs">
                   <Link
-                    to="/about"
+                    to="/display-center"
                     onClick={() => setMobileMenuOpen(false)}
                     className="block py-1.5 text-slate-600 hover:text-industrial-orange"
                   >
-                    Operator CAD/CAM Academy
+                    Showroom
                   </Link>
                   <Link
-                    to="/about"
+                    to="/display-center#factory-visit"
                     onClick={() => setMobileMenuOpen(false)}
                     className="block py-1.5 text-slate-600 hover:text-industrial-orange"
                   >
-                    Safety Standards &amp; Dust Control
+                    Factory Visit
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* 6. GALLERY Accordion */}
+            <div>
+              <button
+                type="button"
+                onClick={() => toggleMobileDropdown('gallery')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-left font-bold ${
+                  isGallery ? 'text-emerald-600' : 'text-charcoal-800 hover:bg-slate-50'
+                }`}
+              >
+                <span>GALLERY</span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${mobileOpenDropdown === 'gallery' ? 'rotate-180' : ''}`} />
+              </button>
+              {mobileOpenDropdown === 'gallery' && (
+                <div className="pl-6 space-y-1 py-1 font-normal normal-case text-xs">
+                  <Link
+                    to="/projects#projects"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
+                  >
+                    Machine Gallery
+                  </Link>
+                  <Link
+                    to="/projects#projects"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
+                  >
+                    Project Gallery
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* 7. CONTACT US Accordion */}
+            <div>
+              <button
+                type="button"
+                onClick={() => toggleMobileDropdown('contact')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-left font-bold ${
+                  isContact ? 'text-emerald-600' : 'text-charcoal-800 hover:bg-slate-50'
+                }`}
+              >
+                <span>CONTACT US</span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${mobileOpenDropdown === 'contact' ? 'rotate-180' : ''}`} />
+              </button>
+              {mobileOpenDropdown === 'contact' && (
+                <div className="pl-6 space-y-1 py-1 font-normal normal-case text-xs">
+                  <Link
+                    to="/contact#info"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
+                  >
+                    Contact Information
+                  </Link>
+                  <Link
+                    to="/contact#locations"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
+                  >
+                    Location
                   </Link>
                 </div>
               )}

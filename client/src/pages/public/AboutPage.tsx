@@ -22,7 +22,7 @@ export const AboutPage: React.FC = () => {
     <div className="bg-surface-offwhite min-h-screen py-10 sm:py-16 pb-24 space-y-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         {/* 1. HERO BANNER: ABOUT US / ABOUT UNIQUE WOOD SOLUTION */}
-        <div className="text-center max-w-4xl mx-auto space-y-5">
+        <div id="profile" className="text-center max-w-4xl mx-auto space-y-5 scroll-mt-24">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 border border-orange-200/80 text-industrial-orange text-xs font-bold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5" />
             <span>About Us &bull; Unique Wood Solution</span>
@@ -102,7 +102,7 @@ export const AboutPage: React.FC = () => {
         </div>
 
         {/* 3. THREE CORE PILLARS GRID */}
-        <div className="space-y-6">
+        <div id="mission" className="space-y-6 scroll-mt-24">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <span className="text-xs font-bold uppercase tracking-widest text-industrial-orange">
               Our Core Principles
@@ -114,7 +114,7 @@ export const AboutPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Pillar 1: Meet Our Team */}
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-7 sm:p-8 shadow-xs hover:border-industrial-orange/60 hover:shadow-lg transition-all duration-300 space-y-4 group">
+            <div id="team" className="bg-white rounded-2xl border border-slate-200/80 p-7 sm:p-8 shadow-xs hover:border-industrial-orange/60 hover:shadow-lg transition-all duration-300 space-y-4 group scroll-mt-28">
               <div className="w-12 h-12 rounded-xl bg-orange-50 group-hover:bg-industrial-orange text-industrial-orange group-hover:text-white flex items-center justify-center transition-colors">
                 <Users className="w-6 h-6" />
               </div>

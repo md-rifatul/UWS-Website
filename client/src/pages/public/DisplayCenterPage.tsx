@@ -192,7 +192,7 @@ export const DisplayCenterPage: React.FC = () => {
 
           {/* Right Column: Book a Live Demonstration Form */}
           <div className="lg:col-span-5">
-            <div className="bg-white rounded-2xl border border-slate-border p-8 shadow-lg space-y-6 sticky top-24">
+            <div id="factory-visit" className="bg-white rounded-2xl border border-slate-border p-8 shadow-lg space-y-6 sticky top-24 scroll-mt-28">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-industrial-orange block">
                   Book A Private Session
