@@ -29,6 +29,7 @@ export const Header: React.FC = () => {
   const [mobileOpenDropdown, setMobileOpenDropdown] = useState<string | null>(null);
   const [headerSearch, setHeaderSearch] = useState('');
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [desktopSearchOpen, setDesktopSearchOpen] = useState(false);
   const [locationModalOpen, setLocationModalOpen] = useState(false);
   const locationCardRef = useRef<HTMLDivElement>(null);
 
@@ -58,6 +59,7 @@ export const Header: React.FC = () => {
       dispatch(setSearchQuery(headerSearch.trim()));
       navigate('/products');
       setMobileSearchOpen(false);
+      setDesktopSearchOpen(false);
     }
   };
 
@@ -84,13 +86,13 @@ export const Header: React.FC = () => {
       <div className="max-w-[1380px] w-full mx-auto px-4 sm:px-6 lg:px-6 xl:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4 xl:gap-6 w-full">
           {/* Left: Brand Logo (Dynamic from Admin Settings) */}
-          <div className="flex items-center justify-start shrink-0 mr-4 xl:mr-8">
+          <div className="flex items-center justify-start shrink-0 mr-3 xl:mr-6">
             <Link to="/" className="flex items-center gap-2 group">
               {siteSettings.logo_url ? (
                 <img
                   src={siteSettings.logo_url}
                   alt={siteSettings.logo_title || 'WoodTech Solutions'}
-                  className="h-9 sm:h-10 w-auto max-w-[170px] object-contain shrink-0"
+                  className="h-8 sm:h-9 xl:h-10 w-auto max-w-[130px] xl:max-w-[170px] object-contain shrink-0"
                 />
               ) : (
                 <>
@@ -115,13 +117,16 @@ export const Header: React.FC = () => {
           </div>
 
           {/* Center Column: Clean responsive navigation links */}
-          <nav className="hidden lg:flex items-center justify-center gap-0.5 xl:gap-1.5 2xl:gap-2.5 text-[10.5px] xl:text-[11.5px] 2xl:text-xs font-bold uppercase tracking-tight xl:tracking-wide shrink min-w-0 mr-3 xl:mr-6">
+          <nav
+            style={{ justifyContent: 'safe center' }}
+            className="hidden lg:flex items-center justify-center gap-1 xl:gap-2 2xl:gap-3 text-[11px] xl:text-xs font-bold uppercase tracking-tight shrink-0 mx-auto px-1"
+          >
             {/* 1. HOME */}
             <NavLink
               to="/"
               end
               className={({ isActive }) =>
-                `transition-colors py-1.5 px-1 xl:px-1.5 flex items-center rounded ${
+                `transition-colors py-1.5 px-1.5 xl:px-2 flex items-center rounded ${
                   isActive ? 'text-emerald-600 font-extrabold' : 'text-charcoal-800 hover:text-emerald-600'
                 }`
               }
@@ -133,12 +138,12 @@ export const Header: React.FC = () => {
             <NavLink
               to="/display-center"
               className={({ isActive }) =>
-                `transition-colors py-1.5 px-1 xl:px-1.5 flex items-center whitespace-nowrap rounded ${
+                `transition-colors py-1.5 px-1.5 xl:px-2 flex items-center whitespace-nowrap rounded ${
                   isActive ? 'text-emerald-600 font-extrabold' : 'text-charcoal-800 hover:text-emerald-600'
                 }`
               }
             >
-              DISPLAY CENTER
+              <span className="hidden xl:inline">DISPLAY </span>CENTER
             </NavLink>
 
             {/* 3. ABOUT US (DROPDOWN) */}
@@ -146,12 +151,12 @@ export const Header: React.FC = () => {
               <button
                 type="button"
                 onClick={() => navigate('/about')}
-                className={`flex items-center gap-0.5 xl:gap-1 transition-colors uppercase cursor-pointer px-1 xl:px-1.5 rounded whitespace-nowrap ${
+                className={`flex items-center gap-0.5 xl:gap-1 transition-colors uppercase cursor-pointer px-1.5 xl:px-2 rounded whitespace-nowrap ${
                   isAbout ? 'text-emerald-600 font-extrabold' : 'text-charcoal-800 group-hover:text-emerald-600'
                 }`}
               >
                 <span>ABOUT US</span>
-                <ChevronDown className="w-3 h-3 group-hover:rotate-180 transition-transform duration-200 shrink-0 opacity-70" />
+                <ChevronDown className="w-2.5 h-2.5 xl:w-3 xl:h-3 group-hover:rotate-180 transition-transform duration-200 shrink-0 opacity-70" />
               </button>
 
               {/* Flyout Menu */}
@@ -192,11 +197,11 @@ export const Header: React.FC = () => {
               <button
                 type="button"
                 onClick={() => navigate('/products')}
-                className={`flex items-center gap-0.5 xl:gap-1 transition-colors uppercase cursor-pointer px-1 xl:px-1.5 rounded whitespace-nowrap ${
+                className={`flex items-center gap-0.5 xl:gap-1 transition-colors uppercase cursor-pointer px-1.5 xl:px-2 rounded whitespace-nowrap ${
                   isMachine ? 'text-emerald-600 font-extrabold' : 'text-charcoal-800 group-hover:text-emerald-600'
                 }`}
               >
-                <span>ALL MACHINE</span>
+                <span><span className="hidden xl:inline">ALL </span>MACHINES</span>
                 <ChevronDown className="w-2.5 h-2.5 xl:w-3 xl:h-3 group-hover:rotate-180 transition-transform duration-200 shrink-0" />
               </button>
 
@@ -343,7 +348,7 @@ export const Header: React.FC = () => {
               <button
                 type="button"
                 onClick={() => navigate('/products?search=Cutter')}
-                className="flex items-center gap-0.5 xl:gap-1 text-charcoal-800 group-hover:text-emerald-600 transition-colors uppercase cursor-pointer px-1 xl:px-1.5 rounded whitespace-nowrap"
+                className="flex items-center gap-0.5 xl:gap-1 text-charcoal-800 group-hover:text-emerald-600 transition-colors uppercase cursor-pointer px-1.5 xl:px-2 rounded whitespace-nowrap"
               >
                 <span><span className="hidden 2xl:inline">CUTTER </span>ACCESSORIES</span>
                 <ChevronDown className="w-2.5 h-2.5 xl:w-3 xl:h-3 group-hover:rotate-180 transition-transform duration-200 shrink-0" />
@@ -385,19 +390,20 @@ export const Header: React.FC = () => {
             <NavLink
               to="/contact"
               className={({ isActive }) =>
-                `transition-colors py-1.5 px-1 xl:px-1.5 flex items-center whitespace-nowrap rounded ${
+                `transition-colors py-1.5 px-1.5 xl:px-2 flex items-center whitespace-nowrap rounded ${
                   isActive ? 'text-emerald-600 font-extrabold' : 'text-charcoal-800 hover:text-emerald-600'
                 }`
               }
             >
-              CONTACT US
+              <span className="hidden xl:inline">CONTACT US</span>
+              <span className="xl:hidden">CONTACT</span>
             </NavLink>
 
             {/* 7. GALLERY */}
             <NavLink
               to="/projects"
               className={({ isActive }) =>
-                `transition-colors py-1.5 px-1 xl:px-1.5 flex items-center whitespace-nowrap rounded ${
+                `transition-colors py-1.5 px-1.5 xl:px-2 flex items-center whitespace-nowrap rounded ${
                   isActive ? 'text-emerald-600 font-extrabold' : 'text-charcoal-800 hover:text-emerald-600'
                 }`
               }
@@ -410,7 +416,7 @@ export const Header: React.FC = () => {
               <button
                 type="button"
                 onClick={() => navigate('/about')}
-                className="flex items-center gap-0.5 xl:gap-1 text-charcoal-800 group-hover:text-emerald-600 transition-colors uppercase cursor-pointer px-1 xl:px-1.5 rounded whitespace-nowrap"
+                className="flex items-center gap-0.5 xl:gap-1 text-charcoal-800 group-hover:text-emerald-600 transition-colors uppercase cursor-pointer px-1.5 xl:px-2 rounded whitespace-nowrap"
               >
                 <span><span className="hidden 2xl:inline">WTS </span>FOUNDATION</span>
                 <ChevronDown className="w-2.5 h-2.5 xl:w-3 xl:h-3 group-hover:rotate-180 transition-transform duration-200 shrink-0" />
@@ -443,8 +449,23 @@ export const Header: React.FC = () => {
 
           {/* Action Tools: Minimal Search, Compare, RFQ Basket, Auth, CTA */}
           <div className="hidden lg:flex items-center justify-end gap-1.5 xl:gap-2.5 shrink-0 ml-auto">
-            {/* Minimal & Beautiful Search Box */}
-            <form onSubmit={handleHeaderSearch} className="relative flex items-center group shrink-0">
+            {/* On lg (1024px - 1279px): Compact Search Icon Button */}
+            <button
+              type="button"
+              onClick={() => setDesktopSearchOpen(!desktopSearchOpen)}
+              className={`p-1.5 rounded-md transition-colors xl:hidden cursor-pointer ${
+                desktopSearchOpen
+                  ? 'bg-industrial-orange/15 text-industrial-orange'
+                  : 'text-charcoal-700 hover:text-navy-900 hover:bg-slate-100'
+              }`}
+              title="Search Machinery"
+              aria-label="Search"
+            >
+              <Search className="w-4 h-4 text-industrial-orange" />
+            </button>
+
+            {/* On xl (1280px+): Minimal Inline Search Box */}
+            <form onSubmit={handleHeaderSearch} className="relative hidden xl:flex items-center group shrink-0">
               <div className="relative flex items-center">
                 <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 pointer-events-none group-focus-within:text-industrial-orange transition-colors" />
                 <input
@@ -452,7 +473,7 @@ export const Header: React.FC = () => {
                   value={headerSearch}
                   onChange={(e) => setHeaderSearch(e.target.value)}
                   placeholder="Search..."
-                  className="w-24 sm:w-28 xl:w-32 pl-8 pr-6 py-1.5 text-xs text-navy-950 placeholder:text-slate-400 bg-slate-100 hover:bg-slate-50 focus:bg-white border border-slate-200 focus:border-industrial-orange rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-industrial-orange/20 shadow-2xs font-medium"
+                  className="w-28 2xl:w-36 pl-8 pr-6 py-1.5 text-xs text-navy-950 placeholder:text-slate-400 bg-slate-100 hover:bg-slate-50 focus:bg-white border border-slate-200 focus:border-industrial-orange rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-industrial-orange/20 shadow-2xs font-medium"
                 />
                 {headerSearch ? (
                   <button
@@ -464,7 +485,7 @@ export const Header: React.FC = () => {
                     <X className="w-3 h-3" />
                   </button>
                 ) : (
-                  <span className="hidden xl:inline-block absolute right-2 text-[9px] font-mono text-slate-400 bg-white border border-slate-200 px-1 py-0.2 rounded shadow-2xs pointer-events-none">
+                  <span className="hidden 2xl:inline-block absolute right-2 text-[9px] font-mono text-slate-400 bg-white border border-slate-200 px-1 py-0.2 rounded shadow-2xs pointer-events-none">
                     ↵
                   </span>
                 )}
@@ -651,6 +672,42 @@ export const Header: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Desktop Compact Search Dropdown (for 1024px - 1279px screens) */}
+      {desktopSearchOpen && (
+        <div className="hidden lg:block xl:hidden px-6 py-2.5 bg-slate-50 border-t border-slate-200 animate-in fade-in slide-in-from-top-1 duration-150 shadow-inner">
+          <div className="max-w-xl mx-auto">
+            <form onSubmit={handleHeaderSearch} className="relative flex items-center">
+              <Search className="w-4 h-4 text-industrial-orange absolute left-3.5 pointer-events-none" />
+              <input
+                type="text"
+                autoFocus
+                value={headerSearch}
+                onChange={(e) => setHeaderSearch(e.target.value)}
+                placeholder="Search machinery, models, SKUs..."
+                className="w-full pl-10 pr-9 py-2 text-xs text-navy-950 placeholder-slate-400 bg-white border border-slate-300 rounded-full focus:outline-none focus:border-industrial-orange focus:ring-2 focus:ring-industrial-orange/15 font-medium shadow-2xs"
+              />
+              {headerSearch ? (
+                <button
+                  type="button"
+                  onClick={() => setHeaderSearch('')}
+                  className="absolute right-3 p-0.5 text-slate-400 hover:text-navy-900 rounded-full cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setDesktopSearchOpen(false)}
+                  className="absolute right-3 px-1.5 py-0.5 text-[10px] font-medium text-slate-400 hover:text-slate-600 rounded bg-slate-100 cursor-pointer"
+                >
+                  ESC
+                </button>
+              )}
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Mobile Expandable Search Bar */}
       {mobileSearchOpen && (
