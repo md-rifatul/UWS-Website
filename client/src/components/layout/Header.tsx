@@ -82,9 +82,9 @@ export const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-2xs w-full">
       <div className="max-w-[1380px] w-full mx-auto px-4 sm:px-6 lg:px-6 xl:px-8">
-        <div className="flex lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center justify-between h-16 sm:h-20 gap-2 xl:gap-4 w-full">
+        <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4 xl:gap-6 w-full">
           {/* Left: Brand Logo (Dynamic from Admin Settings) */}
-          <div className="flex items-center justify-start shrink-0 min-w-0">
+          <div className="flex items-center justify-start shrink-0">
             <Link to="/" className="flex items-center gap-2 group">
               {siteSettings.logo_url ? (
                 <img
@@ -114,8 +114,8 @@ export const Header: React.FC = () => {
             </Link>
           </div>
 
-          {/* Center Column: EXACTLY in the middle with equal space on left and right */}
-          <nav className="hidden lg:flex items-center justify-center gap-0.5 lg:gap-1 xl:gap-2.5 text-[10px] xl:text-[11.5px] 2xl:text-xs font-bold uppercase tracking-tight xl:tracking-wide shrink-0 mx-auto">
+          {/* Center Column: Clean responsive navigation links */}
+          <nav className="hidden lg:flex items-center justify-center gap-0.5 xl:gap-1 2xl:gap-2 text-[10.5px] xl:text-[11.5px] 2xl:text-xs font-bold uppercase tracking-tight xl:tracking-wide shrink min-w-0">
             {/* 1. HOME */}
             <NavLink
               to="/"
@@ -442,7 +442,7 @@ export const Header: React.FC = () => {
           </nav>
 
           {/* Action Tools: Minimal Search, Compare, RFQ Basket, Auth, CTA */}
-          <div className="hidden lg:flex items-center justify-end gap-1.5 xl:gap-2 shrink-0 min-w-0">
+          <div className="hidden lg:flex items-center justify-end gap-1.5 xl:gap-2.5 shrink-0">
             {/* Minimal & Beautiful Search Box */}
             <form onSubmit={handleHeaderSearch} className="relative flex items-center group shrink-0">
               <div className="relative flex items-center">
@@ -452,19 +452,19 @@ export const Header: React.FC = () => {
                   value={headerSearch}
                   onChange={(e) => setHeaderSearch(e.target.value)}
                   placeholder="Search..."
-                  className="w-28 lg:w-32 xl:w-36 pl-9 pr-7 py-1.5 text-xs text-navy-950 placeholder:text-slate-400 bg-slate-100/90 hover:bg-slate-100 focus:bg-white border border-slate-200 focus:border-industrial-orange rounded-full transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-industrial-orange/30 shadow-2xs font-medium"
+                  className="w-24 xl:w-32 focus:w-36 xl:focus:w-44 pl-8 pr-6 py-1.5 text-xs text-navy-950 placeholder:text-slate-400 bg-slate-100 hover:bg-slate-50 focus:bg-white border border-slate-200 focus:border-industrial-orange rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-industrial-orange/20 shadow-2xs font-medium"
                 />
                 {headerSearch ? (
                   <button
                     type="button"
                     onClick={() => setHeaderSearch('')}
-                    className="absolute right-2.5 p-0.5 text-slate-400 hover:text-navy-900 rounded-full cursor-pointer"
+                    className="absolute right-2 p-0.5 text-slate-400 hover:text-navy-900 rounded-full cursor-pointer"
                     title="Clear search"
                   >
                     <X className="w-3 h-3" />
                   </button>
                 ) : (
-                  <span className="hidden xl:inline-block absolute right-2.5 text-[9px] font-mono text-slate-400 bg-white border border-slate-200 px-1 py-0.2 rounded shadow-2xs pointer-events-none">
+                  <span className="hidden xl:inline-block absolute right-2 text-[9px] font-mono text-slate-400 bg-white border border-slate-200 px-1 py-0.2 rounded shadow-2xs pointer-events-none">
                     ↵
                   </span>
                 )}
