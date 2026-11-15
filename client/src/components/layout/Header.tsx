@@ -84,7 +84,7 @@ export const Header: React.FC = () => {
       <div className="max-w-[1380px] w-full mx-auto px-4 sm:px-6 lg:px-6 xl:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4 xl:gap-6 w-full">
           {/* Left: Brand Logo (Dynamic from Admin Settings) */}
-          <div className="flex items-center justify-start shrink-0">
+          <div className="flex items-center justify-start shrink-0 mr-4 xl:mr-8">
             <Link to="/" className="flex items-center gap-2 group">
               {siteSettings.logo_url ? (
                 <img
@@ -115,7 +115,7 @@ export const Header: React.FC = () => {
           </div>
 
           {/* Center Column: Clean responsive navigation links */}
-          <nav className="hidden lg:flex items-center justify-center gap-0.5 xl:gap-1 2xl:gap-2 text-[10.5px] xl:text-[11.5px] 2xl:text-xs font-bold uppercase tracking-tight xl:tracking-wide shrink min-w-0">
+          <nav className="hidden lg:flex items-center justify-center gap-0.5 xl:gap-1.5 2xl:gap-2.5 text-[10.5px] xl:text-[11.5px] 2xl:text-xs font-bold uppercase tracking-tight xl:tracking-wide shrink min-w-0 mr-3 xl:mr-6">
             {/* 1. HOME */}
             <NavLink
               to="/"
@@ -345,7 +345,7 @@ export const Header: React.FC = () => {
                 onClick={() => navigate('/products?search=Cutter')}
                 className="flex items-center gap-0.5 xl:gap-1 text-charcoal-800 group-hover:text-emerald-600 transition-colors uppercase cursor-pointer px-1 xl:px-1.5 rounded whitespace-nowrap"
               >
-                <span>CUTTER ACCESSORIES</span>
+                <span><span className="hidden 2xl:inline">CUTTER </span>ACCESSORIES</span>
                 <ChevronDown className="w-2.5 h-2.5 xl:w-3 xl:h-3 group-hover:rotate-180 transition-transform duration-200 shrink-0" />
               </button>
 
@@ -412,7 +412,7 @@ export const Header: React.FC = () => {
                 onClick={() => navigate('/about')}
                 className="flex items-center gap-0.5 xl:gap-1 text-charcoal-800 group-hover:text-emerald-600 transition-colors uppercase cursor-pointer px-1 xl:px-1.5 rounded whitespace-nowrap"
               >
-                <span>WTS FOUNDATION</span>
+                <span><span className="hidden 2xl:inline">WTS </span>FOUNDATION</span>
                 <ChevronDown className="w-2.5 h-2.5 xl:w-3 xl:h-3 group-hover:rotate-180 transition-transform duration-200 shrink-0" />
               </button>
               <div className="absolute top-full right-0 w-64 bg-white rounded-xl shadow-xl border border-slate-border py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
@@ -442,7 +442,7 @@ export const Header: React.FC = () => {
           </nav>
 
           {/* Action Tools: Minimal Search, Compare, RFQ Basket, Auth, CTA */}
-          <div className="hidden lg:flex items-center justify-end gap-1.5 xl:gap-2.5 shrink-0">
+          <div className="hidden lg:flex items-center justify-end gap-1.5 xl:gap-2.5 shrink-0 ml-auto">
             {/* Minimal & Beautiful Search Box */}
             <form onSubmit={handleHeaderSearch} className="relative flex items-center group shrink-0">
               <div className="relative flex items-center">
@@ -452,7 +452,7 @@ export const Header: React.FC = () => {
                   value={headerSearch}
                   onChange={(e) => setHeaderSearch(e.target.value)}
                   placeholder="Search..."
-                  className="w-24 xl:w-32 focus:w-36 xl:focus:w-44 pl-8 pr-6 py-1.5 text-xs text-navy-950 placeholder:text-slate-400 bg-slate-100 hover:bg-slate-50 focus:bg-white border border-slate-200 focus:border-industrial-orange rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-industrial-orange/20 shadow-2xs font-medium"
+                  className="w-24 sm:w-28 xl:w-32 pl-8 pr-6 py-1.5 text-xs text-navy-950 placeholder:text-slate-400 bg-slate-100 hover:bg-slate-50 focus:bg-white border border-slate-200 focus:border-industrial-orange rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-industrial-orange/20 shadow-2xs font-medium"
                 />
                 {headerSearch ? (
                   <button
