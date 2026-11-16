@@ -66,6 +66,11 @@ export const AdminLayout: React.FC = () => {
               <span>Product Inventory</span>
             </NavLink>
 
+            <NavLink to="/admin/categories" className={navClass}>
+              <Layers className="w-4 h-4" />
+              <span>Category Management</span>
+            </NavLink>
+
             <NavLink to="/admin/rfqs" className={navClass}>
               <FileSpreadsheet className="w-4 h-4" />
               <span>RFQ Management</span>

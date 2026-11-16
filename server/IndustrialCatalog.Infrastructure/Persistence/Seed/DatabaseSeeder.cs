@@ -48,43 +48,13 @@ public static class DatabaseSeeder
             {
                 new()
                 {
-                    Id = Guid.Parse("a1111111-1111-1111-1111-111111111111"),
-                    Name = "Nanxing Machinery",
-                    Slug = "nanxing-machinery",
-                    Country = "China",
-                    LogoUrl = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80",
-                    WebsiteUrl = "https://www.nanxing.com",
-                    Description = "Global pioneer in automated panel processing, computerized beam saws, and edgebanders.",
-                },
-                new()
-                {
-                    Id = Guid.Parse("a2222222-2222-2222-2222-222222222222"),
-                    Name = "KDT Machinery",
-                    Slug = "kdt-machinery",
-                    Country = "China",
-                    LogoUrl = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80",
-                    WebsiteUrl = "https://www.kdtmac.com",
-                    Description = "Leading global provider of CNC drilling solutions, industrial edgebanders, and nesting cells.",
-                },
-                new()
-                {
-                    Id = Guid.Parse("a3333333-3333-3333-3333-333333333333"),
-                    Name = "Homag Group Partner",
-                    Slug = "homag-group",
-                    Country = "Germany",
-                    LogoUrl = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80",
-                    WebsiteUrl = "https://www.homag.com",
-                    Description = "Precision German engineered wood processing machinery and high-end manufacturing lines.",
-                },
-                new()
-                {
                     Id = Guid.Parse("a4444444-4444-4444-4444-444444444444"),
-                    Name = "WoodTech Prime Tech",
-                    Slug = "woodtech-prime",
-                    Country = "Taiwan",
-                    LogoUrl = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80",
-                    WebsiteUrl = "https://woodtechsolutionbd.com",
-                    Description = "Customized heavy-duty industrial machinery engineered for tropical climates and continuous operation.",
+                    Name = "UWS Industrial Tech",
+                    Slug = "uws-industrial-tech",
+                    Country = "Bangladesh",
+                    LogoUrl = "https://res.cloudinary.com/dtg0a6y8x/image/upload/v1/uws-branding/uws_logo.png",
+                    WebsiteUrl = "https://www.uwsbd.com",
+                    Description = "High-precision industrial CNC machinery, motion automation controllers, and turnkey spare parts.",
                 },
             };
 
@@ -96,93 +66,82 @@ public static class DatabaseSeeder
         if (!await context.Categories.AnyAsync())
         {
             var cncCatId = Guid.Parse("c1111111-1111-1111-1111-111111111111");
-            var edgeCatId = Guid.Parse("c2222222-2222-2222-2222-222222222222");
-            var sawCatId = Guid.Parse("c3333333-3333-3333-3333-333333333333");
-            var boringCatId = Guid.Parse("c4444444-4444-4444-4444-444444444444");
-            var sandingCatId = Guid.Parse("c5555555-5555-5555-5555-555555555555");
-            var pressCatId = Guid.Parse("c6666666-6666-6666-6666-666666666666");
-            var dustCatId = Guid.Parse("c7777777-7777-7777-7777-777777777777");
+            var accCatId = Guid.Parse("c2222222-2222-2222-2222-222222222222");
+            var motCatId = Guid.Parse("c3333333-3333-3333-3333-333333333333");
+            var drvCatId = Guid.Parse("c4444444-4444-4444-4444-444444444444");
+            var spnCatId = Guid.Parse("c5555555-5555-5555-5555-555555555555");
+            var invCatId = Guid.Parse("c6666666-6666-6666-6666-666666666666");
+            var rmtCatId = Guid.Parse("c7777777-7777-7777-7777-777777777777");
 
             var categories = new List<Category>
             {
                 new()
                 {
                     Id = cncCatId,
-                    Name = "CNC Machining Centers",
-                    Slug = "cnc-machining-centers",
+                    Name = "CNC ROUTER MACHINE",
+                    Slug = "cnc-router-machine",
                     Description = "High-precision multi-axis CNC routers, nesting machines, and heavy-duty 5-axis machining centers.",
-                    ImageUrl = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80",
+                    ImageUrl = null,
                     DisplayOrder = 1,
                     Attributes = new List<CategoryAttribute>
                     {
                         new() { AttributeKey = "working_area", Label = "Working Area (X x Y)", DataType = AttributeDataType.Text, Unit = "mm", IsFilterable = true, IsRequired = true, DisplayOrder = 1 },
                         new() { AttributeKey = "spindle_power", Label = "Spindle Power", DataType = AttributeDataType.Dropdown, Unit = "kW", OptionsJson = "[\"6.0 kW\",\"9.0 kW\",\"12.0 kW\",\"16.0 kW\"]", IsFilterable = true, IsRequired = true, DisplayOrder = 2 },
-                        new() { AttributeKey = "control_system", Label = "CNC Control System", DataType = AttributeDataType.Dropdown, OptionsJson = "[\"Syntec 6MB (Taiwan)\",\"Siemens 808D\",\"OSAI Open-Control (Italy)\"]", IsFilterable = true, IsRequired = true, DisplayOrder = 3 },
+                        new() { AttributeKey = "control_system", Label = "CNC Control System", DataType = AttributeDataType.Dropdown, OptionsJson = "[\"Syntec 6MB (Taiwan)\",\"Siemens 808D\",\"DSP Handheld\"]", IsFilterable = true, IsRequired = true, DisplayOrder = 3 },
                     }
                 },
                 new()
                 {
-                    Id = edgeCatId,
-                    Name = "Automatic Edge Banding",
-                    Slug = "edge-banding-machines",
-                    Description = "High-speed automatic edgebanders with pre-milling, corner rounding, dual gluing, and buffing units.",
-                    ImageUrl = "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
+                    Id = accCatId,
+                    Name = "ACCESSORIES",
+                    Slug = "accessories",
+                    Description = "Precision CNC collets, tool chuck holders, automatic tool setters, hold-down clamps, and vacuum accessories.",
+                    ImageUrl = null,
                     DisplayOrder = 2,
-                    Attributes = new List<CategoryAttribute>
-                    {
-                        new() { AttributeKey = "feed_speed", Label = "Feed Speed", DataType = AttributeDataType.Text, Unit = "m/min", IsFilterable = true, IsRequired = true, DisplayOrder = 1 },
-                        new() { AttributeKey = "tape_thickness", Label = "Tape Thickness", DataType = AttributeDataType.Text, Unit = "mm", IsFilterable = true, IsRequired = true, DisplayOrder = 2 },
-                        new() { AttributeKey = "glue_system", Label = "Gluing System", DataType = AttributeDataType.Dropdown, OptionsJson = "[\"EVA Standard Pot\",\"PUR & EVA Dual System\",\"Hot Air Zero-Joint\"]", IsFilterable = true, IsRequired = true, DisplayOrder = 3 },
-                    }
                 },
                 new()
                 {
-                    Id = sawCatId,
-                    Name = "Precision Panel Saws",
-                    Slug = "panel-saws",
-                    Description = "Heavy duty computerized beam saws and sliding table saws for chip-free panel cutting.",
-                    ImageUrl = "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=800&q=80",
+                    Id = motCatId,
+                    Name = "MOTOR",
+                    Slug = "motor",
+                    Description = "High torque AC brushless servo motors, hybrid stepper motors, and closed-loop motion drive packages.",
+                    ImageUrl = null,
                     DisplayOrder = 3,
-                    Attributes = new List<CategoryAttribute>
-                    {
-                        new() { AttributeKey = "cutting_length", Label = "Max Cutting Length", DataType = AttributeDataType.Text, Unit = "mm", IsFilterable = true, IsRequired = true, DisplayOrder = 1 },
-                        new() { AttributeKey = "main_saw_power", Label = "Main Saw Motor Power", DataType = AttributeDataType.Dropdown, Unit = "kW", OptionsJson = "[\"5.5 kW\",\"7.5 kW\",\"11.0 kW\",\"15.0 kW\"]", IsFilterable = true, IsRequired = true, DisplayOrder = 2 },
-                    }
                 },
                 new()
                 {
-                    Id = boringCatId,
-                    Name = "CNC Boring & Drilling",
-                    Slug = "cnc-boring-drilling",
-                    Description = "Six-sided high-speed boring machines and multi-spindle drilling lines for modern modular furniture.",
-                    ImageUrl = "https://images.unsplash.com/photo-1581092162384-8987c1d64718?auto=format&fit=crop&w=800&q=80",
+                    Id = drvCatId,
+                    Name = "DRIVE",
+                    Slug = "drive",
+                    Description = "High-performance digital AC servo drives, microstepping motor drivers, and multi-axis motion amplifiers.",
+                    ImageUrl = null,
                     DisplayOrder = 4,
                 },
                 new()
                 {
-                    Id = sandingCatId,
-                    Name = "Sanding & Surface Finishing",
-                    Slug = "sanding-finishing",
-                    Description = "Wide belt calibrating and fine finish sanders, lacquer sanding, and profile brush polishers.",
-                    ImageUrl = "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
+                    Id = spnCatId,
+                    Name = "SPINDLE",
+                    Slug = "spindle",
+                    Description = "Industrial air-cooled and water-cooled high-speed electro-spindles (up to 24,000 RPM) and ATC spindles.",
+                    ImageUrl = null,
                     DisplayOrder = 5,
                 },
                 new()
                 {
-                    Id = pressCatId,
-                    Name = "Hydraulic Cold & Hot Presses",
-                    Slug = "hydraulic-presses",
-                    Description = "Industrial veneer presses, multi-daylight hot presses, and laminating presses for solid wood and MDF.",
-                    ImageUrl = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80",
+                    Id = invCatId,
+                    Name = "INVERTER",
+                    Slug = "inverter",
+                    Description = "Variable frequency drives (VFD) and vector frequency inverters for smooth spindle speed control.",
+                    ImageUrl = null,
                     DisplayOrder = 6,
                 },
                 new()
                 {
-                    Id = dustCatId,
-                    Name = "Dust Extraction Systems",
-                    Slug = "dust-extraction",
-                    Description = "Factory-grade central pulse-jet baghouses and modular cyclone dust extraction units.",
-                    ImageUrl = "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=800&q=80",
+                    Id = rmtCatId,
+                    Name = "REMOTE",
+                    Slug = "remote",
+                    Description = "DSP handheld motion controllers (RichAuto A11/A18), wireless MPG handwheels, and CNC pendants.",
+                    ImageUrl = null,
                     DisplayOrder = 7,
                 },
             };
@@ -195,17 +154,14 @@ public static class DatabaseSeeder
         if (!await context.Products.AnyAsync())
         {
             var cncCatId = Guid.Parse("c1111111-1111-1111-1111-111111111111");
-            var edgeCatId = Guid.Parse("c2222222-2222-2222-2222-222222222222");
-            var sawCatId = Guid.Parse("c3333333-3333-3333-3333-333333333333");
-            var boringCatId = Guid.Parse("c4444444-4444-4444-4444-444444444444");
-            var sandingCatId = Guid.Parse("c5555555-5555-5555-5555-555555555555");
-            var pressCatId = Guid.Parse("c6666666-6666-6666-6666-666666666666");
-            var dustCatId = Guid.Parse("c7777777-7777-7777-7777-777777777777");
+            var accCatId = Guid.Parse("c2222222-2222-2222-2222-222222222222");
+            var motCatId = Guid.Parse("c3333333-3333-3333-3333-333333333333");
+            var drvCatId = Guid.Parse("c4444444-4444-4444-4444-444444444444");
+            var spnCatId = Guid.Parse("c5555555-5555-5555-5555-555555555555");
+            var invCatId = Guid.Parse("c6666666-6666-6666-6666-666666666666");
+            var rmtCatId = Guid.Parse("c7777777-7777-7777-7777-777777777777");
 
-            var m1 = Guid.Parse("a1111111-1111-1111-1111-111111111111");
-            var m2 = Guid.Parse("a2222222-2222-2222-2222-222222222222");
-            var m3 = Guid.Parse("a3333333-3333-3333-3333-333333333333");
-            var m4 = Guid.Parse("a4444444-4444-4444-4444-444444444444");
+            var mUws = Guid.Parse("a4444444-4444-4444-4444-444444444444");
 
             var products = new List<Product>
             {
@@ -213,14 +169,14 @@ public static class DatabaseSeeder
                 {
                     Id = Guid.NewGuid(),
                     CategoryId = cncCatId,
-                    ManufacturerId = m4,
+                    ManufacturerId = mUws,
                     Name = "WTS Prime-1325 Heavy Duty ATC CNC Router",
                     Slug = "wts-prime-1325-atc-cnc-router",
                     ModelNumber = "WTS-1325-ATC",
                     SKU = "CNC-RTR-001",
                     ShortDescription = "Industrial-grade 9.0kW Italian ATC spindle with 12-tool carousel, Syntec controller, and vacuum table.",
                     FullDescription = "Tempered stress-relieved steel gantry, Japanese Yaskawa AC servos, repeatable 0.02mm positioning accuracy for heavy 3-shift factory conditions.",
-                    MainImageUrl = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80",
+                    MainImageUrl = null,
                     Condition = MachineCondition.BrandNew,
                     AvailabilityStatus = AvailabilityStatus.InStock,
                     IsFeatured = true,
@@ -239,76 +195,144 @@ public static class DatabaseSeeder
                 new()
                 {
                     Id = Guid.NewGuid(),
-                    CategoryId = edgeCatId,
-                    ManufacturerId = m1,
-                    Name = "Nanxing NB6PC High Speed Automatic Edgebander",
-                    Slug = "nanxing-nb6pc-high-speed-edgebander",
-                    ModelNumber = "NB6PC",
-                    SKU = "EDG-BND-003",
-                    ShortDescription = "Full-function edgebander with pre-milling, corner rounding, scraper, and dual buffing units.",
-                    FullDescription = "Dual diamond pre-milling cutters, pneumatic glue pot feeding, two-motor end trimming, rough and fine trimming, corner rounding, buffing wheels.",
-                    MainImageUrl = "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80",
+                    CategoryId = accCatId,
+                    ManufacturerId = mUws,
+                    Name = "UWS ER32 High Precision Spring Collet & Nut Kit",
+                    Slug = "uws-er32-high-precision-collet-set",
+                    ModelNumber = "UWS-COL-ER32",
+                    SKU = "UWS-ACC-01",
+                    ShortDescription = "Ultra-precision ER32 spring collet chuck set (3mm–20mm) with clamping nut and wrench.",
+                    FullDescription = "High carbon alloy steel ER32 collets manufactured to 0.005mm runout tolerance for vibration-free high RPM CNC milling.",
+                    MainImageUrl = null,
                     Condition = MachineCondition.BrandNew,
                     AvailabilityStatus = AvailabilityStatus.InStock,
                     IsFeatured = true,
-                    ViewCount = 1670,
+                    ViewCount = 890,
                     SpecificationsJson = JsonSerializer.Serialize(new Dictionary<string, object>
                     {
-                        { "feed_speed", "16 - 24 m/min" },
-                        { "tape_thickness", "0.4 - 3.0 mm" },
-                        { "glue_system", "EVA Standard Pot" },
-                        { "corner_rounding", true },
-                        { "total_power", "18.5 kW" }
+                        { "accessory_type", "ER Collet & Nut" },
+                        { "collet_standard", "ER32" },
+                        { "concentricity", "< 0.005 mm" }
                     })
                 },
                 new()
                 {
                     Id = Guid.NewGuid(),
-                    CategoryId = sawCatId,
-                    ManufacturerId = m1,
-                    Name = "Nanxing NPC-330 Computerized Beam Panel Saw",
-                    Slug = "nanxing-npc-330-beam-panel-saw",
-                    ModelNumber = "NPC-330",
-                    SKU = "SAW-BEM-005",
-                    ShortDescription = "Heavy-duty automatic pressure beam saw with 15kW main blade, optimized cutting software, and air flotation tables.",
-                    FullDescription = "Intelligent pattern optimization software with barcode printing to minimize material waste and eliminate human layout errors.",
-                    MainImageUrl = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80",
+                    CategoryId = motCatId,
+                    ManufacturerId = mUws,
+                    Name = "UWS 1.5kW AC Servo Motor High Torque",
+                    Slug = "uws-1-5kw-ac-servo-motor",
+                    ModelNumber = "UWS-SM-1500",
+                    SKU = "UWS-MOT-01",
+                    ShortDescription = "130mm flange AC brushless servo motor delivering 6.0 N.m rated torque at 2500 RPM.",
+                    FullDescription = "IP65 sealed industrial AC synchronous servo motor with 2500 PPR optical / 17-bit magnetic encoder for CNC multi-axis drives.",
+                    MainImageUrl = null,
                     Condition = MachineCondition.BrandNew,
                     AvailabilityStatus = AvailabilityStatus.InStock,
                     IsFeatured = true,
-                    ViewCount = 1890,
+                    ViewCount = 760,
                     SpecificationsJson = JsonSerializer.Serialize(new Dictionary<string, object>
                     {
-                        { "cutting_length", "3300 mm" },
-                        { "main_saw_power", "15.0 kW" },
-                        { "scoring_saw_power", "2.2 kW" },
-                        { "max_cutting_thickness", "90 mm" }
+                        { "power_rating", "1.5 kW" },
+                        { "rated_speed", "2500 RPM" },
+                        { "rated_torque", "6.0 N.m" }
                     })
                 },
                 new()
                 {
                     Id = Guid.NewGuid(),
-                    CategoryId = boringCatId,
-                    ManufacturerId = m2,
-                    Name = "KDT KD-612HS Six-Sided CNC Drilling Center",
-                    Slug = "kdt-kd-612hs-six-sided-cnc-drilling-center",
-                    ModelNumber = "KD-612HS",
-                    SKU = "BOR-SIX-007",
-                    ShortDescription = "Simultaneous top and bottom drilling, horizontal boring, grooving saw, and routing in a single pass.",
-                    FullDescription = "Six-sided panel drilling without flipping panels. Dual independent air-floating clamps ensure zero scratches on delicate melamine.",
-                    MainImageUrl = "https://images.unsplash.com/photo-1581092162384-8987c1d64718?auto=format&fit=crop&w=1200&q=80",
+                    CategoryId = drvCatId,
+                    ManufacturerId = mUws,
+                    Name = "UWS Digital AC Servo Drive Controller",
+                    Slug = "uws-digital-ac-servo-drive-system",
+                    ModelNumber = "UWS-DRV-1500",
+                    SKU = "UWS-DRV-01",
+                    ShortDescription = "DSP-controlled intelligent servo driver compatible with 1.0kW–2.0kW AC motors.",
+                    FullDescription = "32-bit DSP vector control algorithm with real-time vibration suppression, electronic gear ratio, and position/speed/torque operating modes.",
+                    MainImageUrl = null,
                     Condition = MachineCondition.BrandNew,
                     AvailabilityStatus = AvailabilityStatus.InStock,
                     IsFeatured = true,
-                    ViewCount = 1350,
+                    ViewCount = 690,
                     SpecificationsJson = JsonSerializer.Serialize(new Dictionary<string, object>
                     {
-                        { "boring_sides", "Six-Sided Simultaneous" },
-                        { "max_panel_length", "2800 mm" },
-                        { "spindle_power", "3.5 kW Routing" }
+                        { "control_method", "DSP Vector Control" },
+                        { "input_voltage", "AC 220V Single/3-Phase" }
+                    })
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    CategoryId = spnCatId,
+                    ManufacturerId = mUws,
+                    Name = "UWS 4.5kW Air-Cooled High Speed Electro-Spindle",
+                    Slug = "uws-4-5kw-air-cooled-spindle",
+                    ModelNumber = "UWS-SPN-45A",
+                    SKU = "UWS-SPN-01",
+                    ShortDescription = "Heavy duty 4.5kW air-cooled milling electro-spindle with ER32 collet, 18,000 RPM.",
+                    FullDescription = "Precision angular contact ceramic-steel hybrid bearings, dynamic balancing to G0.4 standard for noise-free continuous cutting.",
+                    MainImageUrl = null,
+                    Condition = MachineCondition.BrandNew,
+                    AvailabilityStatus = AvailabilityStatus.InStock,
+                    IsFeatured = true,
+                    ViewCount = 1120,
+                    SpecificationsJson = JsonSerializer.Serialize(new Dictionary<string, object>
+                    {
+                        { "cooling_type", "Air Cooled" },
+                        { "power_rating", "4.5 kW" },
+                        { "max_rpm", "18,000 RPM" }
+                    })
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    CategoryId = invCatId,
+                    ManufacturerId = mUws,
+                    Name = "UWS 5.5kW High Frequency VFD Vector Inverter",
+                    Slug = "uws-5-5kw-vfd-vector-inverter",
+                    ModelNumber = "UWS-INV-5500",
+                    SKU = "UWS-INV-01",
+                    ShortDescription = "Wide-band 0–1000Hz output vector frequency inverter for high-speed CNC electro-spindles.",
+                    FullDescription = "Advanced sensorless vector control (SVC), PID feedback loop, built-in braking unit, and multi-step programmable speed curve.",
+                    MainImageUrl = null,
+                    Condition = MachineCondition.BrandNew,
+                    AvailabilityStatus = AvailabilityStatus.InStock,
+                    IsFeatured = true,
+                    ViewCount = 880,
+                    SpecificationsJson = JsonSerializer.Serialize(new Dictionary<string, object>
+                    {
+                        { "power_rating", "5.5 kW" },
+                        { "input_voltage", "3-Phase 380V" },
+                        { "output_frequency", "0 - 1000 Hz" }
+                    })
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    CategoryId = rmtCatId,
+                    ManufacturerId = mUws,
+                    Name = "UWS RichAuto A11 3-Axis DSP Handheld Controller",
+                    Slug = "uws-richauto-a11-dsp-controller",
+                    ModelNumber = "UWS-RMT-A11",
+                    SKU = "UWS-RMT-01",
+                    ShortDescription = "Standalone offline CNC motion controller pendant with 512MB internal storage and USB drive support.",
+                    FullDescription = "Complete standalone operation without a host computer. Supports standard G-code, automatic tool offset, origin save on power failure.",
+                    MainImageUrl = null,
+                    Condition = MachineCondition.BrandNew,
+                    AvailabilityStatus = AvailabilityStatus.InStock,
+                    IsFeatured = true,
+                    ViewCount = 1340,
+                    SpecificationsJson = JsonSerializer.Serialize(new Dictionary<string, object>
+                    {
+                        { "axis_support", "3-Axis (X, Y, Z)" },
+                        { "interface", "USB Flash Drive + Handheld DSP" }
                     })
                 },
             };
+
+            context.Products.AddRange(products);
+            await context.SaveChangesAsync();
+        }
 
             context.Products.AddRange(products);
             await context.SaveChangesAsync();

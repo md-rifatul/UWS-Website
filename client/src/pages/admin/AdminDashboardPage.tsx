@@ -71,14 +71,17 @@ export const AdminDashboardPage: React.FC = () => {
             onClick={() => navigate('/admin/categories')}
             icon={<Layers className="w-4 h-4" />}
           >
-            Dynamic Attributes
+            Manage Categories
           </Button>
         </div>
       </div>
 
       {/* KPI Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="bg-white rounded-xl border border-slate-border p-5 shadow-xs space-y-2">
+        <div
+          onClick={() => navigate('/admin/products')}
+          className="bg-white rounded-xl border border-slate-border p-5 shadow-xs space-y-2 cursor-pointer hover:border-industrial-orange transition-all"
+        >
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-muted uppercase">Catalog Models</span>
             <div className="p-2 bg-navy-900/10 text-navy-900 rounded-md">
@@ -91,7 +94,10 @@ export const AdminDashboardPage: React.FC = () => {
           <span className="text-[11px] text-emerald-600 font-medium">Active in public catalog</span>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-border p-5 shadow-xs space-y-2">
+        <div
+          onClick={() => navigate('/admin/categories')}
+          className="bg-white rounded-xl border border-slate-border p-5 shadow-xs space-y-2 cursor-pointer hover:border-industrial-orange transition-all"
+        >
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-muted uppercase">Machine Categories</span>
             <div className="p-2 bg-industrial-orange/15 text-industrial-orange rounded-md">
@@ -101,7 +107,7 @@ export const AdminDashboardPage: React.FC = () => {
           <span className="text-2xl font-bold text-navy-900 block">
             {summary?.totalCategories || 0}
           </span>
-          <span className="text-[11px] text-slate-500 font-medium">Dynamic JSONB schemas</span>
+          <span className="text-[11px] text-slate-500 font-medium">Manage categories &amp; photos</span>
         </div>
 
         <div className="bg-white rounded-xl border border-slate-border p-5 shadow-xs space-y-2">

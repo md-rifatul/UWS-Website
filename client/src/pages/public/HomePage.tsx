@@ -31,17 +31,6 @@ import { AvailabilityBadge } from '@/components/common/Badge';
 import {
   handleImageError,
   CNC_ROUTER_SVG,
-  SURFACE_PLANER_SVG,
-  THICKNESS_PLANER_SVG,
-  SPINDLE_SHAPER_SVG,
-  CIRCULAR_SAW_SVG,
-  EDGE_BANDER_SVG,
-  PANEL_SAW_SVG,
-  BORING_MACHINE_SVG,
-  WIDE_BELT_SANDER_SVG,
-  HYDRAULIC_PRESS_SVG,
-  DUST_EXTRACTION_SVG,
-  DIAMOND_TOOLING_SVG,
   ALL_MACHINERY_SVG,
   MOTOR_SVG,
   DRIVE_SVG,
@@ -55,21 +44,12 @@ export const HomePage: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
 
-  // 12 Featured Machinery Category Badges (Pure Machinery Categories Only)
-  const featuredCategoryBadges = [
-    { id: 'cat-cnc', name: 'CNC Router', slug: 'cnc-router-machine', imageUrl: CNC_ROUTER_SVG },
-    { id: 'cat-surf', name: 'Surface Planer', slug: 'surface-planer', imageUrl: SURFACE_PLANER_SVG },
-    { id: 'cat-thick', name: 'Thickness Planer', slug: 'thickness-planer', imageUrl: THICKNESS_PLANER_SVG },
-    { id: 'cat-spin', name: 'Spindle Shaper', slug: 'spindle-shaper-moulder', imageUrl: SPINDLE_SHAPER_SVG },
-    { id: 'cat-circ', name: 'Circular Saw', slug: 'circular-saw', imageUrl: CIRCULAR_SAW_SVG },
-    { id: 'cat-edge', name: 'Edge Banding', slug: 'edge-banding', imageUrl: EDGE_BANDER_SVG },
-    { id: 'cat-panel', name: 'Panel Saws', slug: 'panel-saws', imageUrl: PANEL_SAW_SVG },
-    { id: 'cat-bore', name: 'Boring & Drilling', slug: 'boring-drilling', imageUrl: BORING_MACHINE_SVG },
-    { id: 'cat-sand', name: 'Belt Sanding', slug: 'sanding-finishing', imageUrl: WIDE_BELT_SANDER_SVG },
-    { id: 'cat-press', name: 'Hydraulic Press', slug: 'hydraulic-presses', imageUrl: HYDRAULIC_PRESS_SVG },
-    { id: 'cat-dust', name: 'Dust Extraction', slug: 'dust-extraction', imageUrl: DUST_EXTRACTION_SVG },
-    { id: 'cat-tools', name: 'PCD Tooling', slug: 'cutter-accessories', imageUrl: DIAMOND_TOOLING_SVG },
-  ];
+  // Dynamic Machinery Categories for the Circular Category Carousel
+  const carouselCategories = useMemo(() => {
+    return categories
+      .filter((c) => c.isActive)
+      .sort((a, b) => a.displayOrder - b.displayOrder);
+  }, [categories]);
 
   // Hero Carousel State (Auto-swapping pictures with pause on hover)
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
@@ -181,6 +161,15 @@ export const HomePage: React.FC = () => {
       }
     };
     loadHomeData();
+
+    const handleCatsUpdate = async () => {
+      try {
+        const cats = await catalogService.getCategories();
+        setCategories([...cats].sort((a, b) => a.displayOrder - b.displayOrder));
+      } catch {}
+    };
+    window.addEventListener('uws-categories-updated', handleCatsUpdate);
+    return () => window.removeEventListener('uws-categories-updated', handleCatsUpdate);
   }, []);
 
   // Tapping ANY machine or component category navigates to that category's dedicated catalog page!
@@ -190,51 +179,69 @@ export const HomePage: React.FC = () => {
     navigate(`/products?category=${categorySlug}`);
   };
 
-  // 6 Core Components & Accessories matching genuine UWS industrial product offerings
-  const componentCategories = [
-    {
-      slug: 'accessories',
-      name: 'ACCESSORIES',
-      tagline: 'Collets, Clamps & Sensors',
-      badge: 'Genuine Spares',
-      imageUrl: ACCESSORIES_SVG,
-    },
-    {
-      slug: 'motor',
-      name: 'MOTOR',
-      tagline: 'AC Servo & Stepper Motors',
-      badge: 'High Torque',
-      imageUrl: MOTOR_SVG,
-    },
-    {
-      slug: 'drive',
-      name: 'DRIVE',
-      tagline: 'Digital Stepper & Servo Drives',
-      badge: 'Microstepping',
-      imageUrl: DRIVE_SVG,
-    },
-    {
-      slug: 'spindle',
-      name: 'SPINDLE',
-      tagline: 'Air & Water-Cooled Spindles',
-      badge: '24,000 RPM',
-      imageUrl: SPINDLE_SVG,
-    },
-    {
-      slug: 'inverter',
-      name: 'INVERTER',
-      tagline: 'High-Frequency VFD Inverters',
-      badge: 'Vector Control',
-      imageUrl: INVERTER_SVG,
-    },
-    {
-      slug: 'remote',
-      name: 'REMOTE',
-      tagline: 'DSP Controllers & Handwheels',
-      badge: 'Offline DSP',
-      imageUrl: REMOTE_SVG,
-    },
-  ];
+  // 6 Core Components & Accessories dynamically synchronized with Admin Category management
+  const activeComponentCategories = useMemo(() => {
+    const defaults = [
+      {
+        slug: 'accessories',
+        fallbackName: 'ACCESSORIES',
+        fallbackTagline: 'Collets, Clamps & Sensors',
+        badge: 'Genuine Spares',
+        fallbackImage: ACCESSORIES_SVG,
+      },
+      {
+        slug: 'motor',
+        fallbackName: 'MOTOR',
+        fallbackTagline: 'AC Servo & Stepper Motors',
+        badge: 'High Torque',
+        fallbackImage: MOTOR_SVG,
+      },
+      {
+        slug: 'drive',
+        fallbackName: 'DRIVE',
+        fallbackTagline: 'Digital Stepper & Servo Drives',
+        badge: 'Microstepping',
+        fallbackImage: DRIVE_SVG,
+      },
+      {
+        slug: 'spindle',
+        fallbackName: 'SPINDLE',
+        fallbackTagline: 'Air & Water-Cooled Spindles',
+        badge: '24,000 RPM',
+        fallbackImage: SPINDLE_SVG,
+      },
+      {
+        slug: 'inverter',
+        fallbackName: 'INVERTER',
+        fallbackTagline: 'High-Frequency VFD Inverters',
+        badge: 'Vector Control',
+        fallbackImage: INVERTER_SVG,
+      },
+      {
+        slug: 'remote',
+        fallbackName: 'REMOTE',
+        fallbackTagline: 'DSP Controllers & Handwheels',
+        badge: 'Offline DSP',
+        fallbackImage: REMOTE_SVG,
+      },
+    ];
+
+    return defaults.map((item) => {
+      const match = categories.find((c) => c.slug === item.slug);
+      return {
+        slug: item.slug,
+        name: match?.name || item.fallbackName,
+        tagline: match?.description || item.fallbackTagline,
+        badge: item.badge,
+        imageUrl: match?.imageUrl || item.fallbackImage,
+      };
+    });
+  }, [categories]);
+
+  // Dynamic CNC Router Category for Left Highlight Card
+  const cncCategory = useMemo(() => {
+    return categories.find((c) => c.slug === 'cnc-router-machine');
+  }, [categories]);
 
   // Count how many CNC router models exist across active catalog
   const cncRouterProductsCount = useMemo(() => {
@@ -465,7 +472,7 @@ export const HomePage: React.FC = () => {
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               className="no-scrollbar scrollbar-none flex items-start gap-4 sm:gap-6 lg:gap-7 overflow-x-auto scroll-smooth py-2 px-3 sm:px-4 w-full select-none"
             >
-              {featuredCategoryBadges.map((cat) => (
+              {carouselCategories.map((cat) => (
                 <div
                   key={cat.id}
                   onClick={() => handlePopularItemNavigate(cat.slug)}
@@ -474,7 +481,7 @@ export const HomePage: React.FC = () => {
                   {/* Circular Badge Avatar */}
                   <div className="w-17 h-17 sm:w-19 sm:h-19 md:w-21 md:h-21 rounded-full bg-[#f4f6f8] group-hover:bg-white border border-slate-200/80 group-hover:border-industrial-orange/50 shadow-2xs group-hover:shadow-md flex items-center justify-center p-3 transition-all duration-300 group-hover:scale-108">
                     <img
-                      src={cat.imageUrl}
+                      src={cat.imageUrl || ALL_MACHINERY_SVG}
                       alt={cat.name}
                       onError={handleImageError}
                       className="w-11 h-11 sm:w-13 sm:h-13 md:w-14 md:h-14 object-contain drop-shadow-2xs group-hover:scale-110 transition-transform duration-200"
@@ -537,7 +544,7 @@ export const HomePage: React.FC = () => {
             {/* Centered Machine Cutout Image */}
             <div className="flex-1 flex items-center justify-center p-4 sm:p-6 min-h-[220px] sm:min-h-[260px]">
               <img
-                src={CNC_ROUTER_SVG}
+                src={cncCategory?.imageUrl || CNC_ROUTER_SVG}
                 alt="CNC Router Machine"
                 onError={handleImageError}
                 className="max-h-60 sm:max-h-72 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-md"
@@ -571,7 +578,7 @@ export const HomePage: React.FC = () => {
 
           {/* Right Side: 6 Component Cards (3 Columns x 2 Rows) */}
           <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-4.5">
-            {componentCategories.map((item) => (
+            {activeComponentCategories.map((item) => (
               <div
                 key={item.slug}
                 onClick={() => handlePopularItemNavigate(item.slug)}

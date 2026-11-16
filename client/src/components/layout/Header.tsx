@@ -206,42 +206,35 @@ export const Header: React.FC = () => {
                   className="block px-4 py-2.5 hover:bg-slate-50 transition-colors"
                 >
                   <span className="font-bold text-navy-900 block text-xs">All Machines</span>
-                  <span className="text-[11px] text-slate-500 font-normal">Explore full woodworking lineup</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Explore full industrial lineup</span>
                 </Link>
                 <Link
-                  to="/products?search=CNC+Router"
+                  to="/products?category=cnc-router-machine"
                   className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
                 >
                   <span className="font-bold text-navy-900 block text-xs">CNC Router</span>
                   <span className="text-[11px] text-slate-500 font-normal">Classic &amp; heavy-duty nesting routers</span>
                 </Link>
                 <Link
-                  to="/products?search=Surface+Planer"
+                  to="/products?search=ATC"
                   className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
                 >
-                  <span className="font-bold text-navy-900 block text-xs">Surface Planer</span>
-                  <span className="text-[11px] text-slate-500 font-normal">Helical spiral silent jointers</span>
+                  <span className="font-bold text-navy-900 block text-xs">ATC Nesting Series</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Automatic tool change routers</span>
                 </Link>
                 <Link
-                  to="/products?search=Thickness+Planer"
+                  to="/products?search=1325"
                   className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
                 >
-                  <span className="font-bold text-navy-900 block text-xs">Thickness Planer</span>
-                  <span className="text-[11px] text-slate-500 font-normal">Digital elevation thicknessers</span>
+                  <span className="font-bold text-navy-900 block text-xs">1325 Industrial Standard</span>
+                  <span className="text-[11px] text-slate-500 font-normal">Standard 4x8 ft vacuum bed models</span>
                 </Link>
                 <Link
-                  to="/products?search=Spindle+Shaper"
+                  to="/products?search=Racer"
                   className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
                 >
-                  <span className="font-bold text-navy-900 block text-xs">Spindle Shaper</span>
-                  <span className="text-[11px] text-slate-500 font-normal">High-speed tilting moulders</span>
-                </Link>
-                <Link
-                  to="/products?search=Circular+Saw"
-                  className="block px-4 py-2.5 hover:bg-slate-50 transition-colors border-t border-slate-100"
-                >
-                  <span className="font-bold text-navy-900 block text-xs">Circular Saw</span>
-                  <span className="text-[11px] text-slate-500 font-normal">Sliding table &amp; precision beam saws</span>
+                  <span className="font-bold text-navy-900 block text-xs">Racer High-Speed Series</span>
+                  <span className="text-[11px] text-slate-500 font-normal">High rapid feed &amp; 3D relief systems</span>
                 </Link>
               </div>
             </div>
@@ -790,39 +783,25 @@ export const Header: React.FC = () => {
                     All Machines
                   </Link>
                   <Link
-                    to="/products?search=CNC+Router"
+                    to="/products?category=cnc-router-machine"
                     onClick={() => setMobileMenuOpen(false)}
                     className="block py-1.5 text-slate-600 hover:text-industrial-orange"
                   >
                     CNC Router
                   </Link>
                   <Link
-                    to="/products?search=Surface+Planer"
+                    to="/products?search=ATC"
                     onClick={() => setMobileMenuOpen(false)}
                     className="block py-1.5 text-slate-600 hover:text-industrial-orange"
                   >
-                    Surface Planer
+                    ATC Nesting Series
                   </Link>
                   <Link
-                    to="/products?search=Thickness+Planer"
+                    to="/products?search=1325"
                     onClick={() => setMobileMenuOpen(false)}
                     className="block py-1.5 text-slate-600 hover:text-industrial-orange"
                   >
-                    Thickness Planer
-                  </Link>
-                  <Link
-                    to="/products?search=Spindle+Shaper"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
-                  >
-                    Spindle Shaper
-                  </Link>
-                  <Link
-                    to="/products?search=Circular+Saw"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block py-1.5 text-slate-600 hover:text-industrial-orange"
-                  >
-                    Circular Saw
+                    1325 Industrial Standard
                   </Link>
                 </div>
               )}

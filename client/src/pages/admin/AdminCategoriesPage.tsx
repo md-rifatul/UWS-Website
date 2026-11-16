@@ -12,9 +12,12 @@ import {
   Image as ImageIcon,
   ArrowUpDown,
   Eye,
+  Upload,
+  Loader2,
 } from 'lucide-react';
 import { adminService } from '@/services/adminService';
 import { catalogService } from '@/services/catalogService';
+import { cloudinaryService } from '@/services/cloudinaryService';
 import { AttributeDataType, Category, CategoryAttribute } from '@/types';
 import Button from '@/components/common/Button';
 import { handleImageError } from '@/utils/imageUtils';
@@ -29,6 +32,8 @@ export const AdminCategoriesPage: React.FC = () => {
   // Category Add / Edit Modal State
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [categoryForm, setCategoryForm] = useState({
     name: '',
     slug: '',
@@ -85,11 +90,12 @@ export const AdminCategoriesPage: React.FC = () => {
   // Open Add Category Modal
   const handleOpenAddCategory = () => {
     setEditingCategory(null);
+    setUploadError(null);
     setCategoryForm({
       name: '',
       slug: '',
       description: '',
-      imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+      imageUrl: '',
       displayOrder: categories.length + 1,
       isActive: true,
     });
@@ -100,6 +106,7 @@ export const AdminCategoriesPage: React.FC = () => {
   const handleOpenEditCategory = (cat: Category, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     setEditingCategory(cat);
+    setUploadError(null);
     setCategoryForm({
       name: cat.name,
       slug: cat.slug,
@@ -109,6 +116,36 @@ export const AdminCategoriesPage: React.FC = () => {
       isActive: cat.isActive,
     });
     setIsCategoryModalOpen(true);
+  };
+
+  // Direct Cloudinary Upload for Category Image
+  const handleCategoryPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingImage(true);
+    setUploadError(null);
+    try {
+      const oldUrl = categoryForm.imageUrl;
+      const res = await cloudinaryService.uploadImage(file, 'uws-categories');
+      setCategoryForm((prev) => ({ ...prev, imageUrl: res.url }));
+      if (oldUrl && oldUrl !== res.url && oldUrl.includes('cloudinary.com')) {
+        cloudinaryService.deleteImage(oldUrl).catch(() => {});
+      }
+    } catch (err: any) {
+      console.error('Category photo upload failed:', err);
+      setUploadError(err.message || 'Image upload failed. Please try again.');
+    } finally {
+      setIsUploadingImage(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleRemoveCategoryPhoto = async () => {
+    const oldUrl = categoryForm.imageUrl;
+    setCategoryForm((prev) => ({ ...prev, imageUrl: '' }));
+    if (oldUrl && oldUrl.includes('cloudinary.com')) {
+      await cloudinaryService.deleteImage(oldUrl).catch(() => {});
+    }
   };
 
   // Save Category (Create or Update)
@@ -144,13 +181,16 @@ export const AdminCategoriesPage: React.FC = () => {
       setSelectedCategory(created);
     }
 
+    // Notify other components (homepage, catalog) of category updates
+    window.dispatchEvent(new CustomEvent('uws-categories-updated'));
     setIsCategoryModalOpen(false);
   };
 
-  // Delete Category
+  // Delete Category & Clean Cloudinary Image
   const handleDeleteCategory = async (id: string, name: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (window.confirm(`Are you sure you want to delete category "${name}"?`)) {
+      const catToDelete = categories.find((c) => c.id === id);
       await adminService.deleteCategory(id);
       const updatedList = categories.filter((c) => c.id !== id);
       setCategories(updatedList);
@@ -158,6 +198,10 @@ export const AdminCategoriesPage: React.FC = () => {
         setSelectedCategory(updatedList[0] || null);
         setAttributes(updatedList[0]?.attributes || []);
       }
+      if (catToDelete?.imageUrl && catToDelete.imageUrl.includes('cloudinary.com')) {
+        cloudinaryService.deleteImage(catToDelete.imageUrl).catch(() => {});
+      }
+      window.dispatchEvent(new CustomEvent('uws-categories-updated'));
     }
   };
 
@@ -277,7 +321,7 @@ export const AdminCategoriesPage: React.FC = () => {
                       src={cat.imageUrl || ''}
                       alt=""
                       onError={handleImageError}
-                      className="w-9 h-9 rounded object-cover border border-slate-border bg-slate-100 shrink-0"
+                      className="w-9 h-9 rounded object-contain p-0.5 border border-slate-border bg-slate-50 shrink-0"
                     />
                     <div className="truncate">
                       <div className="flex items-center gap-1.5">
@@ -337,7 +381,7 @@ export const AdminCategoriesPage: React.FC = () => {
                     src={selectedCategory.imageUrl || ''}
                     alt=""
                     onError={handleImageError}
-                    className="w-12 h-12 rounded-lg object-cover border border-slate-border bg-slate-100"
+                    className="w-12 h-12 rounded-lg object-contain p-1 border border-slate-border bg-slate-50 shrink-0"
                   />
                   <div>
                     <div className="flex items-center gap-2">
@@ -643,28 +687,70 @@ export const AdminCategoriesPage: React.FC = () => {
 
               <div>
                 <label className="block text-xs font-semibold text-charcoal-700 uppercase mb-1">
-                  Category Image URL *
+                  Category Image
                 </label>
-                <input
-                  type="url"
-                  required
-                  placeholder="https://images.unsplash.com/..."
-                  value={categoryForm.imageUrl}
-                  onChange={(e) => setCategoryForm({ ...categoryForm, imageUrl: e.target.value })}
-                  className="w-full text-xs px-3 py-2 bg-surface-offwhite border border-slate-border rounded-md text-charcoal-800 focus:outline-none focus:border-industrial-orange"
-                />
-                {categoryForm.imageUrl && (
-                  <div className="mt-2 flex items-center gap-3 p-2 bg-surface-offwhite rounded border border-slate-border">
+                {categoryForm.imageUrl ? (
+                  <div className="flex items-center gap-4 p-3 bg-slate-50 border border-slate-border rounded-lg">
                     <img
                       src={categoryForm.imageUrl}
-                      alt="Preview"
+                      alt="Category"
                       onError={handleImageError}
-                      className="w-16 h-12 rounded object-cover border border-slate-border bg-slate-200 shrink-0"
+                      className="w-16 h-16 rounded-md object-contain bg-white border border-slate-200 p-1 shrink-0"
                     />
-                    <span className="text-[11px] text-slate-500">
-                      Live image preview. If this link ever fails, the platform will automatically render the WoodTech fallback SVG.
-                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-charcoal-800 truncate">
+                        {categoryForm.imageUrl.split('/').pop()}
+                      </p>
+                      <p className="text-[11px] text-emerald-600 font-medium">Uploaded to Cloudinary</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <label className="px-2.5 py-1 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded hover:bg-slate-50 cursor-pointer transition-colors shadow-2xs">
+                          <span>Replace Photo</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            disabled={isUploadingImage}
+                            onChange={handleCategoryPhotoUpload}
+                          />
+                        </label>
+                        <button
+                          type="button"
+                          onClick={handleRemoveCategoryPhoto}
+                          disabled={isUploadingImage}
+                          className="px-2.5 py-1 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
+                        >
+                          Remove Photo
+                        </button>
+                      </div>
+                    </div>
                   </div>
+                ) : (
+                  <label className={`flex flex-col items-center justify-center p-6 border-2 border-dashed border-slate-300 hover:border-industrial-orange rounded-xl cursor-pointer bg-slate-50/50 hover:bg-orange-50/20 transition-all ${isUploadingImage ? 'opacity-50 pointer-events-none' : ''}`}>
+                    {isUploadingImage ? (
+                      <div className="flex flex-col items-center py-2">
+                        <Loader2 className="w-8 h-8 text-industrial-orange animate-spin mb-2" />
+                        <span className="text-xs font-semibold text-charcoal-700">Uploading to Cloudinary...</span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center text-center">
+                        <div className="w-10 h-10 rounded-full bg-orange-100 text-industrial-orange flex items-center justify-center mb-2 shadow-2xs">
+                          <Upload className="w-5 h-5" />
+                        </div>
+                        <span className="text-xs font-bold text-navy-900 mb-0.5">Click to upload category picture</span>
+                        <span className="text-[11px] text-slate-500">PNG, JPG, WEBP, or SVG up to 10MB</span>
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      disabled={isUploadingImage}
+                      onChange={handleCategoryPhotoUpload}
+                    />
+                  </label>
+                )}
+                {uploadError && (
+                  <p className="text-xs text-red-500 font-medium mt-1.5">{uploadError}</p>
                 )}
               </div>
 
