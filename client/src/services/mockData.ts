@@ -571,7 +571,7 @@ export const DEMO_PRODUCTS: Product[] = [
     availabilityStatus: 'InStock',
     referencePrice: 18500,
     showPrice: false,
-    isFeatured: true,
+    isFeatured: false,
     viewCount: 1850,
     isActive: true,
     specifications: {
@@ -606,7 +606,7 @@ export const DEMO_PRODUCTS: Product[] = [
     availabilityStatus: 'InStock',
     referencePrice: 22800,
     showPrice: false,
-    isFeatured: true,
+    isFeatured: false,
     viewCount: 1940,
     isActive: true,
     specifications: {
@@ -640,7 +640,7 @@ export const DEMO_PRODUCTS: Product[] = [
     availabilityStatus: 'InStock',
     referencePrice: 26000,
     showPrice: false,
-    isFeatured: true,
+    isFeatured: false,
     viewCount: 1780,
     isActive: true,
     specifications: {
@@ -673,7 +673,7 @@ export const DEMO_PRODUCTS: Product[] = [
     availabilityStatus: 'InStock',
     referencePrice: 24500,
     showPrice: false,
-    isFeatured: true,
+    isFeatured: false,
     viewCount: 1410,
     isActive: true,
     specifications: {
@@ -774,7 +774,7 @@ export const DEMO_PRODUCTS: Product[] = [
     availabilityStatus: 'InStock',
     referencePrice: 6500,
     showPrice: false,
-    isFeatured: true,
+    isFeatured: false,
     viewCount: 940,
     isActive: true,
     specifications: {
@@ -841,7 +841,7 @@ export const DEMO_PRODUCTS: Product[] = [
     availabilityStatus: 'InStock',
     referencePrice: 5800,
     showPrice: false,
-    isFeatured: true,
+    isFeatured: false,
     viewCount: 890,
     isActive: true,
     specifications: {
@@ -874,7 +874,7 @@ export const DEMO_PRODUCTS: Product[] = [
     availabilityStatus: 'InStock',
     referencePrice: 9600,
     showPrice: false,
-    isFeatured: true,
+    isFeatured: false,
     viewCount: 1420,
     isActive: true,
     specifications: {
@@ -907,7 +907,7 @@ export const DEMO_PRODUCTS: Product[] = [
     availabilityStatus: 'InStock',
     referencePrice: 11200,
     showPrice: false,
-    isFeatured: true,
+    isFeatured: false,
     viewCount: 1180,
     isActive: true,
     specifications: {
@@ -940,7 +940,7 @@ export const DEMO_PRODUCTS: Product[] = [
     availabilityStatus: 'InStock',
     referencePrice: 14500,
     showPrice: false,
-    isFeatured: true,
+    isFeatured: false,
     viewCount: 1530,
     isActive: true,
     specifications: {
@@ -972,7 +972,7 @@ export const DEMO_PRODUCTS: Product[] = [
     availabilityStatus: 'InStock',
     referencePrice: 8800,
     showPrice: false,
-    isFeatured: true,
+    isFeatured: false,
     viewCount: 1040,
     isActive: true,
     specifications: {
@@ -1003,7 +1003,7 @@ export const DEMO_PRODUCTS: Product[] = [
     availabilityStatus: 'InStock',
     referencePrice: 7900,
     showPrice: false,
-    isFeatured: true,
+    isFeatured: false,
     viewCount: 1250,
     isActive: true,
     specifications: {
@@ -1034,7 +1034,7 @@ export const DEMO_PRODUCTS: Product[] = [
     availabilityStatus: 'InStock',
     referencePrice: 12800,
     showPrice: false,
-    isFeatured: true,
+    isFeatured: false,
     viewCount: 1480,
     isActive: true,
     specifications: {

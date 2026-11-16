@@ -104,26 +104,41 @@ public class AdminService : IAdminService
 
         if (product == null) throw new KeyNotFoundException("Product not found.");
 
-        product.CategoryId = dto.CategoryId;
-        product.ManufacturerId = dto.ManufacturerId;
-        product.Name = dto.Name;
-        product.ModelNumber = dto.ModelNumber;
-        product.SKU = dto.SKU;
-        product.ShortDescription = dto.ShortDescription;
-        product.FullDescription = dto.FullDescription;
-        product.MainImageUrl = dto.MainImageUrl;
+        if (dto.CategoryId != Guid.Empty) product.CategoryId = dto.CategoryId;
+        if (dto.ManufacturerId != Guid.Empty) product.ManufacturerId = dto.ManufacturerId;
+        if (!string.IsNullOrWhiteSpace(dto.Name)) product.Name = dto.Name;
+        if (!string.IsNullOrWhiteSpace(dto.ModelNumber)) product.ModelNumber = dto.ModelNumber;
+        if (!string.IsNullOrWhiteSpace(dto.SKU)) product.SKU = dto.SKU;
+        if (!string.IsNullOrWhiteSpace(dto.ShortDescription)) product.ShortDescription = dto.ShortDescription;
+        if (!string.IsNullOrWhiteSpace(dto.FullDescription)) product.FullDescription = dto.FullDescription;
+        if (!string.IsNullOrWhiteSpace(dto.MainImageUrl)) product.MainImageUrl = dto.MainImageUrl;
         product.Condition = dto.Condition;
         product.AvailabilityStatus = dto.AvailabilityStatus;
-        product.ReferencePrice = dto.ReferencePrice;
+        if (dto.ReferencePrice.HasValue) product.ReferencePrice = dto.ReferencePrice;
         product.ShowPrice = dto.ShowPrice;
         product.IsFeatured = dto.IsFeatured;
         product.UpdatedAtUtc = DateTime.UtcNow;
 
-        if (dto.Specifications != null)
+        if (dto.Specifications != null && dto.Specifications.Count > 0)
         {
             product.SpecificationsJson = JsonSerializer.Serialize(dto.Specifications);
         }
 
+        await _context.SaveChangesAsync(ct);
+        return CatalogService.MapProductToDto(product);
+    }
+
+    public async Task<ProductDto> ToggleProductFeaturedAsync(Guid id, bool isFeatured, CancellationToken ct = default)
+    {
+        var product = await _context.Products
+            .Include(p => p.Category)
+            .Include(p => p.Manufacturer)
+            .FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted, ct);
+
+        if (product == null) throw new KeyNotFoundException("Product not found.");
+
+        product.IsFeatured = isFeatured;
+        product.UpdatedAtUtc = DateTime.UtcNow;
         await _context.SaveChangesAsync(ct);
         return CatalogService.MapProductToDto(product);
     }

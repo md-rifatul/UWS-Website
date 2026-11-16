@@ -36,6 +36,7 @@ public interface IAdminService
     Task<DashboardSummaryDto> GetDashboardSummaryAsync(CancellationToken ct = default);
     Task<ProductDto> CreateProductAsync(CreateProductDto dto, CancellationToken ct = default);
     Task<ProductDto> UpdateProductAsync(Guid id, CreateProductDto dto, CancellationToken ct = default);
+    Task<ProductDto> ToggleProductFeaturedAsync(Guid id, bool isFeatured, CancellationToken ct = default);
     Task<bool> DeleteProductAsync(Guid id, CancellationToken ct = default);
     Task<CategoryDto> CreateCategoryAsync(CreateCategoryDto dto, CancellationToken ct = default);
     Task<CategoryDto> UpdateCategoryAsync(Guid id, CreateCategoryDto dto, CancellationToken ct = default);

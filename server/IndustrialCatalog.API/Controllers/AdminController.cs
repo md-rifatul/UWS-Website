@@ -50,6 +50,17 @@ public class AdminController : BaseApiController
     }
 
     /// <summary>
+    /// Toggles the homepage featured status of a machinery equipment model.
+    /// </summary>
+    [HttpPatch("products/{id:guid}/featured")]
+    [HttpPut("products/{id:guid}/featured")]
+    public async Task<ActionResult<ProductDto>> ToggleProductFeatured(Guid id, [FromBody] ToggleFeaturedDto dto, CancellationToken ct)
+    {
+        var product = await _adminService.ToggleProductFeaturedAsync(id, dto.IsFeatured, ct);
+        return Ok(product);
+    }
+
+    /// <summary>
     /// Soft-deletes a machinery equipment entry from active catalog.
     /// </summary>
     [HttpDelete("products/{id:guid}")]

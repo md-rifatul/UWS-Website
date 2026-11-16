@@ -2,6 +2,27 @@ import apiClient from './apiClient';
 import { Category, Manufacturer, PaginatedResult, Product, ProductFilterParams, HeroSlide } from '@/types';
 import { DEMO_CATEGORIES, DEMO_MANUFACTURERS, DEMO_PRODUCTS, DEFAULT_HERO_SLIDES } from './mockData';
 
+export const FEATURED_STORAGE_KEY = 'wts_featured_map';
+
+export const getStoredFeaturedMap = (): Record<string, boolean> => {
+  try {
+    const raw = localStorage.getItem(FEATURED_STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return {};
+};
+
+export const applyFeaturedOverrides = (products: Product[]): Product[] => {
+  const map = getStoredFeaturedMap();
+  if (Object.keys(map).length === 0) return products;
+  return products.map((p) => {
+    if (map[p.id] !== undefined) {
+      return { ...p, isFeatured: map[p.id] };
+    }
+    return p;
+  });
+};
+
 export const catalogService = {
   async getCategories(): Promise<Category[]> {
     try {
@@ -39,36 +60,61 @@ export const catalogService = {
   },
 
   async getProducts(params: ProductFilterParams = {}): Promise<PaginatedResult<Product>> {
+    let result: PaginatedResult<Product>;
     try {
       const response = await apiClient.get<PaginatedResult<Product>>('/catalog/products', {
         params,
       });
       if (response.data && response.data.items && response.data.items.length > 0) {
-        return response.data;
+        result = response.data;
+      } else {
+        result = filterLocalProducts(params);
       }
-      return filterLocalProducts(params);
     } catch {
-      return filterLocalProducts(params);
+      result = filterLocalProducts(params);
     }
+    // Apply local storage featured overrides so admin toggles persist immediately everywhere
+    return {
+      ...result,
+      items: applyFeaturedOverrides(result.items),
+    };
   },
 
   async getProductBySlug(slug: string): Promise<Product | null> {
     try {
       const response = await apiClient.get<Product>(`/catalog/products/slug/${slug}`);
-      return response.data;
+      const prod = response.data;
+      if (prod) {
+        const map = getStoredFeaturedMap();
+        if (map[prod.id] !== undefined) prod.isFeatured = map[prod.id];
+      }
+      return prod;
     } catch {
       const found = DEMO_PRODUCTS.find((p) => p.slug === slug);
-      return found || null;
+      if (found) {
+        const map = getStoredFeaturedMap();
+        return map[found.id] !== undefined ? { ...found, isFeatured: map[found.id] } : found;
+      }
+      return null;
     }
   },
 
   async getProductById(id: string): Promise<Product | null> {
     try {
       const response = await apiClient.get<Product>(`/catalog/products/${id}`);
-      return response.data;
+      const prod = response.data;
+      if (prod) {
+        const map = getStoredFeaturedMap();
+        if (map[prod.id] !== undefined) prod.isFeatured = map[prod.id];
+      }
+      return prod;
     } catch {
       const found = DEMO_PRODUCTS.find((p) => p.id === id);
-      return found || null;
+      if (found) {
+        const map = getStoredFeaturedMap();
+        return map[found.id] !== undefined ? { ...found, isFeatured: map[found.id] } : found;
+      }
+      return null;
     }
   },
 

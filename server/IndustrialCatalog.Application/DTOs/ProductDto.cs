@@ -67,6 +67,11 @@ public class CreateProductDto
     public Dictionary<string, object>? Specifications { get; set; }
 }
 
+public class ToggleFeaturedDto
+{
+    public bool IsFeatured { get; set; }
+}
+
 public class ProductFilterParamsDto
 {
     public int PageNumber { get; set; } = 1;

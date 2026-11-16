@@ -42,6 +42,14 @@ export const adminService = {
   async createProduct(product: Partial<Product>): Promise<Product> {
     try {
       const response = await apiClient.post<Product>('/admin/products', product);
+      if (response.data && product.isFeatured !== undefined) {
+        try {
+          const stored = localStorage.getItem('wts_featured_map');
+          const map = stored ? JSON.parse(stored) : {};
+          map[response.data.id] = product.isFeatured;
+          localStorage.setItem('wts_featured_map', JSON.stringify(map));
+        } catch {}
+      }
       return response.data;
     } catch {
       const newProduct: Product = {
@@ -69,12 +77,31 @@ export const adminService = {
         documents: product.documents || [],
         createdAtUtc: new Date().toISOString(),
       };
+      if (product.isFeatured !== undefined) {
+        try {
+          const stored = localStorage.getItem('wts_featured_map');
+          const map = stored ? JSON.parse(stored) : {};
+          map[newProduct.id] = newProduct.isFeatured;
+          localStorage.setItem('wts_featured_map', JSON.stringify(map));
+        } catch {}
+      }
       DEMO_PRODUCTS.unshift(newProduct);
       return newProduct;
     }
   },
 
   async updateProduct(id: string, product: Partial<Product>): Promise<Product> {
+    if (product.isFeatured !== undefined) {
+      try {
+        const stored = localStorage.getItem('wts_featured_map');
+        const map = stored ? JSON.parse(stored) : {};
+        map[id] = product.isFeatured;
+        localStorage.setItem('wts_featured_map', JSON.stringify(map));
+      } catch (e) {
+        console.error('Failed to update localStorage featured map:', e);
+      }
+    }
+
     try {
       const response = await apiClient.put<Product>(`/admin/products/${id}`, product);
       return response.data;
@@ -86,6 +113,40 @@ export const adminService = {
       }
       throw new Error('Product not found');
     }
+  },
+
+  async toggleProductFeatured(id: string, isFeatured: boolean): Promise<Product> {
+    // 1. Immediately store in localStorage featured map
+    try {
+      const stored = localStorage.getItem('wts_featured_map');
+      const map = stored ? JSON.parse(stored) : {};
+      map[id] = isFeatured;
+      localStorage.setItem('wts_featured_map', JSON.stringify(map));
+    } catch (e) {
+      console.error('Failed to update localStorage featured map:', e);
+    }
+
+    // 2. Also update in-memory DEMO_PRODUCTS so instant local states reflect it
+    const index = DEMO_PRODUCTS.findIndex((p) => p.id === id);
+    if (index !== -1) {
+      DEMO_PRODUCTS[index] = { ...DEMO_PRODUCTS[index], isFeatured, updatedAtUtc: new Date().toISOString() };
+    }
+
+    // 3. Send API request to backend (supports both PATCH & PUT)
+    try {
+      const response = await apiClient.patch<Product>(`/admin/products/${id}/featured`, { isFeatured });
+      if (response.data) return response.data;
+    } catch {
+      try {
+        const response = await apiClient.put<Product>(`/admin/products/${id}/featured`, { isFeatured });
+        if (response.data) return response.data;
+      } catch {}
+    }
+
+    if (index !== -1) {
+      return DEMO_PRODUCTS[index];
+    }
+    throw new Error('Product not found');
   },
 
   async deleteProduct(id: string): Promise<boolean> {

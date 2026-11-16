@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRight,
@@ -16,6 +16,7 @@ import {
   FileSpreadsheet,
   ExternalLink,
   Sparkles,
+  Star,
 } from 'lucide-react';
 import { catalogService } from '@/services/catalogService';
 import { Category, Product, HeroSlide } from '@/types';
@@ -186,8 +187,10 @@ export const HomePage: React.FC = () => {
   const heroCategory = popularCategories[0]; // CNC ROUTER MACHINE
   const gridCategories = popularCategories.slice(1, 5); // SURFACE PLANER, THICKNESS PLANER, SPINDLE SHAPER, CIRCULAR SAW
 
-  // Featured Products Section: Display top 9 products
-  const featuredProducts = allProducts.slice(0, 9);
+  // Featured Products Section: Strictly controlled by Admin via Inventory Featured status (isFeatured === true)
+  const featuredProducts = useMemo(() => {
+    return allProducts.filter((p) => p.isFeatured);
+  }, [allProducts]);
 
   return (
     <div className="space-y-10 sm:space-y-12 pb-14">
@@ -572,13 +575,15 @@ export const HomePage: React.FC = () => {
             })}
           </div>
         ) : (
-          <div className="p-12 text-center bg-white rounded-xl border border-slate-border space-y-3">
-            <Package className="w-10 h-10 text-slate-300 mx-auto" />
-            <h4 className="font-bold text-sm text-navy-900">
-              No machinery models found.
+          <div className="p-12 text-center bg-white rounded-2xl border border-slate-border space-y-3 shadow-xs">
+            <div className="w-12 h-12 rounded-full bg-orange-50 text-industrial-orange flex items-center justify-center mx-auto">
+              <Star className="w-6 h-6 text-industrial-orange" />
+            </div>
+            <h4 className="font-bold text-base text-navy-900">
+              No Featured Machinery Configured
             </h4>
             <p className="text-xs text-slate-500 max-w-md mx-auto">
-              Visit our demo center or contact our engineering desk for catalog assistance.
+              Machinery models can be selected to display in this showcase directly from the Admin Inventory section.
             </p>
           </div>
         )}
