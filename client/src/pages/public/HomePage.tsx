@@ -546,7 +546,7 @@ export const HomePage: React.FC = () => {
                 Flagship Machinery
               </span>
               <span className="px-2.5 py-1 rounded-full bg-orange-50 text-industrial-orange text-[11px] font-bold tracking-wide border border-orange-200">
-                {cncRouterProductsCount > 0 ? `${cncRouterProductsCount} Models Available` : 'Multiple Models'}
+                Heavy Duty Series
               </span>
             </div>
 

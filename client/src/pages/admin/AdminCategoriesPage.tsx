@@ -338,7 +338,7 @@ export const AdminCategoriesPage: React.FC = () => {
                         )}
                       </div>
                       <span className={`text-[10px] block ${isSelected ? 'text-slate-300' : 'text-slate-400'}`}>
-                        {cat.attributes?.length || 0} specifications • {cat.productCount || 0} models
+                        {cat.attributes?.length || 0} specifications configured
                       </span>
                     </div>
                   </div>

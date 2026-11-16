@@ -10,7 +10,6 @@ export const DEMO_CATEGORIES: Category[] = [
     iconName: 'Cpu',
     displayOrder: 1,
     isActive: true,
-    productCount: 4,
     attributes: [
       {
         id: 'a1',
@@ -79,7 +78,6 @@ export const DEMO_CATEGORIES: Category[] = [
     iconName: 'Wrench',
     displayOrder: 2,
     isActive: true,
-    productCount: 4,
     attributes: [
       {
         id: 'acc_1',
@@ -114,7 +112,6 @@ export const DEMO_CATEGORIES: Category[] = [
     iconName: 'Zap',
     displayOrder: 3,
     isActive: true,
-    productCount: 3,
     attributes: [
       {
         id: 'mot_1',
@@ -149,7 +146,6 @@ export const DEMO_CATEGORIES: Category[] = [
     iconName: 'Cpu',
     displayOrder: 4,
     isActive: true,
-    productCount: 3,
     attributes: [
       {
         id: 'drv_1',
@@ -184,7 +180,6 @@ export const DEMO_CATEGORIES: Category[] = [
     iconName: 'Disc',
     displayOrder: 5,
     isActive: true,
-    productCount: 3,
     attributes: [
       {
         id: 'spn_1',
@@ -230,7 +225,6 @@ export const DEMO_CATEGORIES: Category[] = [
     iconName: 'Sliders',
     displayOrder: 6,
     isActive: true,
-    productCount: 3,
     attributes: [
       {
         id: 'inv_1',
@@ -265,7 +259,6 @@ export const DEMO_CATEGORIES: Category[] = [
     iconName: 'Radio',
     displayOrder: 7,
     isActive: true,
-    productCount: 3,
     attributes: [
       {
         id: 'rmt_1',
@@ -303,7 +296,6 @@ export const DEMO_MANUFACTURERS: Manufacturer[] = [
     websiteUrl: 'https://www.uwsbd.com',
     description: 'High-precision industrial CNC machinery, motion automation controllers, and turnkey spare parts.',
     isActive: true,
-    productCount: 22,
   },
 ];
 

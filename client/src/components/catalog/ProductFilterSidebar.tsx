@@ -51,8 +51,6 @@ export const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
     Object.keys(selectedSpecs).length > 0
   );
 
-  const totalProductsCount = categories.reduce((acc, c) => acc + (c.productCount || 0), 0);
-
   return (
     <div className={`space-y-6 select-none ${className}`}>
       {/* Header & Reset Button */}
@@ -135,15 +133,6 @@ export const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
             }`}
           >
             <span>All Categories</span>
-            <span
-              className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
-                selectedCategorySlug === null
-                  ? 'bg-white/20 text-white'
-                  : 'bg-slate-100 text-slate-500'
-              }`}
-            >
-              {totalProductsCount}
-            </span>
           </button>
 
           {/* Individual Categories */}
@@ -161,17 +150,6 @@ export const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                 }`}
               >
                 <span className="truncate pr-2 text-left">{category.name}</span>
-                {category.productCount !== undefined && (
-                  <span
-                    className={`text-[10px] px-2 py-0.5 rounded-full font-semibold transition-colors shrink-0 ${
-                      isSelected
-                        ? 'bg-white/25 text-white'
-                        : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'
-                    }`}
-                  >
-                    {category.productCount}
-                  </span>
-                )}
               </button>
             );
           })}
