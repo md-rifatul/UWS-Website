@@ -1,14 +1,4 @@
-/**
- * Cloudinary Direct Upload & Delete Service
- * Secure direct upload and deletion on Cloudinary CDN with SHA-1 signed authorization.
- */
-
-async function sha1Hex(message: string): Promise<string> {
-  const msgUint8 = new TextEncoder().encode(message);
-  const hashBuffer = await crypto.subtle.digest('SHA-1', msgUint8);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
-}
+import apiClient from './apiClient';
 
 export function extractPublicIdFromUrl(url: string): string | null {
   if (!url || !url.includes('cloudinary.com')) return null;
@@ -24,139 +14,91 @@ export interface CloudinaryResponse {
   format?: string;
   width?: number;
   height?: number;
+  bytes?: number;
 }
 
+/**
+ * Backend-Driven Image Service
+ * All uploads and deletions are routed through the ASP.NET Core backend API (/api/v1/admin/upload-image and /api/v1/admin/delete-image).
+ * Zero Cloudinary API Secret is exposed in the frontend.
+ */
 export const cloudinaryService = {
   extractPublicId(url: string): string | null {
     return extractPublicIdFromUrl(url);
   },
 
+  /**
+   * Upload image securely via the ASP.NET Core backend API.
+   * Backend validates file extension, file size, and handles Cloudinary authentication securely.
+   */
   async uploadImage(file: File, folder = 'uws-machinery'): Promise<CloudinaryResponse> {
-    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'vyt6u4eu';
-    const apiKey = import.meta.env.VITE_CLOUDINARY_API_KEY || '537746434753267';
-    const apiSecret = import.meta.env.VITE_CLOUDINARY_API_SECRET || 'EOCiyW0YfEcyQdFSrzzAp38L10s';
-
     if (!file) {
       throw new Error('Please select an image file to upload.');
     }
 
-    // 1. Client-side signature generation for direct Cloudinary REST API
+    const formData = new FormData();
+    formData.append('file', file);
+
     try {
-      const timestamp = Math.floor(Date.now() / 1000);
-      const strToSign = `folder=${folder}&timestamp=${timestamp}${apiSecret}`;
-      const signature = await sha1Hex(strToSign);
+      const response = await apiClient.post<CloudinaryResponse>(
+        `/admin/upload-image?folder=${encodeURIComponent(folder)}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
 
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('api_key', apiKey);
-      formData.append('timestamp', String(timestamp));
-      formData.append('folder', folder);
-      formData.append('signature', signature);
-
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (response.ok) {
-        const data = await response.json();
+      if (response.data && (response.data.secureUrl || response.data.url)) {
         return {
-          url: data.secure_url || data.url,
-          secureUrl: data.secure_url || data.url,
-          publicId: data.public_id || '',
-          format: data.format,
-          width: data.width,
-          height: data.height,
+          url: response.data.secureUrl || response.data.url,
+          secureUrl: response.data.secureUrl || response.data.url,
+          publicId: response.data.publicId || '',
+          format: response.data.format,
+          width: response.data.width,
+          height: response.data.height,
+          bytes: response.data.bytes,
         };
       }
 
-      const errorPayload = await response.json().catch(() => ({}));
-      const message = errorPayload?.error?.message || `Cloudinary rejected upload (${response.status})`;
-      throw new Error(message);
+      throw new Error('Upload succeeded but no image URL was returned by server.');
     } catch (err: any) {
-      console.warn('Direct Cloudinary upload attempt failed, trying backend proxy:', err);
-
-      // 2. Fallback to backend /api/v1/admin/upload-image if available
-      try {
-        const backendFormData = new FormData();
-        backendFormData.append('file', file);
-        const backendRes = await fetch(`/api/v1/admin/upload-image?folder=${encodeURIComponent(folder)}`, {
-          method: 'POST',
-          body: backendFormData,
-        });
-
-        if (backendRes.ok) {
-          const bData = await backendRes.json();
-          return {
-            url: bData.secureUrl || bData.url,
-            secureUrl: bData.secureUrl || bData.url,
-            publicId: bData.publicId || '',
-            format: bData.format,
-            width: bData.width,
-            height: bData.height,
-          };
-        }
-      } catch {}
-
-      throw new Error(err.message || 'Failed to upload image to Cloudinary.');
+      console.error('Backend image upload error:', err);
+      const serverMsg = err.response?.data?.message || err.response?.data?.error;
+      if (serverMsg) {
+        throw new Error(serverMsg);
+      }
+      if (err.code === 'ERR_NETWORK' || err.message === 'Network Error') {
+        throw new Error('Backend server is not running (http://localhost:5000). Please start the backend server to upload images.');
+      }
+      throw new Error(err.message || 'Failed to upload image via backend server.');
     }
   },
 
+  /**
+   * Delete image from Cloudinary securely via ASP.NET Core backend API.
+   * Supports passing either the Cloudinary publicId or the full image URL.
+   */
   async deleteImage(publicIdOrUrl: string): Promise<boolean> {
     if (!publicIdOrUrl) return false;
-    let publicId = publicIdOrUrl;
-    if (publicIdOrUrl.includes('http://') || publicIdOrUrl.includes('https://')) {
-      const extracted = extractPublicIdFromUrl(publicIdOrUrl);
-      if (!extracted) {
-        // Not a recognized Cloudinary URL
+
+    try {
+      const response = await apiClient.delete('/admin/delete-image', {
+        params: { publicId: publicIdOrUrl },
+      });
+      return !!response.data?.success;
+    } catch {
+      // Fallback to POST in case DELETE with query params is restricted
+      try {
+        const postRes = await apiClient.post('/admin/delete-image', {
+          publicId: publicIdOrUrl,
+        });
+        return !!postRes.data?.success;
+      } catch (postErr) {
+        console.warn('Backend image deletion failed:', postErr);
         return false;
       }
-      publicId = extracted;
     }
-
-    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'vyt6u4eu';
-    const apiKey = import.meta.env.VITE_CLOUDINARY_API_KEY || '537746434753267';
-    const apiSecret = import.meta.env.VITE_CLOUDINARY_API_SECRET || 'EOCiyW0YfEcyQdFSrzzAp38L10s';
-
-    // 1. Direct Cloudinary REST destroy API call
-    try {
-      const timestamp = Math.floor(Date.now() / 1000);
-      const strToSign = `public_id=${publicId}&timestamp=${timestamp}${apiSecret}`;
-      const signature = await sha1Hex(strToSign);
-
-      const formData = new FormData();
-      formData.append('public_id', publicId);
-      formData.append('api_key', apiKey);
-      formData.append('timestamp', String(timestamp));
-      formData.append('signature', signature);
-
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log(`Cloudinary image "${publicId}" deleted:`, data);
-        return data.result === 'ok';
-      }
-    } catch (err) {
-      console.warn('Direct Cloudinary destroy failed, trying backend proxy:', err);
-    }
-
-    // 2. Fallback to backend /api/v1/admin/delete-image if available
-    try {
-      const bRes = await fetch('/api/v1/admin/delete-image', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ publicId }),
-      });
-      if (bRes.ok) {
-        const bData = await bRes.json();
-        return !!bData.success;
-      }
-    } catch {}
-
-    return false;
   },
 };

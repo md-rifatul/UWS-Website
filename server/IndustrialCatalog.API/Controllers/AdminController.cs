@@ -268,6 +268,52 @@ public class AdminController : BaseApiController
     }
 
     /// <summary>
+    /// Deletes an image from Cloudinary using its publicId or full URL.
+    /// </summary>
+    [HttpDelete("delete-image")]
+    [AllowAnonymous]
+    public async Task<IActionResult> DeleteImage([FromQuery] string publicId, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(publicId))
+        {
+            return BadRequest(new { message = "Public ID or image URL is required." });
+        }
+
+        try
+        {
+            var success = await _cloudinaryService.DeleteImageAsync(publicId, ct);
+            return Ok(new { success, message = success ? "Image successfully removed from Cloudinary." : "Image not found or could not be removed." });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Failed to delete image from Cloudinary.", error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Fallback POST endpoint for deleting an image from Cloudinary.
+    /// </summary>
+    [HttpPost("delete-image")]
+    [AllowAnonymous]
+    public async Task<IActionResult> DeleteImagePost([FromBody] DeleteImageRequestDto dto, CancellationToken ct)
+    {
+        if (dto == null || string.IsNullOrWhiteSpace(dto.PublicId))
+        {
+            return BadRequest(new { message = "Public ID or image URL is required." });
+        }
+
+        try
+        {
+            var success = await _cloudinaryService.DeleteImageAsync(dto.PublicId, ct);
+            return Ok(new { success, message = success ? "Image successfully removed from Cloudinary." : "Image not found or could not be removed." });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Failed to delete image from Cloudinary.", error = ex.Message });
+        }
+    }
+
+    /// <summary>
     /// Exports all machinery catalog entries to CSV.
     /// </summary>
     [HttpGet("products/export")]
@@ -295,4 +341,9 @@ public class AdminController : BaseApiController
     }
 
     #endregion
+}
+
+public class DeleteImageRequestDto
+{
+    public string PublicId { get; set; } = string.Empty;
 }

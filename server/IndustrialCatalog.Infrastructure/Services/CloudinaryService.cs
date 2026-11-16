@@ -92,8 +92,37 @@ public class CloudinaryService : ICloudinaryService
             return false;
         }
 
-        var deleteParams = new DeletionParams(publicId);
-        var result = await _cloudinary.DestroyAsync(deleteParams);
-        return result.Result == "ok";
+        var cleanPublicId = ExtractPublicId(publicId);
+        if (string.IsNullOrWhiteSpace(cleanPublicId))
+        {
+            return false;
+        }
+
+        try
+        {
+            var deleteParams = new DeletionParams(cleanPublicId);
+            var result = await _cloudinary.DestroyAsync(deleteParams);
+            _logger.LogInformation("Cloudinary deletion for '{PublicId}' result: {Result}", cleanPublicId, result.Result);
+            return result.Result == "ok";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to destroy image '{PublicId}' from Cloudinary", cleanPublicId);
+            return false;
+        }
+    }
+
+    private static string ExtractPublicId(string publicIdOrUrl)
+    {
+        if (string.IsNullOrWhiteSpace(publicIdOrUrl)) return string.Empty;
+        if (!publicIdOrUrl.Contains("cloudinary.com")) return publicIdOrUrl.Trim();
+
+        var clean = publicIdOrUrl.Split('?')[0];
+        var match = System.Text.RegularExpressions.Regex.Match(clean, @"/upload/(?:v\d+/)?(.+)\.[a-zA-Z0-9]+$");
+        if (match.Success && match.Groups.Count > 1)
+        {
+            return match.Groups[1].Value;
+        }
+        return publicIdOrUrl.Trim();
     }
 }
