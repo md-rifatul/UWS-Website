@@ -15,7 +15,7 @@ export interface CloudinaryResponse {
   bytes?: number;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
 /**
  * Backend-Driven Image Service
@@ -39,14 +39,29 @@ export const cloudinaryService = {
     const formData = new FormData();
     formData.append('file', file);
 
-    const uploadUrl = `${API_BASE_URL}/admin/upload-image?folder=${encodeURIComponent(folder)}`;
+    const primaryUrl = `${API_BASE_URL}/admin/upload-image?folder=${encodeURIComponent(folder)}`;
+    const directFallbackUrl = `http://127.0.0.1:5000/api/v1/admin/upload-image?folder=${encodeURIComponent(folder)}`;
 
     try {
-      const response = await fetch(uploadUrl, {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-      });
+      let response: Response;
+      try {
+        response = await fetch(primaryUrl, {
+          method: 'POST',
+          body: formData,
+          credentials: 'include',
+        });
+      } catch (firstErr) {
+        // Fallback to direct backend URL if proxy or relative request failed
+        if (primaryUrl !== directFallbackUrl) {
+          response = await fetch(directFallbackUrl, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include',
+          });
+        } else {
+          throw firstErr;
+        }
+      }
 
       const data = await response.json().catch(() => null);
 
@@ -81,7 +96,7 @@ export const cloudinaryService = {
         err.message?.includes('NetworkError')
       ) {
         throw new Error(
-          'Backend server is not running or unreachable at http://localhost:5000. Please start the backend server to upload images.'
+          'Backend server is unreachable at http://localhost:5000. Please ensure the backend server is running.'
         );
       }
       throw new Error(err.message || 'Failed to upload image via backend server.');
@@ -95,13 +110,23 @@ export const cloudinaryService = {
   async deleteImage(publicIdOrUrl: string): Promise<boolean> {
     if (!publicIdOrUrl) return false;
 
-    const deleteUrl = `${API_BASE_URL}/admin/delete-image?publicId=${encodeURIComponent(publicIdOrUrl)}`;
+    const primaryUrl = `${API_BASE_URL}/admin/delete-image?publicId=${encodeURIComponent(publicIdOrUrl)}`;
+    const directFallbackUrl = `http://127.0.0.1:5000/api/v1/admin/delete-image?publicId=${encodeURIComponent(publicIdOrUrl)}`;
 
     try {
-      const response = await fetch(deleteUrl, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
+      let response: Response;
+      try {
+        response = await fetch(primaryUrl, {
+          method: 'DELETE',
+          credentials: 'include',
+        });
+      } catch {
+        response = await fetch(directFallbackUrl, {
+          method: 'DELETE',
+          credentials: 'include',
+        });
+      }
+
       if (response.ok) {
         const data = await response.json().catch(() => null);
         return !!data?.success;
@@ -110,7 +135,8 @@ export const cloudinaryService = {
 
     // Fallback to POST endpoint
     try {
-      const postRes = await fetch(`${API_BASE_URL}/admin/delete-image`, {
+      const postUrl = `${API_BASE_URL}/admin/delete-image`;
+      const postRes = await fetch(postUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ publicId: publicIdOrUrl }),

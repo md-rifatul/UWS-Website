@@ -65,11 +65,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowVercelAndLocalClient", policy =>
     {
-        policy.WithOrigins(allowedOrigins)
-              .SetIsOriginAllowedToAllowWildcardSubdomains()
+        policy.SetIsOriginAllowed(_ => true)
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials(); // Critical for HTTP-only refresh cookies
+              .AllowCredentials();
     });
 });
 
