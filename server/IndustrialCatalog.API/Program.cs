@@ -155,7 +155,9 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// 6. HTTP Pipeline
+// 6. HTTP Pipeline - Place CORS at the very top so all responses (including errors) have CORS headers
+app.UseCors("AllowVercelAndLocalClient");
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Always enable Swagger for local testing, development, and documentation
@@ -176,7 +178,6 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }
-app.UseCors("AllowVercelAndLocalClient");
 
 app.UseAuthentication();
 app.UseAuthorization();

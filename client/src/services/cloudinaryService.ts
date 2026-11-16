@@ -1,5 +1,3 @@
-import apiClient from './apiClient';
-
 export function extractPublicIdFromUrl(url: string): string | null {
   if (!url || !url.includes('cloudinary.com')) return null;
   const cleanUrl = url.split('?')[0];
@@ -16,6 +14,8 @@ export interface CloudinaryResponse {
   height?: number;
   bytes?: number;
 }
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1';
 
 /**
  * Backend-Driven Image Service
@@ -39,38 +39,50 @@ export const cloudinaryService = {
     const formData = new FormData();
     formData.append('file', file);
 
-    try {
-      const response = await apiClient.post<CloudinaryResponse>(
-        `/admin/upload-image?folder=${encodeURIComponent(folder)}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+    const uploadUrl = `${API_BASE_URL}/admin/upload-image?folder=${encodeURIComponent(folder)}`;
 
-      if (response.data && (response.data.secureUrl || response.data.url)) {
+    try {
+      const response = await fetch(uploadUrl, {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        const errorMsg =
+          data?.message ||
+          data?.error ||
+          data?.title ||
+          (data?.errors ? Object.values(data.errors).flat().join(', ') : null) ||
+          `Server returned status ${response.status}`;
+        throw new Error(errorMsg);
+      }
+
+      if (data && (data.secureUrl || data.url)) {
         return {
-          url: response.data.secureUrl || response.data.url,
-          secureUrl: response.data.secureUrl || response.data.url,
-          publicId: response.data.publicId || '',
-          format: response.data.format,
-          width: response.data.width,
-          height: response.data.height,
-          bytes: response.data.bytes,
+          url: data.secureUrl || data.url,
+          secureUrl: data.secureUrl || data.url,
+          publicId: data.publicId || '',
+          format: data.format,
+          width: data.width,
+          height: data.height,
+          bytes: data.bytes,
         };
       }
 
       throw new Error('Upload succeeded but no image URL was returned by server.');
     } catch (err: any) {
       console.error('Backend image upload error:', err);
-      const serverMsg = err.response?.data?.message || err.response?.data?.error;
-      if (serverMsg) {
-        throw new Error(serverMsg);
-      }
-      if (err.code === 'ERR_NETWORK' || err.message === 'Network Error') {
-        throw new Error('Backend server is not running (http://localhost:5000). Please start the backend server to upload images.');
+      if (
+        err.name === 'TypeError' ||
+        err.message?.includes('Failed to fetch') ||
+        err.message?.includes('NetworkError')
+      ) {
+        throw new Error(
+          'Backend server is not running or unreachable at http://localhost:5000. Please start the backend server to upload images.'
+        );
       }
       throw new Error(err.message || 'Failed to upload image via backend server.');
     }
@@ -83,22 +95,36 @@ export const cloudinaryService = {
   async deleteImage(publicIdOrUrl: string): Promise<boolean> {
     if (!publicIdOrUrl) return false;
 
+    const deleteUrl = `${API_BASE_URL}/admin/delete-image?publicId=${encodeURIComponent(publicIdOrUrl)}`;
+
     try {
-      const response = await apiClient.delete('/admin/delete-image', {
-        params: { publicId: publicIdOrUrl },
+      const response = await fetch(deleteUrl, {
+        method: 'DELETE',
+        credentials: 'include',
       });
-      return !!response.data?.success;
-    } catch {
-      // Fallback to POST in case DELETE with query params is restricted
-      try {
-        const postRes = await apiClient.post('/admin/delete-image', {
-          publicId: publicIdOrUrl,
-        });
-        return !!postRes.data?.success;
-      } catch (postErr) {
-        console.warn('Backend image deletion failed:', postErr);
-        return false;
+      if (response.ok) {
+        const data = await response.json().catch(() => null);
+        return !!data?.success;
       }
+    } catch {}
+
+    // Fallback to POST endpoint
+    try {
+      const postRes = await fetch(`${API_BASE_URL}/admin/delete-image`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ publicId: publicIdOrUrl }),
+        credentials: 'include',
+      });
+      if (postRes.ok) {
+        const data = await postRes.json().catch(() => null);
+        return !!data?.success;
+      }
+    } catch (postErr) {
+      console.warn('Backend image deletion failed:', postErr);
+      return false;
     }
+
+    return false;
   },
 };
