@@ -150,7 +150,13 @@ export const adminService = {
     throw new Error('Product not found');
   },
 
-  async deleteProduct(id: string): Promise<boolean> {
+  async deleteProduct(id: string, imageUrl?: string): Promise<boolean> {
+    const existing = DEMO_PRODUCTS.find((p) => p.id === id);
+    const targetImg = imageUrl || existing?.mainImageUrl;
+    if (targetImg) {
+      cloudinaryService.deleteImage(targetImg).catch(() => {});
+    }
+
     try {
       await apiClient.delete(`/admin/products/${id}`);
       return true;
@@ -162,6 +168,10 @@ export const adminService = {
       }
       return false;
     }
+  },
+
+  async deleteImage(publicIdOrUrl: string): Promise<boolean> {
+    return await cloudinaryService.deleteImage(publicIdOrUrl);
   },
 
   async createCategory(category: Partial<Category>): Promise<Category> {

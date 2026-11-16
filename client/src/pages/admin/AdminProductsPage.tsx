@@ -15,6 +15,7 @@ import {
   Star,
 } from 'lucide-react';
 import { adminService } from '@/services/adminService';
+import { cloudinaryService } from '@/services/cloudinaryService';
 import { catalogService } from '@/services/catalogService';
 import { Category, Manufacturer, Product } from '@/types';
 import { AvailabilityBadge, ConditionBadge } from '@/components/common/Badge';
@@ -166,17 +167,29 @@ export const AdminProductsPage: React.FC = () => {
   const handleImageFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const oldUrl = formState.mainImageUrl;
     setIsUploadingImage(true);
     setUploadError(null);
     try {
       const res = await adminService.uploadImage(file, 'uws-machinery');
       setFormState((prev) => ({ ...prev, mainImageUrl: res.url }));
+      if (oldUrl && oldUrl !== res.url && oldUrl.includes('cloudinary.com')) {
+        cloudinaryService.deleteImage(oldUrl).catch(() => {});
+      }
     } catch (err: any) {
       console.error('Image upload failed:', err);
       setUploadError(err.message || 'Failed to upload image to Cloudinary.');
     } finally {
       setIsUploadingImage(false);
       e.target.value = '';
+    }
+  };
+
+  const handleRemoveImage = async () => {
+    const oldUrl = formState.mainImageUrl;
+    setFormState((prev) => ({ ...prev, mainImageUrl: '' }));
+    if (oldUrl && oldUrl.includes('cloudinary.com')) {
+      await cloudinaryService.deleteImage(oldUrl).catch(() => {});
     }
   };
   const [loading, setLoading] = useState(true);
@@ -407,8 +420,12 @@ export const AdminProductsPage: React.FC = () => {
 
   const handleDelete = async (id: string, name: string) => {
     if (window.confirm(`Are you sure you want to remove "${name}" from the active catalog?`)) {
-      await adminService.deleteProduct(id);
+      const prod = products.find((p) => p.id === id);
+      await adminService.deleteProduct(id, prod?.mainImageUrl);
       setProducts(products.filter((p) => p.id !== id));
+      if (prod?.mainImageUrl && prod.mainImageUrl.includes('cloudinary.com')) {
+        cloudinaryService.deleteImage(prod.mainImageUrl).catch(() => {});
+      }
     }
   };
 
@@ -1150,7 +1167,7 @@ export const AdminProductsPage: React.FC = () => {
                         </label>
                         <button
                           type="button"
-                          onClick={() => setFormState({ ...formState, mainImageUrl: '' })}
+                          onClick={handleRemoveImage}
                           className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />

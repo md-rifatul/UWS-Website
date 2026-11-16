@@ -23,6 +23,7 @@ import {
   Upload,
 } from 'lucide-react';
 import { adminService } from '@/services/adminService';
+import { cloudinaryService } from '@/services/cloudinaryService';
 import { catalogService } from '@/services/catalogService';
 import { HeroSlide, Product, SiteSetting } from '@/types';
 import Button from '@/components/common/Button';
@@ -101,10 +102,14 @@ export const AdminSettingsPage: React.FC = () => {
   const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const oldUrl = slideFormData.imageUrl;
     setIsUploadingBanner(true);
     try {
       const res = await adminService.uploadImage(file, 'uws-hero-banners');
       setSlideFormData((prev) => ({ ...prev, imageUrl: res.url }));
+      if (oldUrl && oldUrl !== res.url && oldUrl.includes('cloudinary.com')) {
+        cloudinaryService.deleteImage(oldUrl).catch(() => {});
+      }
     } catch (err: any) {
       console.error('Failed to upload banner:', err);
       alert(err.message || 'Failed to upload banner to Cloudinary.');
@@ -117,10 +122,14 @@ export const AdminSettingsPage: React.FC = () => {
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const oldUrl = siteSettings.logo_url;
     setIsUploadingLogo(true);
     try {
       const res = await adminService.uploadImage(file, 'uws-brand');
       setSiteSettings((prev) => ({ ...prev, logo_url: res.url }));
+      if (oldUrl && oldUrl !== res.url && oldUrl.includes('cloudinary.com')) {
+        cloudinaryService.deleteImage(oldUrl).catch(() => {});
+      }
     } catch (err: any) {
       console.error('Failed to upload logo:', err);
       alert(err.message || 'Failed to upload logo to Cloudinary.');
@@ -220,11 +229,15 @@ export const AdminSettingsPage: React.FC = () => {
 
   const handleDeleteSlide = (id: string) => {
     if (!window.confirm('Are you sure you want to remove this hero banner?')) return;
+    const target = heroSlides.find((s) => s.id === id);
+    if (target?.imageUrl && target.imageUrl.includes('cloudinary.com')) {
+      cloudinaryService.deleteImage(target.imageUrl).catch(() => {});
+    }
     const updated = heroSlides.filter((s) => s.id !== id);
     setHeroSlides(updated);
     adminService.saveHeroSlides(updated);
     window.dispatchEvent(new CustomEvent('wts-hero-slides-updated', { detail: updated }));
-    showNotification('Hero banner deleted.');
+    showNotification('Hero banner deleted from site & Cloudinary.');
   };
 
   const handleToggleSlideActive = (id: string) => {
@@ -655,7 +668,13 @@ export const AdminSettingsPage: React.FC = () => {
                       </label>
                       <button
                         type="button"
-                        onClick={() => setSiteSettings((prev) => ({ ...prev, logo_url: '' }))}
+                        onClick={async () => {
+                          const oldUrl = siteSettings.logo_url;
+                          setSiteSettings((prev) => ({ ...prev, logo_url: '' }));
+                          if (oldUrl && oldUrl.includes('cloudinary.com')) {
+                            await cloudinaryService.deleteImage(oldUrl).catch(() => {});
+                          }
+                        }}
                         className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -1225,7 +1244,13 @@ export const AdminSettingsPage: React.FC = () => {
                         </label>
                         <button
                           type="button"
-                          onClick={() => setSlideFormData({ ...slideFormData, imageUrl: '' })}
+                          onClick={async () => {
+                            const oldUrl = slideFormData.imageUrl;
+                            setSlideFormData({ ...slideFormData, imageUrl: '' });
+                            if (oldUrl && oldUrl.includes('cloudinary.com')) {
+                              await cloudinaryService.deleteImage(oldUrl).catch(() => {});
+                            }
+                          }}
                           className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
