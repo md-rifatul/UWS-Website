@@ -172,7 +172,10 @@ if (app.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("Ena
     });
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseCors("AllowVercelAndLocalClient");
 
 app.UseAuthentication();
