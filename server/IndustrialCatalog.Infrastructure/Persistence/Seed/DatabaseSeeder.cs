@@ -62,8 +62,9 @@ public static class DatabaseSeeder
             await context.SaveChangesAsync();
         }
 
-        // 3. Seed Categories & Dynamic Attributes
-        if (!await context.Categories.AnyAsync())
+        // 3. Seed or Synchronize Categories
+        var existingCategories = await context.Categories.Include(c => c.Attributes).ToListAsync();
+        if (!existingCategories.Any())
         {
             var cncCatId = Guid.Parse("c1111111-1111-1111-1111-111111111111");
             var accCatId = Guid.Parse("c2222222-2222-2222-2222-222222222222");
@@ -147,6 +148,57 @@ public static class DatabaseSeeder
             };
 
             context.Categories.AddRange(categories);
+            await context.SaveChangesAsync();
+        }
+        else
+        {
+            // Sync existing categories: remove old unsplash demo images and rename to requested categories
+            var targetNames = new Dictionary<string, string>
+            {
+                { "c1111111-1111-1111-1111-111111111111", "CNC ROUTER MACHINE" },
+                { "c2222222-2222-2222-2222-222222222222", "ACCESSORIES" },
+                { "c3333333-3333-3333-3333-333333333333", "MOTOR" },
+                { "c4444444-4444-4444-4444-444444444444", "DRIVE" },
+                { "c5555555-5555-5555-5555-555555555555", "SPINDLE" },
+                { "c6666666-6666-6666-6666-666666666666", "INVERTER" },
+                { "c7777777-7777-7777-7777-777777777777", "REMOTE" }
+            };
+
+            var targetSlugs = new Dictionary<string, string>
+            {
+                { "c1111111-1111-1111-1111-111111111111", "cnc-router-machine" },
+                { "c2222222-2222-2222-2222-222222222222", "accessories" },
+                { "c3333333-3333-3333-3333-333333333333", "motor" },
+                { "c4444444-4444-4444-4444-444444444444", "drive" },
+                { "c5555555-5555-5555-5555-555555555555", "spindle" },
+                { "c6666666-6666-6666-6666-666666666666", "inverter" },
+                { "c7777777-7777-7777-7777-777777777777", "remote" }
+            };
+
+            foreach (var cat in existingCategories)
+            {
+                var idStr = cat.Id.ToString();
+                if (targetNames.ContainsKey(idStr))
+                {
+                    cat.Name = targetNames[idStr];
+                    cat.Slug = targetSlugs[idStr];
+                }
+                // Purge demo unsplash images so only user-uploaded Cloudinary images appear
+                if (cat.ImageUrl != null && cat.ImageUrl.Contains("unsplash.com"))
+                {
+                    cat.ImageUrl = null;
+                }
+            }
+
+            // Remove any demo products seeded with unsplash.com
+            var demoProducts = await context.Products
+                .Where(p => p.MainImageUrl.Contains("unsplash.com"))
+                .ToListAsync();
+            if (demoProducts.Any())
+            {
+                context.Products.RemoveRange(demoProducts);
+            }
+
             await context.SaveChangesAsync();
         }
 

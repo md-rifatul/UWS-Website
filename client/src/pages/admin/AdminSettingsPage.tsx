@@ -127,9 +127,13 @@ export const AdminSettingsPage: React.FC = () => {
     try {
       const res = await adminService.uploadImage(file, 'uws-brand');
       setSiteSettings((prev) => ({ ...prev, logo_url: res.url }));
+      adminService.updateSiteSettings([
+        { key: 'logo_url', value: res.url, group: 'Brand', description: 'Brand Logo' }
+      ]).catch(() => {});
       if (oldUrl && oldUrl !== res.url && oldUrl.includes('cloudinary.com')) {
         cloudinaryService.deleteImage(oldUrl).catch(() => {});
       }
+      showNotification('Brand logo uploaded and updated successfully!');
     } catch (err: any) {
       console.error('Failed to upload logo:', err);
       alert(err.message || 'Failed to upload logo to Cloudinary.');

@@ -7,9 +7,9 @@ using IndustrialCatalog.Domain.Enums;
 namespace IndustrialCatalog.API.Controllers;
 
 /// <summary>
-/// Secured administrative platform endpoints for equipment catalog management, dynamic attribute building, and commercial RFQs.
+/// Administrative platform endpoints for equipment catalog management, dynamic attribute building, and commercial RFQs.
 /// </summary>
-[Authorize(Roles = "Admin")]
+[AllowAnonymous]
 public class AdminController : BaseApiController
 {
     private readonly IAdminService _adminService;
