@@ -17,6 +17,8 @@ import {
   ExternalLink,
   Sparkles,
   Star,
+  Layers,
+  Grid,
 } from 'lucide-react';
 import { catalogService } from '@/services/catalogService';
 import { Category, Product, HeroSlide } from '@/types';
@@ -41,6 +43,12 @@ import {
   DUST_EXTRACTION_SVG,
   DIAMOND_TOOLING_SVG,
   ALL_MACHINERY_SVG,
+  MOTOR_SVG,
+  DRIVE_SVG,
+  SPINDLE_SVG,
+  INVERTER_SVG,
+  REMOTE_SVG,
+  ACCESSORIES_SVG,
 } from '@/utils/imageUtils';
 
 export const HomePage: React.FC = () => {
@@ -175,22 +183,96 @@ export const HomePage: React.FC = () => {
     loadHomeData();
   }, []);
 
-  // 1. Tapping ANY of the 5 Most Popular Items navigates to that category's dedicated page!
+  // Tapping ANY machine or component category navigates to that category's dedicated catalog page!
   const handlePopularItemNavigate = (categorySlug: string) => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     dispatch(setSelectedCategory(categorySlug));
     navigate(`/products?category=${categorySlug}`);
   };
 
-  // 5 Popular Items: 1 Hero on Left + 4 on Right in 2x2 grid
-  const popularCategories = categories.slice(0, 5);
-  const heroCategory = popularCategories[0]; // CNC ROUTER MACHINE
-  const gridCategories = popularCategories.slice(1, 5); // SURFACE PLANER, THICKNESS PLANER, SPINDLE SHAPER, CIRCULAR SAW
+  // 6 Core Components & Accessories matching genuine UWS industrial product offerings
+  const componentCategories = [
+    {
+      slug: 'accessories',
+      name: 'ACCESSORIES',
+      tagline: 'Collets, Clamps & Sensors',
+      badge: 'Genuine Spares',
+      imageUrl: ACCESSORIES_SVG,
+    },
+    {
+      slug: 'motor',
+      name: 'MOTOR',
+      tagline: 'AC Servo & Stepper Motors',
+      badge: 'High Torque',
+      imageUrl: MOTOR_SVG,
+    },
+    {
+      slug: 'drive',
+      name: 'DRIVE',
+      tagline: 'Digital Stepper & Servo Drives',
+      badge: 'Microstepping',
+      imageUrl: DRIVE_SVG,
+    },
+    {
+      slug: 'spindle',
+      name: 'SPINDLE',
+      tagline: 'Air & Water-Cooled Spindles',
+      badge: '24,000 RPM',
+      imageUrl: SPINDLE_SVG,
+    },
+    {
+      slug: 'inverter',
+      name: 'INVERTER',
+      tagline: 'High-Frequency VFD Inverters',
+      badge: 'Vector Control',
+      imageUrl: INVERTER_SVG,
+    },
+    {
+      slug: 'remote',
+      name: 'REMOTE',
+      tagline: 'DSP Controllers & Handwheels',
+      badge: 'Offline DSP',
+      imageUrl: REMOTE_SVG,
+    },
+  ];
+
+  // Count how many CNC router models exist across active catalog
+  const cncRouterProductsCount = useMemo(() => {
+    return allProducts.filter(
+      (p) =>
+        p.categorySlug === 'cnc-router-machine' ||
+        p.categoryName?.toLowerCase().includes('cnc') ||
+        p.name.toLowerCase().includes('cnc')
+    ).length;
+  }, [allProducts]);
+
+  // Featured Products Pagination & Show All state (12 Products per Page by default)
+  const [featuredPage, setFeaturedPage] = useState(1);
+  const [showAllFeatured, setShowAllFeatured] = useState(false);
+  const featuredSectionRef = useRef<HTMLDivElement>(null);
+  const FEATURED_PAGE_SIZE = 12;
 
   // Featured Products Section: Strictly controlled by Admin via Inventory Featured status (isFeatured === true)
   const featuredProducts = useMemo(() => {
     return allProducts.filter((p) => p.isFeatured);
   }, [allProducts]);
+
+  const totalFeaturedPages = Math.ceil(featuredProducts.length / FEATURED_PAGE_SIZE) || 1;
+
+  const visibleFeaturedProducts = useMemo(() => {
+    if (showAllFeatured) {
+      return featuredProducts;
+    }
+    const start = (featuredPage - 1) * FEATURED_PAGE_SIZE;
+    return featuredProducts.slice(start, start + FEATURED_PAGE_SIZE);
+  }, [featuredProducts, showAllFeatured, featuredPage]);
+
+  const handlePageChange = (newPage: number) => {
+    setFeaturedPage(newPage);
+    if (featuredSectionRef.current) {
+      featuredSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   return (
     <div className="space-y-10 sm:space-y-12 pb-14">
@@ -420,79 +502,112 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. MOST POPULAR ITEMS (TAP TAKES USER DIRECTLY TO DEDICATED CATEGORY PAGE!) */}
+      {/* 4. CNC ROUTER & MOTION AUTOMATION COMPONENTS (HERO CNC ROUTER + 6 COMPONENT CARDS) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-7">
-        {/* Section Heading matching Reference Website */}
+        {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto space-y-2">
-          <span className="text-xs font-bold uppercase tracking-widest text-slate-500 block">
-            WTS Woodworking Machinery — All Kind of Woodworking Solution
+          <span className="text-xs font-bold uppercase tracking-widest text-industrial-orange block">
+            UWS Machinery &amp; Motion Automation Spares
           </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-navy-900 uppercase tracking-tight">
-            MOST POPULAR ITEMS
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-navy-900 uppercase tracking-tight">
+            CNC ROUTER &amp; COMPONENTS
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl mx-auto">
-            We provide a complete woodworking solution with consultancy for factory planning,
-            production layout plan, supply of machines, installation, operation training and after sales service.
+            High-precision CNC router machines with customizable configurations, alongside turnkey industrial spare parts including motors, drives, high-speed spindles, inverters, remotes, and cutter accessories.
           </p>
         </div>
 
-        {/* 5 Box Container: Left Hero Box + Right 2x2 Grid */}
+        {/* 7-Card Grid: Left Highlight Card (CNC Router Machines) + Right 6 Component Cards (3x2 Grid) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           {/* Left Hero Box: CNC ROUTER MACHINE */}
-          {heroCategory && (
-            <div
-              onClick={() => handlePopularItemNavigate(heroCategory.slug)}
-              className="lg:col-span-6 bg-white rounded-2xl border border-slate-border hover:border-industrial-orange hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer flex flex-col justify-between group p-6 sm:p-8 text-center"
-            >
-              {/* Centered Machine Cutout Image */}
-              <div className="flex-1 flex items-center justify-center p-4 sm:p-8 min-h-[280px] sm:min-h-[360px]">
-                <img
-                  src={heroCategory.imageUrl || ''}
-                  alt={heroCategory.name}
-                  onError={handleImageError}
-                  className="max-h-72 sm:max-h-80 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-md"
-                />
-              </div>
-
-              {/* Bottom Centered Title (Clean, Bold, Just Like Photo 1) */}
-              <div className="pt-4 border-t border-slate-100 flex flex-col items-center">
-                <h3 className="font-extrabold text-lg sm:text-xl text-navy-900 group-hover:text-industrial-orange transition-colors tracking-wide uppercase">
-                  {heroCategory.name}
-                </h3>
-                <span className="text-xs font-semibold text-industrial-orange mt-1 inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                  <span>Explore Series Models</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </span>
-              </div>
+          <div
+            onClick={() => handlePopularItemNavigate('cnc-router-machine')}
+            className="lg:col-span-5 bg-white rounded-2xl border border-slate-border hover:border-industrial-orange hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer flex flex-col justify-between group p-6 sm:p-7 text-center relative"
+          >
+            {/* Top Badges */}
+            <div className="flex items-center justify-between gap-2 w-full mb-2">
+              <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold tracking-wide uppercase border border-emerald-200">
+                Flagship Machinery
+              </span>
+              <span className="px-2.5 py-1 rounded-full bg-orange-50 text-industrial-orange text-[11px] font-bold tracking-wide border border-orange-200">
+                {cncRouterProductsCount > 0 ? `${cncRouterProductsCount} Models Available` : 'Multiple Models'}
+              </span>
             </div>
-          )}
 
-          {/* Right Side 2x2 Grid: SURFACE PLANER, THICKNESS PLANER, SPINDLE SHAPER, CIRCULAR SAW */}
-          <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {gridCategories.map((category) => (
+            {/* Centered Machine Cutout Image */}
+            <div className="flex-1 flex items-center justify-center p-4 sm:p-6 min-h-[220px] sm:min-h-[260px]">
+              <img
+                src={CNC_ROUTER_SVG}
+                alt="CNC Router Machine"
+                onError={handleImageError}
+                className="max-h-60 sm:max-h-72 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-md"
+              />
+            </div>
+
+            {/* Bottom Centered Title & Specs Chips */}
+            <div className="pt-4 border-t border-slate-100 flex flex-col items-center space-y-3">
+              <div>
+                <h3 className="font-extrabold text-lg sm:text-xl text-navy-900 group-hover:text-industrial-orange transition-colors tracking-wide uppercase">
+                  CNC ROUTER MACHINE
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">
+                  1325 Standard, 1530 Heavy Duty, ATC Linear Nesting, Multi-Spindle 3D Relief &amp; Stone Series
+                </p>
+              </div>
+
+              {/* Quick Model Spec Chips */}
+              <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">
+                <span className="text-[10px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded">Syntec / DSP</span>
+                <span className="text-[10px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded">Vacuum Matrix Bed</span>
+                <span className="text-[10px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded">High Torque Servos</span>
+              </div>
+
+              <span className="text-xs font-bold text-white bg-navy-950 group-hover:bg-industrial-orange px-5 py-2.5 rounded-xl transition-all shadow-sm group-hover:shadow-md inline-flex items-center gap-1.5">
+                <span>Explore All CNC Models</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </div>
+          </div>
+
+          {/* Right Side: 6 Component Cards (3 Columns x 2 Rows) */}
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-4.5">
+            {componentCategories.map((item) => (
               <div
-                key={category.id}
-                onClick={() => handlePopularItemNavigate(category.slug)}
-                className="bg-white rounded-2xl border border-slate-border hover:border-industrial-orange hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer flex flex-col justify-between group p-5 text-center"
+                key={item.slug}
+                onClick={() => handlePopularItemNavigate(item.slug)}
+                className="bg-white rounded-2xl border border-slate-border hover:border-industrial-orange hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer flex flex-col justify-between group p-4 sm:p-4.5 text-center"
               >
-                {/* Centered Machine Cutout Image */}
-                <div className="flex-1 flex items-center justify-center p-3 min-h-[160px] sm:min-h-[190px]">
+                {/* Card Top Pill Badge */}
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-[10px] font-bold text-slate-500 bg-slate-100 group-hover:bg-orange-50 group-hover:text-industrial-orange px-2 py-0.5 rounded-full transition-colors">
+                    {item.badge}
+                  </span>
+                  <span className="text-[10px] text-slate-400 group-hover:text-industrial-orange transition-colors">
+                    In Stock
+                  </span>
+                </div>
+
+                {/* Centered Component Illustration */}
+                <div className="flex-1 flex items-center justify-center p-2 min-h-[120px] sm:min-h-[140px]">
                   <img
-                    src={category.imageUrl || ''}
-                    alt={category.name}
+                    src={item.imageUrl}
+                    alt={item.name}
                     onError={handleImageError}
-                    className="max-h-40 sm:max-h-44 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-sm"
+                    className="max-h-28 sm:max-h-32 w-auto object-contain group-hover:scale-108 transition-transform duration-300 drop-shadow-2xs"
                   />
                 </div>
 
-                {/* Bottom Centered Title (Clean, Bold, Just Like Photo 1) */}
-                <div className="pt-3 border-t border-slate-100 flex flex-col items-center">
+                {/* Card Bottom: Name, Tagline & Link */}
+                <div className="pt-2.5 border-t border-slate-100 flex flex-col items-center">
                   <h3 className="font-extrabold text-sm sm:text-base text-navy-900 group-hover:text-industrial-orange transition-colors tracking-wide uppercase">
-                    {category.name}
+                    {item.name}
                   </h3>
-                  <span className="text-[11px] font-semibold text-slate-500 mt-0.5 group-hover:text-industrial-orange transition-colors inline-flex items-center gap-1">
-                    <span>Explore Models</span>
-                    <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  <span className="text-[11px] text-slate-500 font-normal line-clamp-1 mt-0.5">
+                    {item.tagline}
+                  </span>
+                  <span className="text-[11px] font-bold text-industrial-orange mt-2 inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                    <span>Explore Parts</span>
+                    <ArrowRight className="w-3 h-3" />
                   </span>
                 </div>
               </div>
@@ -501,30 +616,74 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. FEATURED PRODUCTS (CLEAN 3-COL GRID, 9 PRODUCTS, HOVER QUICK VIEW, NO CATEGORY PILLS) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-4 space-y-6">
+      {/* 5. FEATURED PRODUCTS (12 PER PAGE, PAGINATION, SHOW ALL TOGGLE) */}
+      <section ref={featuredSectionRef} id="featured-products-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-4 space-y-6 scroll-mt-20">
         {/* Centered Heading & Subtitle */}
         <div className="text-center max-w-3xl mx-auto space-y-2">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-navy-900 uppercase tracking-tight">
             FEATURED PRODUCTS
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 font-normal">
-            Visit our demo and technology center to see all kind of woodworking machines
+            Visit our demo and technology center to inspect machinery and industrial spares
           </p>
           <div className="w-16 h-0.5 bg-slate-200 mx-auto mt-2" />
         </div>
 
-        {/* Clean 3-Column Grid without artificial card boxes/borders */}
-        {featuredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-8 gap-y-8 sm:gap-y-10">
-            {featuredProducts.map((product) => {
+        {/* Top Controls Bar: Counter & Show All Toggle */}
+        {featuredProducts.length > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3 sm:px-5 sm:py-3 rounded-xl border border-slate-200 shadow-2xs">
+            {/* Counter */}
+            <span className="text-xs sm:text-sm font-semibold text-charcoal-700">
+              {showAllFeatured ? (
+                <>Showing all <span className="text-industrial-orange font-bold">{featuredProducts.length}</span> featured products</>
+              ) : (
+                <>Showing <span className="text-industrial-orange font-bold">{(featuredPage - 1) * FEATURED_PAGE_SIZE + 1}–{Math.min(featuredPage * FEATURED_PAGE_SIZE, featuredProducts.length)}</span> of <span className="font-bold">{featuredProducts.length}</span> featured products</>
+              )}
+            </span>
+
+            {/* Show All / Paginated Toggle Button */}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAllFeatured(!showAllFeatured);
+                  if (showAllFeatured) {
+                    setFeaturedPage(1);
+                  }
+                }}
+                className={`text-xs font-bold px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer border ${
+                  showAllFeatured
+                    ? 'bg-industrial-orange text-white border-industrial-orange shadow-sm'
+                    : 'bg-slate-50 hover:bg-slate-100 text-navy-900 border-slate-300'
+                }`}
+              >
+                {showAllFeatured ? (
+                  <>
+                    <Layers className="w-3.5 h-3.5" />
+                    <span>Switch to Paginated View (12 / Page)</span>
+                  </>
+                ) : (
+                  <>
+                    <Grid className="w-3.5 h-3.5" />
+                    <span>Show All ({featuredProducts.length})</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* 4-Column Grid: 12 Products per Page */}
+        {visibleFeaturedProducts.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+            {visibleFeaturedProducts.map((product) => {
               return (
                 <div
                   key={product.id}
-                  className="group flex flex-col items-center text-center cursor-pointer select-none"
+                  className="bg-white rounded-2xl border border-slate-200 hover:border-industrial-orange hover:shadow-xl transition-all duration-300 flex flex-col justify-between group p-4 text-center cursor-pointer select-none"
                 >
-                  {/* Machine Photo Container with Minimalist Hover Quick View */}
-                  <div className="relative w-full aspect-4/3 flex items-center justify-center p-4 overflow-hidden">
+                  {/* Photo Container with Minimalist Hover Quick View */}
+                  <div className="relative w-full aspect-4/3 flex items-center justify-center p-3 overflow-hidden rounded-xl bg-slate-50/60">
                     <Link
                       to={`/products/${product.slug}`}
                       className="w-full h-full flex items-center justify-center"
@@ -533,7 +692,7 @@ export const HomePage: React.FC = () => {
                         src={product.mainImageUrl}
                         alt={product.name}
                         onError={handleImageError}
-                        className="max-h-56 sm:max-h-64 w-auto object-contain transition-transform duration-300 ease-out group-hover:scale-105"
+                        className="max-h-40 sm:max-h-48 w-auto object-contain transition-transform duration-300 ease-out group-hover:scale-108"
                         loading="lazy"
                       />
                     </Link>
@@ -547,7 +706,7 @@ export const HomePage: React.FC = () => {
                             e.stopPropagation();
                             setQuickViewProduct(product);
                           }}
-                          className="bg-navy-900/90 hover:bg-industrial-orange text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg flex items-center gap-1.5 transition-all duration-200 hover:scale-105 backdrop-blur-xs cursor-pointer"
+                          className="bg-navy-900/90 hover:bg-industrial-orange text-white text-xs font-semibold px-3.5 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 transition-all duration-200 hover:scale-105 backdrop-blur-xs cursor-pointer"
                           title="Quick View Machine Details"
                         >
                           <Eye className="w-3.5 h-3.5" />
@@ -557,18 +716,29 @@ export const HomePage: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Machine Model Name & Category */}
-                  <div className="pt-4 space-y-1">
+                  {/* Model Name & Category */}
+                  <div className="pt-3.5 space-y-1">
                     <Link
                       to={`/products/${product.slug}`}
-                      className="font-bold text-sm sm:text-base text-navy-900 group-hover:text-industrial-orange transition-colors uppercase tracking-tight block line-clamp-1"
+                      className="font-bold text-xs sm:text-sm text-navy-900 group-hover:text-industrial-orange transition-colors uppercase tracking-tight block line-clamp-2 min-h-[36px]"
                       title={product.name}
                     >
                       {product.name}
                     </Link>
-                    <span className="text-xs text-slate-500 font-normal block">
-                      {product.categoryName || 'CNC Router Machine'}
+                    <span className="text-[11px] text-slate-500 font-normal block">
+                      {product.categoryName || 'CNC Machinery & Components'}
                     </span>
+                  </div>
+
+                  {/* View Details Link */}
+                  <div className="pt-3 border-t border-slate-100 mt-2">
+                    <Link
+                      to={`/products/${product.slug}`}
+                      className="text-xs font-bold text-navy-900 group-hover:text-industrial-orange inline-flex items-center gap-1 transition-colors"
+                    >
+                      <span>View Specifications</span>
+                      <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                    </Link>
                   </div>
                 </div>
               );
@@ -585,6 +755,46 @@ export const HomePage: React.FC = () => {
             <p className="text-xs text-slate-500 max-w-md mx-auto">
               Machinery models can be selected to display in this showcase directly from the Admin Inventory section.
             </p>
+          </div>
+        )}
+
+        {/* Pagination Bar (When Not Show All and Total Pages > 1) */}
+        {!showAllFeatured && totalFeaturedPages > 1 && (
+          <div className="flex items-center justify-center gap-2 pt-4">
+            <button
+              type="button"
+              disabled={featuredPage === 1}
+              onClick={() => handlePageChange(featuredPage - 1)}
+              className="p-2 sm:px-3.5 sm:py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-navy-900 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">Previous</span>
+            </button>
+
+            {Array.from({ length: totalFeaturedPages }, (_, i) => i + 1).map((pageNum) => (
+              <button
+                key={pageNum}
+                type="button"
+                onClick={() => handlePageChange(pageNum)}
+                className={`w-9 h-9 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  featuredPage === pageNum
+                    ? 'bg-industrial-orange text-white shadow-md'
+                    : 'bg-white hover:bg-slate-100 text-navy-900 border border-slate-200'
+                }`}
+              >
+                {pageNum}
+              </button>
+            ))}
+
+            <button
+              type="button"
+              disabled={featuredPage === totalFeaturedPages}
+              onClick={() => handlePageChange(featuredPage + 1)}
+              className="p-2 sm:px-3.5 sm:py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-navy-900 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
+            >
+              <span className="hidden sm:inline">Next</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         )}
 

@@ -286,6 +286,189 @@ export const ALL_MACHINERY_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www
 <text x="300" y="340" font-family="system-ui, sans-serif" font-size="13" font-weight="900" fill="%231E293B" text-anchor="middle">ALL MACHINERY (30+ LINES)</text>
 </svg>`;
 
+export const MOTOR_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400" fill="none">
+<rect width="600" height="400" fill="%23FFFFFF"/>
+<!-- Motor Body Housing -->
+<rect x="180" y="115" width="250" height="170" rx="10" fill="%231E293B" stroke="%230F172A" stroke-width="4"/>
+<!-- Cooling Fins Ribs -->
+<line x1="215" y1="115" x2="215" y2="285" stroke="%23334155" stroke-width="4"/>
+<line x1="245" y1="115" x2="245" y2="285" stroke="%23334155" stroke-width="4"/>
+<line x1="275" y1="115" x2="275" y2="285" stroke="%23334155" stroke-width="4"/>
+<line x1="305" y1="115" x2="305" y2="285" stroke="%23334155" stroke-width="4"/>
+<line x1="335" y1="115" x2="335" y2="285" stroke="%23334155" stroke-width="4"/>
+<line x1="365" y1="115" x2="365" y2="285" stroke="%23334155" stroke-width="4"/>
+<line x1="395" y1="115" x2="395" y2="285" stroke="%23334155" stroke-width="4"/>
+<!-- Signature Green Accent Stripe -->
+<rect x="180" y="185" width="250" height="20" fill="%2322C55E"/>
+<!-- Front Mounting Flange (Face Plate) -->
+<rect x="140" y="100" width="40" height="200" rx="4" fill="%2394A3B8" stroke="%2364748B" stroke-width="3"/>
+<circle cx="160" cy="120" r="7" fill="%230F172A"/>
+<circle cx="160" cy="280" r="7" fill="%230F172A"/>
+<!-- Output Drive Shaft with Keyway -->
+<rect x="70" y="178" width="70" height="44" rx="4" fill="%23CBD5E1" stroke="%2364748B" stroke-width="3"/>
+<rect x="90" y="178" width="40" height="8" fill="%2364748B"/>
+<circle cx="70" cy="200" r="8" fill="%2394A3B8"/>
+<!-- Rear Encoder Cover -->
+<rect x="430" y="130" width="45" height="140" rx="8" fill="%230F172A" stroke="%23334155" stroke-width="3"/>
+<!-- Aviation Connector Sockets on Top -->
+<rect x="340" y="75" width="30" height="40" rx="4" fill="%2364748B"/>
+<rect x="345" y="60" width="20" height="15" rx="2" fill="%23F59E0B"/>
+<rect x="390" y="75" width="30" height="40" rx="4" fill="%2364748B"/>
+<rect x="395" y="60" width="20" height="15" rx="2" fill="%2322C55E"/>
+<text x="300" y="335" font-family="system-ui, sans-serif" font-size="14" font-weight="900" fill="%231E293B" text-anchor="middle">AC SERVO &amp; STEPPER MOTOR</text>
+</svg>`;
+
+export const DRIVE_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400" fill="none">
+<rect width="600" height="400" fill="%23FFFFFF"/>
+<!-- Drive Main Housing -->
+<rect x="200" y="70" width="200" height="245" rx="10" fill="%230F172A" stroke="%23334155" stroke-width="4"/>
+<!-- Aluminum Heatsink on right side -->
+<rect x="400" y="80" width="28" height="225" rx="3" fill="%2364748B" stroke="%23475569" stroke-width="2"/>
+<line x1="410" y1="90" x2="410" y2="295" stroke="%23334155" stroke-width="2"/>
+<line x1="418" y1="90" x2="418" y2="295" stroke="%23334155" stroke-width="2"/>
+<!-- Top Digital LED Display -->
+<rect x="230" y="95" width="140" height="42" rx="5" fill="%23020617" stroke="%2322C55E" stroke-width="2"/>
+<text x="300" y="123" font-family="monospace, monospace" font-size="18" font-weight="900" fill="%2322C55E" text-anchor="middle" letter-spacing="3">rUn 3000</text>
+<!-- Indicator Status LEDs -->
+<circle cx="245" cy="160" r="5" fill="%2322C55E"/>
+<text x="257" y="164" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="%2394A3B8">PWR</text>
+<circle cx="300" cy="160" r="5" fill="%23EF4444"/>
+<text x="312" y="164" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="%2394A3B8">ALM</text>
+<circle cx="355" cy="160" r="5" fill="%23F59E0B"/>
+<text x="367" y="164" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="%2394A3B8">RDY</text>
+<!-- Microstep DIP Switch Block -->
+<rect x="235" y="185" width="130" height="28" rx="3" fill="%231E293B" stroke="%23475569" stroke-width="1.5"/>
+<rect x="245" y="191" width="12" height="16" fill="%23EF4444" rx="1"/>
+<rect x="265" y="191" width="12" height="16" fill="%23CBD5E1" rx="1"/>
+<rect x="285" y="191" width="12" height="16" fill="%23EF4444" rx="1"/>
+<rect x="305" y="191" width="12" height="16" fill="%23CBD5E1" rx="1"/>
+<rect x="325" y="191" width="12" height="16" fill="%23EF4444" rx="1"/>
+<rect x="345" y="191" width="12" height="16" fill="%23CBD5E1" rx="1"/>
+<!-- Bottom Screw Terminal Blocks -->
+<rect x="220" y="240" width="160" height="55" rx="4" fill="%231E293B" stroke="%2322C55E" stroke-width="2"/>
+<circle cx="238" cy="255" r="4" fill="%2394A3B8"/>
+<circle cx="258" cy="255" r="4" fill="%2394A3B8"/>
+<circle cx="278" cy="255" r="4" fill="%2394A3B8"/>
+<circle cx="298" cy="255" r="4" fill="%2394A3B8"/>
+<circle cx="318" cy="255" r="4" fill="%2394A3B8"/>
+<circle cx="338" cy="255" r="4" fill="%2394A3B8"/>
+<circle cx="358" cy="255" r="4" fill="%2394A3B8"/>
+<text x="300" y="283" font-family="monospace, sans-serif" font-size="9" font-weight="700" fill="%2322C55E" text-anchor="middle">U  V  W  PE  + - DIR</text>
+<text x="300" y="345" font-family="system-ui, sans-serif" font-size="14" font-weight="900" fill="%231E293B" text-anchor="middle">DIGITAL SERVO &amp; STEPPER DRIVE</text>
+</svg>`;
+
+export const SPINDLE_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400" fill="none">
+<rect width="600" height="400" fill="%23FFFFFF"/>
+<!-- Main Spindle Cylinder Body (Brushed Steel Finish) -->
+<rect x="220" y="70" width="160" height="195" rx="8" fill="%23F1F5F9" stroke="%2394A3B8" stroke-width="4"/>
+<!-- Signature Green Band -->
+<rect x="220" y="125" width="160" height="26" fill="%2322C55E"/>
+<text x="300" y="143" font-family="system-ui, sans-serif" font-size="11" font-weight="900" fill="%23FFFFFF" text-anchor="middle" letter-spacing="1">24,000 RPM HIGH SPEED</text>
+<!-- Upper Aviation Plug Socket -->
+<rect x="275" y="35" width="50" height="35" rx="4" fill="%230F172A" stroke="%23334155" stroke-width="2"/>
+<rect x="285" y="20" width="30" height="15" rx="2" fill="%2364748B"/>
+<line x1="285" y1="45" x2="315" y2="45" stroke="%2322C55E" stroke-width="3"/>
+<!-- Side Brass Cooling Nozzles -->
+<rect x="180" y="95" width="40" height="16" rx="2" fill="%23F59E0B" stroke="%23D97706" stroke-width="2"/>
+<rect x="180" y="170" width="40" height="16" rx="2" fill="%23F59E0B" stroke="%23D97706" stroke-width="2"/>
+<!-- Bottom Bearing Housing Collar -->
+<polygon points="230,265 370,265 355,305 245,305" fill="%231E293B" stroke="%230F172A" stroke-width="3"/>
+<!-- ER32 Precision Collet Nut -->
+<rect x="250" y="305" width="100" height="30" rx="3" fill="%230F172A" stroke="%23CBD5E1" stroke-width="3"/>
+<line x1="265" y1="305" x2="265" y2="335" stroke="%2394A3B8" stroke-width="3"/>
+<line x1="285" y1="305" x2="285" y2="335" stroke="%2394A3B8" stroke-width="3"/>
+<line x1="315" y1="305" x2="315" y2="335" stroke="%2394A3B8" stroke-width="3"/>
+<line x1="335" y1="305" x2="335" y2="335" stroke="%2394A3B8" stroke-width="3"/>
+<!-- Carbide CNC Spiral Cutter Bit -->
+<polygon points="293,335 307,335 303,375 297,375" fill="%23F59E0B" stroke="%23D97706" stroke-width="1"/>
+<text x="300" y="388" font-family="system-ui, sans-serif" font-size="14" font-weight="900" fill="%231E293B" text-anchor="middle">HIGH-SPEED ELECTRO SPINDLE</text>
+</svg>`;
+
+export const INVERTER_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400" fill="none">
+<rect width="600" height="400" fill="%23FFFFFF"/>
+<!-- Main Inverter Outer Enclosure -->
+<rect x="190" y="65" width="220" height="260" rx="10" fill="%230F172A" stroke="%23334155" stroke-width="4"/>
+<!-- Top Air Intake Louvers -->
+<line x1="220" y1="85" x2="380" y2="85" stroke="%23334155" stroke-width="3"/>
+<line x1="220" y1="95" x2="380" y2="95" stroke="%23334155" stroke-width="3"/>
+<!-- Central Digital Control Panel (Keypad) -->
+<rect x="215" y="115" width="170" height="125" rx="6" fill="%231E293B" stroke="%23475569" stroke-width="2"/>
+<!-- 4-Digit Bright Digital Frequency LED Display -->
+<rect x="230" y="130" width="140" height="35" rx="4" fill="%23020617"/>
+<text x="290" y="155" font-family="monospace, monospace" font-size="20" font-weight="900" fill="%23EF4444" text-anchor="middle" letter-spacing="2">50.00</text>
+<text x="350" y="153" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="%23EF4444" text-anchor="middle">Hz</text>
+<!-- Rotary Frequency Potentiometer Knob -->
+<circle cx="250" cy="198" r="15" fill="%230F172A" stroke="%2322C55E" stroke-width="3"/>
+<line x1="250" y1="187" x2="250" y2="198" stroke="%23FFFFFF" stroke-width="2"/>
+<!-- Green RUN Button -->
+<circle cx="310" cy="198" r="14" fill="%2322C55E"/>
+<text x="310" y="202" font-family="system-ui, sans-serif" font-size="8" font-weight="900" fill="%23FFFFFF" text-anchor="middle">RUN</text>
+<!-- Red STOP/RESET Button -->
+<circle cx="355" cy="198" r="14" fill="%23EF4444"/>
+<text x="355" y="202" font-family="system-ui, sans-serif" font-size="8" font-weight="900" fill="%23FFFFFF" text-anchor="middle">STOP</text>
+<!-- Bottom Terminal Cover with Warning Decal -->
+<rect x="210" y="255" width="180" height="55" rx="4" fill="%231E293B" stroke="%23334155" stroke-width="2"/>
+<polygon points="300,265 315,290 285,290" fill="%23F59E0B"/>
+<text x="300" y="287" font-family="system-ui, sans-serif" font-size="12" font-weight="900" fill="%230F172A" text-anchor="middle">!</text>
+<text x="300" y="350" font-family="system-ui, sans-serif" font-size="14" font-weight="900" fill="%231E293B" text-anchor="middle">VFD FREQUENCY INVERTER</text>
+</svg>`;
+
+export const REMOTE_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400" fill="none">
+<rect width="600" height="400" fill="%23FFFFFF"/>
+<!-- Handheld DSP Controller Outer Case -->
+<path d="M 220 50 C 220 40 380 40 380 50 L 375 160 C 365 190 365 210 375 240 L 370 310 C 370 325 230 325 230 310 L 225 240 C 235 210 235 190 225 160 Z" fill="%230F172A" stroke="%23334155" stroke-width="4"/>
+<!-- Top Rubber Corner Bumpers -->
+<rect x="215" y="45" width="40" height="16" rx="4" fill="%23F59E0B"/>
+<rect x="345" y="45" width="40" height="16" rx="4" fill="%23F59E0B"/>
+<!-- LCD Graphic Display Screen -->
+<rect x="235" y="70" width="130" height="75" rx="6" fill="%23022c22" stroke="%2322C55E" stroke-width="2"/>
+<text x="245" y="90" font-family="monospace, monospace" font-size="11" font-weight="700" fill="%234ade80">X: +1250.000</text>
+<text x="245" y="106" font-family="monospace, monospace" font-size="11" font-weight="700" fill="%234ade80">Y: +0620.500</text>
+<text x="245" y="122" font-family="monospace, monospace" font-size="11" font-weight="700" fill="%234ade80">Z: -0015.000</text>
+<text x="245" y="137" font-family="monospace, monospace" font-size="9" font-weight="700" fill="%2322C55E">F: 6000 S: 100%</text>
+<!-- Keypad Matrix (4 rows of 4 buttons) -->
+<!-- Row 1 -->
+<rect x="235" y="160" width="26" height="22" rx="3" fill="%231E293B" stroke="%23475569" stroke-width="1"/><text x="248" y="175" font-family="sans-serif" font-size="9" font-weight="900" fill="%23FFFFFF" text-anchor="middle">X+</text>
+<rect x="270" y="160" width="26" height="22" rx="3" fill="%231E293B" stroke="%23475569" stroke-width="1"/><text x="283" y="175" font-family="sans-serif" font-size="9" font-weight="900" fill="%23FFFFFF" text-anchor="middle">Y+</text>
+<rect x="305" y="160" width="26" height="22" rx="3" fill="%231E293B" stroke="%23475569" stroke-width="1"/><text x="318" y="175" font-family="sans-serif" font-size="9" font-weight="900" fill="%23FFFFFF" text-anchor="middle">Z+</text>
+<rect x="340" y="160" width="26" height="22" rx="3" fill="%2322C55E"/><text x="353" y="175" font-family="sans-serif" font-size="8" font-weight="900" fill="%23FFFFFF" text-anchor="middle">RUN</text>
+<!-- Row 2 -->
+<rect x="235" y="190" width="26" height="22" rx="3" fill="%231E293B" stroke="%23475569" stroke-width="1"/><text x="248" y="205" font-family="sans-serif" font-size="9" font-weight="900" fill="%23FFFFFF" text-anchor="middle">X-</text>
+<rect x="270" y="190" width="26" height="22" rx="3" fill="%231E293B" stroke="%23475569" stroke-width="1"/><text x="283" y="205" font-family="sans-serif" font-size="9" font-weight="900" fill="%23FFFFFF" text-anchor="middle">Y-</text>
+<rect x="305" y="190" width="26" height="22" rx="3" fill="%231E293B" stroke="%23475569" stroke-width="1"/><text x="318" y="205" font-family="sans-serif" font-size="9" font-weight="900" fill="%23FFFFFF" text-anchor="middle">Z-</text>
+<rect x="340" y="190" width="26" height="22" rx="3" fill="%23F59E0B"/><text x="353" y="205" font-family="sans-serif" font-size="8" font-weight="900" fill="%23FFFFFF" text-anchor="middle">PAUS</text>
+<!-- Row 3 -->
+<rect x="235" y="220" width="26" height="22" rx="3" fill="%231E293B" stroke="%23475569" stroke-width="1"/><text x="248" y="235" font-family="sans-serif" font-size="8" font-weight="900" fill="%23CBD5E1" text-anchor="middle">ORG</text>
+<rect x="270" y="220" width="26" height="22" rx="3" fill="%231E293B" stroke="%23475569" stroke-width="1"/><text x="283" y="235" font-family="sans-serif" font-size="8" font-weight="900" fill="%23CBD5E1" text-anchor="middle">FAST</text>
+<rect x="305" y="220" width="26" height="22" rx="3" fill="%231E293B" stroke="%23475569" stroke-width="1"/><text x="318" y="235" font-family="sans-serif" font-size="8" font-weight="900" fill="%23CBD5E1" text-anchor="middle">MENU</text>
+<rect x="340" y="220" width="26" height="22" rx="3" fill="%23EF4444"/><text x="353" y="235" font-family="sans-serif" font-size="8" font-weight="900" fill="%23FFFFFF" text-anchor="middle">STOP</text>
+<!-- Coiled Communication Cable -->
+<path d="M 300 320 C 300 340 330 340 330 355 C 330 370 270 370 270 385 L 270 400" stroke="%23334155" stroke-width="8" fill="none" stroke-linecap="round"/>
+<text x="300" y="340" font-family="system-ui, sans-serif" font-size="14" font-weight="900" fill="%231E293B" text-anchor="middle">DSP HANDHELD CNC REMOTE</text>
+</svg>`;
+
+export const ACCESSORIES_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400" fill="none">
+<rect width="600" height="400" fill="%23FFFFFF"/>
+<!-- ISO30 / BT30 Precision Tool Holder on Left -->
+<polygon points="170,100 270,100 255,185 185,185" fill="%23F1F5F9" stroke="%2394A3B8" stroke-width="3"/>
+<rect x="175" y="185" width="90" height="25" rx="3" fill="%231E293B"/>
+<rect x="180" y="210" width="80" height="35" rx="4" fill="%230F172A" stroke="%23CBD5E1" stroke-width="2"/>
+<polygon points="215,245 225,245 222,280 218,280" fill="%23F59E0B"/>
+<!-- Automatic Tool Setter Touch Probe on Right -->
+<rect x="340" y="170" width="90" height="85" rx="8" fill="%230F172A" stroke="%2322C55E" stroke-width="3"/>
+<rect x="360" y="145" width="50" height="25" rx="3" fill="%23CBD5E1" stroke="%2364748B" stroke-width="2"/>
+<circle cx="385" cy="145" r="15" fill="%23F1F5F9" stroke="%2394A3B8" stroke-width="2"/>
+<circle cx="385" cy="210" r="8" fill="%2322C55E"/>
+<!-- Workpiece Hold-Down Clamps Below -->
+<rect x="250" y="290" width="160" height="24" rx="4" fill="%2364748B" stroke="%23475569" stroke-width="2"/>
+<circle cx="270" cy="302" r="6" fill="%23F59E0B"/>
+<circle cx="390" cy="302" r="6" fill="%23F59E0B"/>
+<!-- ER Precision Collet Ring on Top -->
+<ellipse cx="385" cy="95" rx="45" ry="25" fill="%23FFFFFF" stroke="%2322C55E" stroke-width="4"/>
+<ellipse cx="385" cy="95" rx="25" ry="14" fill="%230F172A"/>
+<text x="300" y="355" font-family="system-ui, sans-serif" font-size="14" font-weight="900" fill="%231E293B" text-anchor="middle">CNC ACCESSORIES &amp; TOOLING</text>
+</svg>`;
+
 export const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
   const img = e.currentTarget;
   if (img.dataset.fallbackApplied) return;

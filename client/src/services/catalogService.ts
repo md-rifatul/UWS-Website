@@ -23,6 +23,57 @@ export const applyFeaturedOverrides = (products: Product[]): Product[] => {
   });
 };
 
+export const CUSTOM_PRODUCTS_KEY = 'uws_custom_products';
+export const DELETED_PRODUCTS_KEY = 'uws_deleted_product_ids';
+export const CUSTOM_CATEGORIES_KEY = 'uws_custom_categories';
+export const DELETED_CATEGORIES_KEY = 'uws_deleted_category_ids';
+
+export const getStoredCustomProducts = (): Product[] => {
+  try {
+    const raw = localStorage.getItem(CUSTOM_PRODUCTS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return [];
+};
+
+export const getStoredDeletedProductIds = (): string[] => {
+  try {
+    const raw = localStorage.getItem(DELETED_PRODUCTS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return [];
+};
+
+export const getStoredCustomCategories = (): Category[] => {
+  try {
+    const raw = localStorage.getItem(CUSTOM_CATEGORIES_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return [];
+};
+
+export const getStoredDeletedCategoryIds = (): string[] => {
+  try {
+    const raw = localStorage.getItem(DELETED_CATEGORIES_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return [];
+};
+
+export const getEffectiveCategories = (): Category[] => {
+  const custom = getStoredCustomCategories();
+  const deletedIds = new Set(getStoredDeletedCategoryIds());
+  const combined = [...custom, ...DEMO_CATEGORIES.filter((c) => !custom.some((x) => x.id === c.id))];
+  return combined.filter((c) => !deletedIds.has(c.id));
+};
+
+export const getEffectiveProducts = (): Product[] => {
+  const custom = getStoredCustomProducts();
+  const deletedIds = new Set(getStoredDeletedProductIds());
+  const combined = [...custom, ...DEMO_PRODUCTS.filter((p) => !custom.some((x) => x.id === p.id))];
+  return combined.filter((p) => !deletedIds.has(p.id));
+};
+
 export const catalogService = {
   async getCategories(): Promise<Category[]> {
     try {
@@ -30,10 +81,9 @@ export const catalogService = {
       if (response.data && response.data.length > 0) {
         return response.data;
       }
-      return DEMO_CATEGORIES;
-    } catch (e) {
-      console.warn('API unavailable, serving catalog categories from local dataset', e);
-      return DEMO_CATEGORIES;
+      return getEffectiveCategories();
+    } catch {
+      return getEffectiveCategories();
     }
   },
 
@@ -42,7 +92,8 @@ export const catalogService = {
       const response = await apiClient.get<Category>(`/catalog/categories/slug/${slug}`);
       return response.data;
     } catch {
-      const found = DEMO_CATEGORIES.find((c) => c.slug === slug);
+      const cats = getEffectiveCategories();
+      const found = cats.find((c) => c.slug === slug);
       return found || null;
     }
   },
@@ -271,7 +322,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettingsMap = {
 };
 
 function filterLocalProducts(params: ProductFilterParams): PaginatedResult<Product> {
-  let list = [...DEMO_PRODUCTS];
+  let list = getEffectiveProducts();
 
   if (params.search) {
     const q = params.search.toLowerCase();
@@ -285,11 +336,12 @@ function filterLocalProducts(params: ProductFilterParams): PaginatedResult<Produ
   }
 
   if (params.categorySlug) {
-    const targetCat = DEMO_CATEGORIES.find((c) => c.slug === params.categorySlug);
+    const targetCat = getEffectiveCategories().find((c) => c.slug === params.categorySlug);
     list = list.filter((p) => {
       if (p.categorySlug === params.categorySlug) return true;
       if (targetCat && p.categoryId === targetCat.id) return true;
       if (targetCat && p.categoryName && p.categoryName.toLowerCase() === targetCat.name.toLowerCase()) return true;
+      if ((params.categorySlug === 'accessories' || params.categorySlug === 'cutter-accessories') && (p.categorySlug === 'accessories' || p.categorySlug === 'cutter-accessories')) return true;
       if (params.categorySlug === 'edge-banding' && (p.categorySlug === 'edge-banding-machines' || p.categorySlug === 'edge-banding')) return true;
       if (params.categorySlug === 'boring-drilling' && (p.categorySlug === 'cnc-boring-drilling' || p.categorySlug === 'boring-drilling')) return true;
       if (params.categorySlug === 'cnc-router-machine' && (p.categorySlug === 'cnc-machining-centers' || p.categorySlug === 'cnc-router-machine')) return true;

@@ -86,6 +86,12 @@ export const adminService = {
           localStorage.setItem('wts_featured_map', JSON.stringify(map));
         } catch {}
       }
+      try {
+        const stored = localStorage.getItem('uws_custom_products');
+        const arr: Product[] = stored ? JSON.parse(stored) : [];
+        arr.unshift(newProduct);
+        localStorage.setItem('uws_custom_products', JSON.stringify(arr));
+      } catch {}
       DEMO_PRODUCTS.unshift(newProduct);
       return newProduct;
     }
@@ -107,6 +113,19 @@ export const adminService = {
       const response = await apiClient.put<Product>(`/admin/products/${id}`, product);
       return response.data;
     } catch {
+      try {
+        const stored = localStorage.getItem('uws_custom_products');
+        const arr: Product[] = stored ? JSON.parse(stored) : [];
+        const idx = arr.findIndex((p) => p.id === id);
+        if (idx !== -1) {
+          arr[idx] = { ...arr[idx], ...product };
+        } else {
+          const existing = DEMO_PRODUCTS.find((p) => p.id === id);
+          if (existing) arr.push({ ...existing, ...product });
+        }
+        localStorage.setItem('uws_custom_products', JSON.stringify(arr));
+      } catch {}
+
       const index = DEMO_PRODUCTS.findIndex((p) => p.id === id);
       if (index !== -1) {
         DEMO_PRODUCTS[index] = { ...DEMO_PRODUCTS[index], ...product, updatedAtUtc: new Date().toISOString() };
@@ -158,6 +177,20 @@ export const adminService = {
     }
 
     try {
+      const stored = localStorage.getItem('uws_custom_products');
+      if (stored) {
+        const arr: Product[] = JSON.parse(stored).filter((p: Product) => p.id !== id);
+        localStorage.setItem('uws_custom_products', JSON.stringify(arr));
+      }
+      const delStored = localStorage.getItem('uws_deleted_product_ids');
+      const delArr: string[] = delStored ? JSON.parse(delStored) : [];
+      if (!delArr.includes(id)) {
+        delArr.push(id);
+        localStorage.setItem('uws_deleted_product_ids', JSON.stringify(delArr));
+      }
+    } catch {}
+
+    try {
       await apiClient.delete(`/admin/products/${id}`);
       return true;
     } catch {
@@ -190,6 +223,12 @@ export const adminService = {
         isActive: true,
         attributes: [],
       };
+      try {
+        const stored = localStorage.getItem('uws_custom_categories');
+        const arr: Category[] = stored ? JSON.parse(stored) : [];
+        arr.push(newCat);
+        localStorage.setItem('uws_custom_categories', JSON.stringify(arr));
+      } catch {}
       DEMO_CATEGORIES.push(newCat);
       return newCat;
     }
@@ -200,6 +239,19 @@ export const adminService = {
       const response = await apiClient.put<Category>(`/admin/categories/${id}`, category);
       return response.data;
     } catch {
+      try {
+        const stored = localStorage.getItem('uws_custom_categories');
+        const arr: Category[] = stored ? JSON.parse(stored) : [];
+        const idx = arr.findIndex((c) => c.id === id);
+        if (idx !== -1) {
+          arr[idx] = { ...arr[idx], ...category };
+        } else {
+          const existing = DEMO_CATEGORIES.find((c) => c.id === id);
+          if (existing) arr.push({ ...existing, ...category });
+        }
+        localStorage.setItem('uws_custom_categories', JSON.stringify(arr));
+      } catch {}
+
       const index = DEMO_CATEGORIES.findIndex((c) => c.id === id);
       if (index !== -1) {
         DEMO_CATEGORIES[index] = { ...DEMO_CATEGORIES[index], ...category };
@@ -210,6 +262,20 @@ export const adminService = {
   },
 
   async deleteCategory(id: string): Promise<boolean> {
+    try {
+      const stored = localStorage.getItem('uws_custom_categories');
+      if (stored) {
+        const arr: Category[] = JSON.parse(stored).filter((c: Category) => c.id !== id);
+        localStorage.setItem('uws_custom_categories', JSON.stringify(arr));
+      }
+      const delStored = localStorage.getItem('uws_deleted_category_ids');
+      const delArr: string[] = delStored ? JSON.parse(delStored) : [];
+      if (!delArr.includes(id)) {
+        delArr.push(id);
+        localStorage.setItem('uws_deleted_category_ids', JSON.stringify(delArr));
+      }
+    } catch {}
+
     try {
       await apiClient.delete(`/admin/categories/${id}`);
       return true;
