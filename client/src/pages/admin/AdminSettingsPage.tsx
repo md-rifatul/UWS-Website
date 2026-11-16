@@ -20,6 +20,7 @@ import {
   ExternalLink,
   X,
   Image as ImageIcon,
+  Upload,
 } from 'lucide-react';
 import { adminService } from '@/services/adminService';
 import { catalogService } from '@/services/catalogService';
@@ -94,6 +95,40 @@ export const AdminSettingsPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isUploadingBanner, setIsUploadingBanner] = useState(false);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+
+  const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingBanner(true);
+    try {
+      const res = await adminService.uploadImage(file, 'uws-hero-banners');
+      setSlideFormData((prev) => ({ ...prev, imageUrl: res.url }));
+    } catch (err: any) {
+      console.error('Failed to upload banner:', err);
+      alert(err.message || 'Failed to upload banner to Cloudinary.');
+    } finally {
+      setIsUploadingBanner(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingLogo(true);
+    try {
+      const res = await adminService.uploadImage(file, 'uws-brand');
+      setSiteSettings((prev) => ({ ...prev, logo_url: res.url }));
+    } catch (err: any) {
+      console.error('Failed to upload logo:', err);
+      alert(err.message || 'Failed to upload logo to Cloudinary.');
+    } finally {
+      setIsUploadingLogo(false);
+      e.target.value = '';
+    }
+  };
 
   useEffect(() => {
     const loadAllData = async () => {
@@ -584,10 +619,27 @@ export const AdminSettingsPage: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
               <div className="space-y-1.5 sm:col-span-2 lg:col-span-4">
-                <label className="font-semibold text-charcoal-700 flex items-center justify-between">
-                  <span>Custom Image Logo URL (Optional)</span>
-                  <span className="text-[10px] text-slate-400 font-normal">PNG or SVG with transparent background</span>
-                </label>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="font-semibold text-charcoal-700 block">Custom Image Logo URL (Optional)</span>
+                    <span className="text-[10px] text-slate-400 font-normal">PNG or SVG with transparent background</span>
+                  </div>
+                  <label className={`text-[11px] font-bold px-2 py-0.5 rounded-md border flex items-center gap-1 cursor-pointer transition-colors ${
+                    isUploadingLogo
+                      ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+                      : 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100'
+                  }`}>
+                    <Upload className="w-3 h-3" />
+                    <span>{isUploadingLogo ? 'Uploading...' : 'Upload Logo to Cloudinary'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      disabled={isUploadingLogo}
+                      className="hidden"
+                      onChange={handleLogoUpload}
+                    />
+                  </label>
+                </div>
                 <input
                   type="url"
                   name="logo_url"
@@ -1103,12 +1155,29 @@ export const AdminSettingsPage: React.FC = () => {
 
               {/* Image URL & Instant Preview */}
               <div className="space-y-1.5">
-                <label className="font-semibold text-charcoal-700">Banner Image URL *</label>
+                <div className="flex items-center justify-between">
+                  <label className="font-semibold text-charcoal-700">Banner Image URL *</label>
+                  <label className={`text-[11px] font-bold px-2 py-0.5 rounded-md border flex items-center gap-1 cursor-pointer transition-colors ${
+                    isUploadingBanner
+                      ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+                      : 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100'
+                  }`}>
+                    <Upload className="w-3 h-3" />
+                    <span>{isUploadingBanner ? 'Uploading...' : 'Upload to Cloudinary'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      disabled={isUploadingBanner}
+                      className="hidden"
+                      onChange={handleBannerUpload}
+                    />
+                  </label>
+                </div>
                 <input
                   type="url"
                   value={slideFormData.imageUrl}
                   onChange={(e) => setSlideFormData({ ...slideFormData, imageUrl: e.target.value })}
-                  placeholder="https://images.unsplash.com/... or direct banner image link"
+                  placeholder="https://res.cloudinary.com/... or direct banner image link"
                   className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
                   required
                 />

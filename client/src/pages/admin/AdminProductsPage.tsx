@@ -128,6 +128,8 @@ export const AdminProductsPage: React.FC = () => {
   const [importFile, setImportFile] = useState<File | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const [importResult, setImportResult] = useState<{ total: number; success: number; errors: string[] } | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleExportCsv = async () => {
     try {
@@ -158,6 +160,23 @@ export const AdminProductsPage: React.FC = () => {
       console.error('Failed to import CSV', err);
     } finally {
       setIsImporting(false);
+    }
+  };
+
+  const handleImageFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingImage(true);
+    setUploadError(null);
+    try {
+      const res = await adminService.uploadImage(file, 'uws-machinery');
+      setFormState((prev) => ({ ...prev, mainImageUrl: res.url }));
+    } catch (err: any) {
+      console.error('Image upload failed:', err);
+      setUploadError(err.message || 'Failed to upload image to Cloudinary.');
+    } finally {
+      setIsUploadingImage(false);
+      e.target.value = '';
     }
   };
   const [loading, setLoading] = useState(true);
@@ -1085,18 +1104,57 @@ export const AdminProductsPage: React.FC = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-charcoal-700 uppercase mb-1">
-                  Main Machinery Image URL *
-                </label>
-                <input
-                  type="url"
-                  required
-                  placeholder="https://images.unsplash.com/..."
-                  value={formState.mainImageUrl}
-                  onChange={(e) => setFormState({ ...formState, mainImageUrl: e.target.value })}
-                  className="w-full text-xs px-3 py-2 bg-surface-offwhite border border-slate-border rounded-md text-charcoal-800 focus:outline-none focus:border-industrial-orange"
-                />
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-charcoal-700 uppercase">
+                    Main Machinery Image (Cloudinary) *
+                  </label>
+                  <label className={`text-[11px] font-bold px-2.5 py-1 rounded-md border flex items-center gap-1.5 cursor-pointer transition-colors ${
+                    isUploadingImage
+                      ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+                      : 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100'
+                  }`}>
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>{isUploadingImage ? 'Uploading to Cloudinary...' : 'Upload Image to Cloudinary'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      disabled={isUploadingImage}
+                      className="hidden"
+                      onChange={handleImageFileUpload}
+                    />
+                  </label>
+                </div>
+
+                <div className="flex gap-3 items-center">
+                  <div className="flex-1">
+                    <input
+                      type="url"
+                      required
+                      placeholder="https://res.cloudinary.com/... or https://..."
+                      value={formState.mainImageUrl}
+                      onChange={(e) => setFormState({ ...formState, mainImageUrl: e.target.value })}
+                      className="w-full text-xs px-3 py-2 bg-surface-offwhite border border-slate-border rounded-md text-charcoal-800 focus:outline-none focus:border-industrial-orange"
+                    />
+                  </div>
+                  {formState.mainImageUrl && (
+                    <div className="w-12 h-10 rounded border border-slate-border overflow-hidden bg-white shrink-0 flex items-center justify-center p-0.5">
+                      <img
+                        src={formState.mainImageUrl}
+                        alt="Preview"
+                        onError={handleImageError}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {uploadError && (
+                  <p className="text-[11px] text-rose-600 font-medium">{uploadError}</p>
+                )}
+                <p className="text-[10px] text-slate-400">
+                  Select an image from your computer to automatically upload to Cloudinary, or paste an existing image URL.
+                </p>
               </div>
 
               <div>

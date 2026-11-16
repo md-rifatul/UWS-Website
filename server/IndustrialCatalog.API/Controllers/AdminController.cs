@@ -13,10 +13,12 @@ namespace IndustrialCatalog.API.Controllers;
 public class AdminController : BaseApiController
 {
     private readonly IAdminService _adminService;
+    private readonly ICloudinaryService _cloudinaryService;
 
-    public AdminController(IAdminService adminService)
+    public AdminController(IAdminService adminService, ICloudinaryService cloudinaryService)
     {
         _adminService = adminService;
+        _cloudinaryService = cloudinaryService;
     }
 
     /// <summary>
@@ -217,6 +219,53 @@ public class AdminController : BaseApiController
     #endregion
 
     #region Bulk CSV Import / Export
+
+    /// <summary>
+    /// Uploads an image to Cloudinary and returns its permanent CDN secure URL.
+    /// </summary>
+    [HttpPost("upload-image")]
+    [AllowAnonymous]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadImage(IFormFile file, [FromQuery] string? folder, CancellationToken ct)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest(new { message = "No image file provided." });
+        }
+
+        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp", ".svg", ".gif" };
+        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+        if (!allowedExtensions.Contains(extension))
+        {
+            return BadRequest(new { message = "Invalid file type. Allowed formats: JPG, JPEG, PNG, WEBP, SVG, GIF." });
+        }
+
+        if (file.Length > 15 * 1024 * 1024)
+        {
+            return BadRequest(new { message = "File size exceeds 15 MB limit." });
+        }
+
+        try
+        {
+            using var stream = file.OpenReadStream();
+            var targetFolder = string.IsNullOrWhiteSpace(folder) ? "uws-machinery" : folder;
+            var result = await _cloudinaryService.UploadImageAsync(stream, file.FileName, targetFolder, ct);
+            return Ok(new
+            {
+                url = result.SecureUrl,
+                secureUrl = result.SecureUrl,
+                publicId = result.PublicId,
+                format = result.Format,
+                width = result.Width,
+                height = result.Height,
+                bytes = result.Bytes
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Failed to upload image to Cloudinary.", error = ex.Message });
+        }
+    }
 
     /// <summary>
     /// Exports all machinery catalog entries to CSV.

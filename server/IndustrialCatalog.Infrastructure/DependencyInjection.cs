@@ -35,6 +35,7 @@ public static class DependencyInjection
         services.AddScoped<IRfqService, RfqService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IAdminService, AdminService>();
+        services.AddScoped<ICloudinaryService, CloudinaryService>();
 
         return services;
     }

@@ -48,7 +48,7 @@ public static class DatabaseSeeder
             {
                 new()
                 {
-                    Id = Guid.Parse("m1111111-1111-1111-1111-111111111111"),
+                    Id = Guid.Parse("a1111111-1111-1111-1111-111111111111"),
                     Name = "Nanxing Machinery",
                     Slug = "nanxing-machinery",
                     Country = "China",
@@ -58,7 +58,7 @@ public static class DatabaseSeeder
                 },
                 new()
                 {
-                    Id = Guid.Parse("m2222222-2222-2222-2222-222222222222"),
+                    Id = Guid.Parse("a2222222-2222-2222-2222-222222222222"),
                     Name = "KDT Machinery",
                     Slug = "kdt-machinery",
                     Country = "China",
@@ -68,7 +68,7 @@ public static class DatabaseSeeder
                 },
                 new()
                 {
-                    Id = Guid.Parse("m3333333-3333-3333-3333-333333333333"),
+                    Id = Guid.Parse("a3333333-3333-3333-3333-333333333333"),
                     Name = "Homag Group Partner",
                     Slug = "homag-group",
                     Country = "Germany",
@@ -78,7 +78,7 @@ public static class DatabaseSeeder
                 },
                 new()
                 {
-                    Id = Guid.Parse("m4444444-4444-4444-4444-444444444444"),
+                    Id = Guid.Parse("a4444444-4444-4444-4444-444444444444"),
                     Name = "WoodTech Prime Tech",
                     Slug = "woodtech-prime",
                     Country = "Taiwan",
@@ -202,10 +202,10 @@ public static class DatabaseSeeder
             var pressCatId = Guid.Parse("c6666666-6666-6666-6666-666666666666");
             var dustCatId = Guid.Parse("c7777777-7777-7777-7777-777777777777");
 
-            var m1 = Guid.Parse("m1111111-1111-1111-1111-111111111111");
-            var m2 = Guid.Parse("m2222222-2222-2222-2222-222222222222");
-            var m3 = Guid.Parse("m3333333-3333-3333-3333-333333333333");
-            var m4 = Guid.Parse("m4444444-4444-4444-4444-444444444444");
+            var m1 = Guid.Parse("a1111111-1111-1111-1111-111111111111");
+            var m2 = Guid.Parse("a2222222-2222-2222-2222-222222222222");
+            var m3 = Guid.Parse("a3333333-3333-3333-3333-333333333333");
+            var m4 = Guid.Parse("a4444444-4444-4444-4444-444444444444");
 
             var products = new List<Product>
             {
