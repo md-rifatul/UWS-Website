@@ -13,6 +13,7 @@ import {
   ArrowLeft,
   Share2,
   Check,
+  Package,
 } from 'lucide-react';
 import { catalogService } from '@/services/catalogService';
 import { Product } from '@/types';
@@ -133,13 +134,20 @@ export const ProductDetailsPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Left Column: Image Gallery */}
           <div className="lg:col-span-7 space-y-4">
-            <div className="relative aspect-4/3 rounded-xl overflow-hidden bg-white border border-slate-border shadow-xs">
-              <img
-                src={activeImage}
-                alt={product.name}
-                className="w-full h-full object-cover"
-                onError={handleImageError}
-              />
+            <div className="relative aspect-4/3 rounded-xl overflow-hidden bg-white border border-slate-border shadow-xs flex items-center justify-center p-4">
+              {activeImage ? (
+                <img
+                  src={activeImage}
+                  alt={product.name}
+                  className="w-full h-full object-contain"
+                  onError={handleImageError}
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center text-slate-300 p-10">
+                  <Package className="w-16 h-16 mb-2 stroke-1" />
+                  <span className="text-xs text-slate-400 font-medium">No Image Uploaded</span>
+                </div>
+              )}
               <div className="absolute top-4 left-4 flex flex-col gap-2">
                 <AvailabilityBadge status={product.availabilityStatus} />
                 <ConditionBadge condition={product.condition} />

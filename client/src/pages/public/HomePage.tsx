@@ -28,17 +28,7 @@ import { setSelectedCategory } from '@/features/catalog/catalogSlice';
 import { addToBasket } from '@/features/rfq/rfqBasketSlice';
 import { addToCompare } from '@/features/compare/compareSlice';
 import { AvailabilityBadge } from '@/components/common/Badge';
-import {
-  handleImageError,
-  CNC_ROUTER_SVG,
-  ALL_MACHINERY_SVG,
-  MOTOR_SVG,
-  DRIVE_SVG,
-  SPINDLE_SVG,
-  INVERTER_SVG,
-  REMOTE_SVG,
-  ACCESSORIES_SVG,
-} from '@/utils/imageUtils';
+import { handleImageError } from '@/utils/imageUtils';
 
 export const HomePage: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -93,16 +83,7 @@ export const HomePage: React.FC = () => {
     }
   };
 
-  const activeHeroSlide = heroSlides[currentHeroIndex] || heroSlides[0] || {
-    id: 'default',
-    badge: 'FEATURED MACHINE MODEL',
-    title: 'WTS Prime-1325 Heavy Duty ATC CNC Router',
-    subtitle: '9.0kW Italian ATC Spindle • Syntec 6MB CNC • Becker Vacuum',
-    imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80',
-    targetSlug: 'wts-prime-1325-atc-cnc-router',
-    displayOrder: 1,
-    isActive: true,
-  };
+  const activeHeroSlide: HeroSlide | null = heroSlides[currentHeroIndex] || heroSlides[0] || null;
   const [isLoading, setIsLoading] = useState(true);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
@@ -187,42 +168,36 @@ export const HomePage: React.FC = () => {
         fallbackName: 'ACCESSORIES',
         fallbackTagline: 'Collets, Clamps & Sensors',
         badge: 'Genuine Spares',
-        fallbackImage: ACCESSORIES_SVG,
       },
       {
         slug: 'motor',
         fallbackName: 'MOTOR',
         fallbackTagline: 'AC Servo & Stepper Motors',
         badge: 'High Torque',
-        fallbackImage: MOTOR_SVG,
       },
       {
         slug: 'drive',
         fallbackName: 'DRIVE',
         fallbackTagline: 'Digital Stepper & Servo Drives',
         badge: 'Microstepping',
-        fallbackImage: DRIVE_SVG,
       },
       {
         slug: 'spindle',
         fallbackName: 'SPINDLE',
         fallbackTagline: 'Air & Water-Cooled Spindles',
         badge: '24,000 RPM',
-        fallbackImage: SPINDLE_SVG,
       },
       {
         slug: 'inverter',
         fallbackName: 'INVERTER',
         fallbackTagline: 'High-Frequency VFD Inverters',
         badge: 'Vector Control',
-        fallbackImage: INVERTER_SVG,
       },
       {
         slug: 'remote',
         fallbackName: 'REMOTE',
         fallbackTagline: 'DSP Controllers & Handwheels',
         badge: 'Offline DSP',
-        fallbackImage: REMOTE_SVG,
       },
     ];
 
@@ -233,7 +208,7 @@ export const HomePage: React.FC = () => {
         name: match?.name || item.fallbackName,
         tagline: match?.description || item.fallbackTagline,
         badge: item.badge,
-        imageUrl: match?.imageUrl || item.fallbackImage,
+        imageUrl: match?.imageUrl || null,
       };
     });
   }, [categories]);
@@ -301,49 +276,77 @@ export const HomePage: React.FC = () => {
               }
             }}
           >
-            {/* Active Slide Background Image - Pure Banner Image with No Text / No Whitewash Gradient */}
-            <div className="absolute inset-0">
-              <img
-                key={activeHeroSlide.id}
-                src={activeHeroSlide.imageUrl}
-                alt={activeHeroSlide.title || 'Hero Banner'}
-                onError={handleImageError}
-                className="w-full h-full object-cover object-center transition-all duration-700 ease-in-out group-hover:scale-[1.01]"
-              />
-            </div>
+            {/* Active Slide Background Image or Clean Branded Banner if no slides configured */}
+            {activeHeroSlide?.imageUrl ? (
+              <div className="absolute inset-0">
+                <img
+                  key={activeHeroSlide.id}
+                  src={activeHeroSlide.imageUrl}
+                  alt={activeHeroSlide.title || 'Hero Banner'}
+                  onError={handleImageError}
+                  className="w-full h-full object-cover object-center transition-all duration-700 ease-in-out group-hover:scale-[1.01]"
+                />
+              </div>
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-navy-950 via-[#0d1b2a] to-navy-950 flex flex-col items-center justify-center text-center p-6 sm:p-10 text-white">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-industrial-orange px-3.5 py-1 bg-white/10 rounded-full mb-3 border border-industrial-orange/30">
+                  Unique Wood Solution
+                </span>
+                <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight max-w-3xl leading-tight">
+                  High-Precision CNC Routers &amp; Motion Automation Spares
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-300 max-w-2xl mt-3 leading-relaxed">
+                  Turnkey industrial machinery supply, specialized accessories, motors, drivers, spindles, inverters, and digital controllers.
+                </p>
+                <div className="mt-6 flex items-center gap-3">
+                  <Link
+                    to="/products"
+                    onClick={(e) => e.stopPropagation()}
+                    className="px-5 py-2.5 rounded-xl bg-industrial-orange hover:bg-orange-600 text-white text-xs font-bold transition-all shadow-md inline-flex items-center gap-2"
+                  >
+                    <span>Explore Products</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            )}
 
             {/* Left & Right Interactive Navigation Arrows */}
-            <div className="absolute top-1/2 -translate-y-1/2 left-4 right-4 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-20">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  prevHeroSlide();
-                }}
-                className="p-3 rounded-full bg-white/90 hover:bg-industrial-orange text-navy-900 hover:text-white border border-slate-200 shadow-lg backdrop-blur-xs transition-all pointer-events-auto cursor-pointer hover:scale-110"
-                title="Previous Slide"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  nextHeroSlide();
-                }}
-                className="p-3 rounded-full bg-white/90 hover:bg-industrial-orange text-navy-900 hover:text-white border border-slate-200 shadow-lg backdrop-blur-xs transition-all pointer-events-auto cursor-pointer hover:scale-110"
-                title="Next Slide"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
+            {heroSlides.length > 1 && (
+              <div className="absolute top-1/2 -translate-y-1/2 left-4 right-4 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-20">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prevHeroSlide();
+                  }}
+                  className="p-3 rounded-full bg-white/90 hover:bg-industrial-orange text-navy-900 hover:text-white border border-slate-200 shadow-lg backdrop-blur-xs transition-all pointer-events-auto cursor-pointer hover:scale-110"
+                  title="Previous Slide"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextHeroSlide();
+                  }}
+                  className="p-3 rounded-full bg-white/90 hover:bg-industrial-orange text-navy-900 hover:text-white border border-slate-200 shadow-lg backdrop-blur-xs transition-all pointer-events-auto cursor-pointer hover:scale-110"
+                  title="Next Slide"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
 
             {/* Top-Right Slide Counter & Auto-play Status */}
-            <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-xs border border-slate-200 shadow-sm text-[11px] font-mono text-navy-900 font-bold z-20">
-              <span className={`w-2 h-2 rounded-full ${isHeroPaused ? 'bg-amber-500' : 'bg-industrial-orange animate-pulse'}`} />
-              <span>{String(currentHeroIndex + 1).padStart(2, '0')} / {String(heroSlides.length || 1).padStart(2, '0')}</span>
-              {isHeroPaused && <span className="text-[10px] text-amber-600 font-sans ml-1">(Paused)</span>}
-            </div>
+            {heroSlides.length > 1 && (
+              <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-xs border border-slate-200 shadow-sm text-[11px] font-mono text-navy-900 font-bold z-20">
+                <span className={`w-2 h-2 rounded-full ${isHeroPaused ? 'bg-amber-500' : 'bg-industrial-orange animate-pulse'}`} />
+                <span>{String(currentHeroIndex + 1).padStart(2, '0')} / {String(heroSlides.length || 1).padStart(2, '0')}</span>
+                {isHeroPaused && <span className="text-[10px] text-amber-600 font-sans ml-1">(Paused)</span>}
+              </div>
+            )}
 
             {/* Bottom Indicator Navigation Dots */}
             {heroSlides.length > 1 && (
@@ -479,13 +482,19 @@ export const HomePage: React.FC = () => {
                   className="shrink-0 group flex flex-col items-center cursor-pointer text-center select-none w-20 sm:w-24 md:w-26 transition-all duration-200 hover:-translate-y-1"
                 >
                   {/* Circular Badge Avatar */}
-                  <div className="w-17 h-17 sm:w-19 sm:h-19 md:w-21 md:h-21 rounded-full bg-[#f4f6f8] group-hover:bg-white border border-slate-200/80 group-hover:border-industrial-orange/50 shadow-2xs group-hover:shadow-md flex items-center justify-center p-3 transition-all duration-300 group-hover:scale-108">
-                    <img
-                      src={cat.imageUrl || ALL_MACHINERY_SVG}
-                      alt={cat.name}
-                      onError={handleImageError}
-                      className="w-11 h-11 sm:w-13 sm:h-13 md:w-14 md:h-14 object-contain drop-shadow-2xs group-hover:scale-110 transition-transform duration-200"
-                    />
+                  <div className="w-17 h-17 sm:w-19 sm:h-19 md:w-21 md:h-21 rounded-full bg-[#f4f6f8] group-hover:bg-white border border-slate-200/80 group-hover:border-industrial-orange/50 shadow-2xs group-hover:shadow-md flex items-center justify-center p-2.5 transition-all duration-300 group-hover:scale-108 overflow-hidden">
+                    {cat.imageUrl ? (
+                      <img
+                        src={cat.imageUrl}
+                        alt={cat.name}
+                        onError={handleImageError}
+                        className="w-full h-full object-contain drop-shadow-2xs group-hover:scale-110 transition-transform duration-200"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 group-hover:text-industrial-orange transition-colors">
+                        <Layers className="w-6 h-6 sm:w-7 sm:h-7 stroke-[1.5]" />
+                      </div>
+                    )}
                   </div>
 
                   {/* Clean Centered Label Underneath */}
@@ -543,12 +552,20 @@ export const HomePage: React.FC = () => {
 
             {/* Centered Machine Cutout Image */}
             <div className="flex-1 flex items-center justify-center p-4 sm:p-6 min-h-[220px] sm:min-h-[260px]">
-              <img
-                src={cncCategory?.imageUrl || CNC_ROUTER_SVG}
-                alt="CNC Router Machine"
-                onError={handleImageError}
-                className="max-h-60 sm:max-h-72 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-md"
-              />
+              {cncCategory?.imageUrl ? (
+                <img
+                  src={cncCategory.imageUrl}
+                  alt="CNC Router Machine"
+                  onError={handleImageError}
+                  className="max-h-60 sm:max-h-72 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-md"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center text-slate-400 p-8 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 w-full h-52">
+                  <Cpu className="w-12 h-12 text-slate-300 mb-2" />
+                  <span className="text-xs font-semibold text-slate-500">CNC Router Series</span>
+                  <span className="text-[10px] text-slate-400 mt-0.5">Upload image in Category Management</span>
+                </div>
+              )}
             </div>
 
             {/* Bottom Centered Title & Specs Chips */}
@@ -596,12 +613,19 @@ export const HomePage: React.FC = () => {
 
                 {/* Centered Component Illustration */}
                 <div className="flex-1 flex items-center justify-center p-2 min-h-[120px] sm:min-h-[140px]">
-                  <img
-                    src={item.imageUrl}
-                    alt={item.name}
-                    onError={handleImageError}
-                    className="max-h-28 sm:max-h-32 w-auto object-contain group-hover:scale-108 transition-transform duration-300 drop-shadow-2xs"
-                  />
+                  {item.imageUrl ? (
+                    <img
+                      src={item.imageUrl}
+                      alt={item.name}
+                      onError={handleImageError}
+                      className="max-h-28 sm:max-h-32 w-auto object-contain group-hover:scale-108 transition-transform duration-300 drop-shadow-2xs"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-slate-400 p-3 border border-dashed border-slate-200 rounded-lg bg-slate-50 w-full h-28">
+                      <Package className="w-7 h-7 text-slate-300 mb-1" />
+                      <span className="text-[10px] text-slate-400 font-medium">No Image</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Card Bottom: Name, Tagline & Link */}

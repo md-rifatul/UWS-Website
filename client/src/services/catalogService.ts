@@ -28,6 +28,18 @@ export const DELETED_PRODUCTS_KEY = 'uws_deleted_product_ids';
 export const CUSTOM_CATEGORIES_KEY = 'uws_custom_categories';
 export const DELETED_CATEGORIES_KEY = 'uws_deleted_category_ids';
 
+// One-time purge of any old demo products / dummy data cached in user's browser localStorage
+const PURGE_KEY = 'uws_demo_cleared_v4';
+try {
+  if (typeof window !== 'undefined' && !localStorage.getItem(PURGE_KEY)) {
+    localStorage.removeItem(CUSTOM_PRODUCTS_KEY);
+    localStorage.removeItem(DELETED_PRODUCTS_KEY);
+    localStorage.removeItem(FEATURED_STORAGE_KEY);
+    localStorage.removeItem('wts_hero_slides');
+    localStorage.setItem(PURGE_KEY, 'true');
+  }
+} catch {}
+
 export const getStoredCustomProducts = (): Product[] => {
   try {
     const raw = localStorage.getItem(CUSTOM_PRODUCTS_KEY);

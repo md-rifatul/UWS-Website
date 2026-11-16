@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FileSpreadsheet, ArrowRight, Check } from 'lucide-react';
+import { FileSpreadsheet, ArrowRight, Check, Package } from 'lucide-react';
 import { Product } from '@/types';
 import { useAppDispatch, useAppSelector } from '@/features/hooks';
 import { addToBasket } from '@/features/rfq/rfqBasketSlice';
@@ -25,13 +25,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'g
           to={`/products/${product.slug}`}
           className="relative sm:w-72 h-52 sm:h-auto bg-gradient-to-b from-[#f8fafc] to-white shrink-0 overflow-hidden flex items-center justify-center p-5 border-b sm:border-b-0 sm:border-r border-slate-100 group-hover:from-white group-hover:to-orange-50/20 transition-all duration-300"
         >
-          <img
-            src={product.mainImageUrl}
-            alt={product.name}
-            className="max-h-48 w-auto object-contain transition-transform duration-300 ease-out group-hover:scale-108 drop-shadow-sm group-hover:drop-shadow-md"
-            loading="lazy"
-            onError={handleImageError}
-          />
+          {product.mainImageUrl ? (
+            <img
+              src={product.mainImageUrl}
+              alt={product.name}
+              className="max-h-48 w-auto object-contain transition-transform duration-300 ease-out group-hover:scale-108 drop-shadow-sm group-hover:drop-shadow-md"
+              loading="lazy"
+              onError={handleImageError}
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center text-slate-300 p-6">
+              <Package className="w-10 h-10 mb-1 stroke-1" />
+              <span className="text-[11px] text-slate-400 font-medium">No Image</span>
+            </div>
+          )}
         </Link>
 
         {/* Minimal Details */}
@@ -108,13 +115,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'g
       {/* Machine Photo - Highlighted Showcase Frame */}
       <div className="relative aspect-4/3 bg-gradient-to-b from-[#f8fafc] to-white overflow-hidden flex items-center justify-center p-5 border-b border-slate-100 group-hover:from-white group-hover:to-orange-50/20 transition-all duration-300">
         <Link to={`/products/${product.slug}`} className="w-full h-full flex items-center justify-center">
-          <img
-            src={product.mainImageUrl}
-            alt={product.name}
-            className="max-h-52 w-auto object-contain transition-transform duration-300 ease-out group-hover:scale-108 drop-shadow-sm group-hover:drop-shadow-md"
-            loading="lazy"
-            onError={handleImageError}
-          />
+          {product.mainImageUrl ? (
+            <img
+              src={product.mainImageUrl}
+              alt={product.name}
+              className="max-h-52 w-auto object-contain transition-transform duration-300 ease-out group-hover:scale-108 drop-shadow-sm group-hover:drop-shadow-md"
+              loading="lazy"
+              onError={handleImageError}
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center text-slate-300 p-6">
+              <Package className="w-12 h-12 mb-1 stroke-1" />
+              <span className="text-[11px] text-slate-400 font-medium">No Image Uploaded</span>
+            </div>
+          )}
         </Link>
       </div>
 
