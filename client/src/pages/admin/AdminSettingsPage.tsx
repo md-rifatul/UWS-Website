@@ -618,19 +618,57 @@ export const AdminSettingsPage: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-              <div className="space-y-1.5 sm:col-span-2 lg:col-span-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="font-semibold text-charcoal-700 block">Custom Image Logo URL (Optional)</span>
-                    <span className="text-[10px] text-slate-400 font-normal">PNG or SVG with transparent background</span>
+              {/* PURE LOGO UPLOADER (CLOUDINARY) - NO URL INPUT */}
+              <div className="space-y-2 sm:col-span-2 lg:col-span-4">
+                <span className="font-semibold text-charcoal-700 block">Custom Brand Logo (Cloudinary)</span>
+
+                {siteSettings.logo_url ? (
+                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-12 w-28 bg-white border border-slate-200 rounded-lg p-1 flex items-center justify-center">
+                        <img
+                          src={siteSettings.logo_url}
+                          alt="Logo"
+                          className="max-h-full max-w-full object-contain"
+                        />
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold text-navy-950 block">Custom Logo Uploaded</span>
+                        <span className="text-[11px] text-slate-500">Stored on Cloudinary CDN for header & footer display</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <label className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg border cursor-pointer transition-colors ${
+                        isUploadingLogo
+                          ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+                          : 'bg-white text-navy-900 border-slate-300 hover:bg-slate-100'
+                      }`}>
+                        <Upload className="w-3.5 h-3.5 text-industrial-orange" />
+                        <span>{isUploadingLogo ? 'Uploading...' : 'Replace Logo'}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          disabled={isUploadingLogo}
+                          className="hidden"
+                          onChange={handleLogoUpload}
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setSiteSettings((prev) => ({ ...prev, logo_url: '' }))}
+                        className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Remove</span>
+                      </button>
+                    </div>
                   </div>
-                  <label className={`text-[11px] font-bold px-2 py-0.5 rounded-md border flex items-center gap-1 cursor-pointer transition-colors ${
+                ) : (
+                  <label className={`block border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition-all ${
                     isUploadingLogo
-                      ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
-                      : 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100'
+                      ? 'border-industrial-orange bg-orange-50/20 cursor-wait'
+                      : 'border-slate-300 hover:border-industrial-orange bg-slate-50 hover:bg-orange-50/10'
                   }`}>
-                    <Upload className="w-3 h-3" />
-                    <span>{isUploadingLogo ? 'Uploading...' : 'Upload Logo to Cloudinary'}</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -638,16 +676,15 @@ export const AdminSettingsPage: React.FC = () => {
                       className="hidden"
                       onChange={handleLogoUpload}
                     />
+                    <Upload className={`w-6 h-6 mx-auto mb-1.5 ${isUploadingLogo ? 'animate-bounce text-industrial-orange' : 'text-slate-400'}`} />
+                    <span className="font-bold text-navy-900 block text-xs">
+                      {isUploadingLogo ? 'Uploading Logo to Cloudinary...' : 'Click to Upload Transparent Brand Logo (PNG or SVG)'}
+                    </span>
+                    <span className="text-[10px] text-slate-400 block mt-0.5">
+                      Leave empty to use the monogram and brand text below
+                    </span>
                   </label>
-                </div>
-                <input
-                  type="url"
-                  name="logo_url"
-                  value={siteSettings.logo_url}
-                  onChange={handleSettingChange}
-                  placeholder="https://example.com/logo.png (leave empty to use styled text logo below)"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
-                />
+                )}
               </div>
 
               <div className="space-y-1.5">
@@ -1153,17 +1190,56 @@ export const AdminSettingsPage: React.FC = () => {
                 />
               </div>
 
-              {/* Image URL & Instant Preview */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="font-semibold text-charcoal-700">Banner Image URL *</label>
-                  <label className={`text-[11px] font-bold px-2 py-0.5 rounded-md border flex items-center gap-1 cursor-pointer transition-colors ${
+              {/* PURE BANNER UPLOADER (CLOUDINARY) - NO URL INPUT */}
+              <div className="space-y-2">
+                <label className="font-semibold text-charcoal-700 block">Banner Photo (Cloudinary) *</label>
+
+                {slideFormData.imageUrl ? (
+                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                    <img
+                      src={slideFormData.imageUrl}
+                      alt="Banner Preview"
+                      onError={handleImageError}
+                      className="w-full max-h-48 object-cover rounded-lg border border-slate-200 shadow-2xs"
+                    />
+                    <div className="flex items-center justify-between pt-1">
+                      <div className="flex items-center gap-1.5 text-emerald-700 text-xs font-bold">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        <span>Banner Hosted on Cloudinary</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <label className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg border cursor-pointer transition-colors ${
+                          isUploadingBanner
+                            ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+                            : 'bg-white text-navy-900 border-slate-300 hover:bg-slate-100'
+                        }`}>
+                          <Upload className="w-3.5 h-3.5 text-industrial-orange" />
+                          <span>{isUploadingBanner ? 'Uploading...' : 'Replace Banner'}</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            disabled={isUploadingBanner}
+                            className="hidden"
+                            onChange={handleBannerUpload}
+                          />
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setSlideFormData({ ...slideFormData, imageUrl: '' })}
+                          className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Remove</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <label className={`block border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
                     isUploadingBanner
-                      ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
-                      : 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100'
+                      ? 'border-industrial-orange bg-orange-50/20 cursor-wait'
+                      : 'border-slate-300 hover:border-industrial-orange bg-slate-50 hover:bg-orange-50/10'
                   }`}>
-                    <Upload className="w-3 h-3" />
-                    <span>{isUploadingBanner ? 'Uploading...' : 'Upload to Cloudinary'}</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -1171,30 +1247,16 @@ export const AdminSettingsPage: React.FC = () => {
                       className="hidden"
                       onChange={handleBannerUpload}
                     />
-                  </label>
-                </div>
-                <input
-                  type="url"
-                  value={slideFormData.imageUrl}
-                  onChange={(e) => setSlideFormData({ ...slideFormData, imageUrl: e.target.value })}
-                  placeholder="https://res.cloudinary.com/... or direct banner image link"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-border text-navy-900 focus:outline-hidden focus:border-industrial-orange text-xs"
-                  required
-                />
-
-                {/* Instant Image Preview */}
-                {slideFormData.imageUrl && (
-                  <div className="mt-2 p-2.5 bg-slate-100 rounded-xl border border-slate-200">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                      Live Banner Image Preview
+                    <div className="mx-auto w-12 h-12 rounded-full bg-white shadow-2xs flex items-center justify-center mb-2">
+                      <Upload className={`w-6 h-6 ${isUploadingBanner ? 'animate-bounce text-industrial-orange' : 'text-slate-400'}`} />
+                    </div>
+                    <span className="font-bold text-navy-900 block text-xs">
+                      {isUploadingBanner ? 'Uploading Banner to Cloudinary...' : 'Click or Drag & Drop Banner to Upload'}
                     </span>
-                    <img
-                      src={slideFormData.imageUrl}
-                      alt="Preview"
-                      onError={handleImageError}
-                      className="w-full max-h-48 object-cover rounded-lg border border-slate-200 shadow-2xs"
-                    />
-                  </div>
+                    <span className="text-[11px] text-slate-400 block mt-1">
+                      High resolution panoramic banner (JPG, PNG, WEBP)
+                    </span>
+                  </label>
                 )}
               </div>
 

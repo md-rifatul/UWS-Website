@@ -301,8 +301,7 @@ export const AdminProductsPage: React.FC = () => {
       manufacturerId: defaultManId,
       condition: 'BrandNew',
       availabilityStatus: 'InStock',
-      mainImageUrl:
-        'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+      mainImageUrl: '',
       shortDescription: '',
       fullDescription: '',
       referencePrice: '',
@@ -436,6 +435,11 @@ export const AdminProductsPage: React.FC = () => {
 
     if (!formState.categoryId) {
       alert('Please select or create a Category for this machinery model.');
+      return;
+    }
+
+    if (!formState.mainImageUrl) {
+      alert('Please upload a machine photo from your computer.');
       return;
     }
 
@@ -1104,18 +1108,63 @@ export const AdminProductsPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* PURE IMAGE UPLOADER (CLOUDINARY) - NO URL INPUT */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="block text-xs font-semibold text-charcoal-700 uppercase">
-                    Main Machinery Image (Cloudinary) *
-                  </label>
-                  <label className={`text-[11px] font-bold px-2.5 py-1 rounded-md border flex items-center gap-1.5 cursor-pointer transition-colors ${
+                <label className="block text-xs font-semibold text-charcoal-700 uppercase">
+                  Machine Photo (Cloudinary) *
+                </label>
+
+                {formState.mainImageUrl ? (
+                  <div className="p-3 bg-surface-offwhite rounded-xl border border-slate-border flex flex-col sm:flex-row items-center gap-4">
+                    <div className="w-full sm:w-36 h-28 rounded-lg overflow-hidden bg-white border border-slate-200 shrink-0 flex items-center justify-center p-1">
+                      <img
+                        src={formState.mainImageUrl}
+                        alt="Machine"
+                        onError={handleImageError}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div className="flex-1 space-y-1.5 w-full text-center sm:text-left">
+                      <div className="flex items-center justify-center sm:justify-start gap-1.5">
+                        <Check className="w-4 h-4 text-emerald-600" />
+                        <span className="text-xs font-bold text-navy-950">Image Uploaded Successfully</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500">
+                        Stored securely on Cloudinary CDN for ultra-fast loading across all devices.
+                      </p>
+                      <div className="flex items-center justify-center sm:justify-start gap-2 pt-1">
+                        <label className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border cursor-pointer transition-colors ${
+                          isUploadingImage
+                            ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+                            : 'bg-white text-navy-950 border-slate-300 hover:bg-slate-100'
+                        }`}>
+                          <Upload className="w-3.5 h-3.5 text-industrial-orange" />
+                          <span>{isUploadingImage ? 'Uploading...' : 'Replace Photo'}</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            disabled={isUploadingImage}
+                            className="hidden"
+                            onChange={handleImageFileUpload}
+                          />
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setFormState({ ...formState, mainImageUrl: '' })}
+                          className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Remove</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <label className={`block border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
                     isUploadingImage
-                      ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
-                      : 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100'
+                      ? 'border-industrial-orange bg-orange-50/20 cursor-wait'
+                      : 'border-slate-300 hover:border-industrial-orange bg-surface-offwhite hover:bg-orange-50/10'
                   }`}>
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>{isUploadingImage ? 'Uploading to Cloudinary...' : 'Upload Image to Cloudinary'}</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -1123,38 +1172,21 @@ export const AdminProductsPage: React.FC = () => {
                       className="hidden"
                       onChange={handleImageFileUpload}
                     />
-                  </label>
-                </div>
-
-                <div className="flex gap-3 items-center">
-                  <div className="flex-1">
-                    <input
-                      type="url"
-                      required
-                      placeholder="https://res.cloudinary.com/... or https://..."
-                      value={formState.mainImageUrl}
-                      onChange={(e) => setFormState({ ...formState, mainImageUrl: e.target.value })}
-                      className="w-full text-xs px-3 py-2 bg-surface-offwhite border border-slate-border rounded-md text-charcoal-800 focus:outline-none focus:border-industrial-orange"
-                    />
-                  </div>
-                  {formState.mainImageUrl && (
-                    <div className="w-12 h-10 rounded border border-slate-border overflow-hidden bg-white shrink-0 flex items-center justify-center p-0.5">
-                      <img
-                        src={formState.mainImageUrl}
-                        alt="Preview"
-                        onError={handleImageError}
-                        className="w-full h-full object-contain"
-                      />
+                    <div className="mx-auto w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-2">
+                      <Upload className={`w-6 h-6 ${isUploadingImage ? 'animate-bounce text-industrial-orange' : 'text-slate-400'}`} />
                     </div>
-                  )}
-                </div>
+                    <span className="font-bold text-navy-900 block text-xs">
+                      {isUploadingImage ? 'Uploading Photo to Cloudinary...' : 'Click or Drag & Drop Machine Photo to Upload'}
+                    </span>
+                    <span className="text-[11px] text-slate-400 block mt-1">
+                      PNG, JPG, WEBP up to 15MB (Auto-hosted on Cloudinary CDN)
+                    </span>
+                  </label>
+                )}
 
                 {uploadError && (
                   <p className="text-[11px] text-rose-600 font-medium">{uploadError}</p>
                 )}
-                <p className="text-[10px] text-slate-400">
-                  Select an image from your computer to automatically upload to Cloudinary, or paste an existing image URL.
-                </p>
               </div>
 
               <div>

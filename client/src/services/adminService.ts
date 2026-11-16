@@ -1,4 +1,5 @@
 import apiClient from './apiClient';
+import { cloudinaryService } from './cloudinaryService';
 import { Category, CategoryAttribute, Product, RFQ, RFQStatus, User, SiteSetting, BulkImportResult, HeroSlide } from '@/types';
 import { DEMO_CATEGORIES, DEMO_PRODUCTS, DEMO_RFQS, DEFAULT_HERO_SLIDES } from './mockData';
 
@@ -226,21 +227,7 @@ export const adminService = {
   },
 
   async uploadImage(file: File, folder = 'uws-machinery'): Promise<{ url: string; publicId: string }> {
-    const formData = new FormData();
-    formData.append('file', file);
-    try {
-      const response = await apiClient.post<{ url: string; publicId: string }>(
-        `/admin/upload-image?folder=${encodeURIComponent(folder)}`,
-        formData,
-        {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        }
-      );
-      return response.data;
-    } catch (err: any) {
-      console.error('Failed to upload image:', err);
-      throw new Error(err.response?.data?.message || err.message || 'Failed to upload image to Cloudinary');
-    }
+    return await cloudinaryService.uploadImage(file, folder);
   },
 
   async getAdminRfqs(): Promise<RFQ[]> {
