@@ -235,10 +235,7 @@ export const adminService = {
   },
 
   async updateCategory(id: string, category: Partial<Category>): Promise<Category> {
-    try {
-      const response = await apiClient.put<Category>(`/admin/categories/${id}`, category);
-      return response.data;
-    } catch {
+    const updateLocal = () => {
       try {
         const stored = localStorage.getItem('uws_custom_categories');
         const arr: Category[] = stored ? JSON.parse(stored) : [];
@@ -251,6 +248,14 @@ export const adminService = {
         }
         localStorage.setItem('uws_custom_categories', JSON.stringify(arr));
       } catch {}
+    };
+
+    try {
+      const response = await apiClient.put<Category>(`/admin/categories/${id}`, category);
+      updateLocal();
+      return response.data;
+    } catch {
+      updateLocal();
 
       const index = DEMO_CATEGORIES.findIndex((c) => c.id === id);
       if (index !== -1) {

@@ -91,7 +91,29 @@ export const catalogService = {
     try {
       const response = await apiClient.get<Category[]>('/catalog/categories');
       if (response.data && response.data.length > 0) {
-        return response.data;
+        // If a category from the backend is missing imageUrl, retain any uploaded image from localStorage
+        const localCats = getEffectiveCategories();
+        const merged = response.data.map((cat) => {
+          if (!cat.imageUrl) {
+            const local = localCats.find((l) => l.slug === cat.slug || l.id === cat.id);
+            if (local?.imageUrl) {
+              // Asynchronously sync local image to backend database so PostgreSQL is permanently updated
+              apiClient
+                .put(`/admin/categories/${cat.id}`, {
+                  name: cat.name,
+                  slug: cat.slug,
+                  description: cat.description,
+                  imageUrl: local.imageUrl,
+                  displayOrder: cat.displayOrder,
+                  isActive: cat.isActive,
+                })
+                .catch(() => {});
+              return { ...cat, imageUrl: local.imageUrl };
+            }
+          }
+          return cat;
+        });
+        return merged;
       }
       return getEffectiveCategories();
     } catch {
@@ -102,7 +124,18 @@ export const catalogService = {
   async getCategoryBySlug(slug: string): Promise<Category | null> {
     try {
       const response = await apiClient.get<Category>(`/catalog/categories/slug/${slug}`);
-      return response.data;
+      if (response.data) {
+        if (!response.data.imageUrl) {
+          const local = getEffectiveCategories().find(
+            (l) => l.slug === slug || l.id === response.data.id
+          );
+          if (local?.imageUrl) {
+            response.data.imageUrl = local.imageUrl;
+          }
+        }
+        return response.data;
+      }
+      return null;
     } catch {
       const cats = getEffectiveCategories();
       const found = cats.find((c) => c.slug === slug);
