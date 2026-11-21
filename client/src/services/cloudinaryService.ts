@@ -50,6 +50,19 @@ export const cloudinaryService = {
           body: formData,
           credentials: 'include',
         });
+        // If Vite proxy returns 500/502/504 because backend is down or proxy connection dropped, try direct backend URL
+        if (!response.ok && (response.status === 500 || response.status === 502 || response.status === 504)) {
+          try {
+            const fallbackRes = await fetch(directFallbackUrl, {
+              method: 'POST',
+              body: formData,
+              credentials: 'include',
+            });
+            if (fallbackRes.ok) {
+              response = fallbackRes;
+            }
+          } catch {}
+        }
       } catch (firstErr) {
         // Fallback to direct backend URL if proxy or relative request failed
         if (primaryUrl !== directFallbackUrl) {
@@ -66,6 +79,9 @@ export const cloudinaryService = {
       const data = await response.json().catch(() => null);
 
       if (!response.ok) {
+        if (!data && (response.status === 500 || response.status === 502 || response.status === 504)) {
+          throw new Error('Backend server is not running (http://localhost:5000). Please start the backend server to upload images.');
+        }
         const errorMsg =
           data?.message ||
           data?.error ||
